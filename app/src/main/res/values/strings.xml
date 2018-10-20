@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">KomunanTW</string>
+    <!-- Misc -->
+    <string name="authentication">認証</string>
+    <string name="default_label">デフォルト</string>
+    <string name="open_browser">ブラウザを開く</string>
+    <string name="pin">PIN</string>
+</resources>
