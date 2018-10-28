@@ -1,4 +1,4 @@
-package net.komunan.komunantw.ui.timeline
+package net.komunan.komunantw.ui.home
 
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView

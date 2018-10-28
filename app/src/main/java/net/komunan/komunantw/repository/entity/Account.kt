@@ -12,6 +12,8 @@ class Account(
         @PrimaryKey()
         @ColumnInfo(name = "id")
         var id: Long,
+        @ColumnInfo(name = "image_url")
+        var imageUrl: String,
         @ColumnInfo(name = "name")
         var name: String,
         @ColumnInfo(name = "screen_name")
@@ -30,7 +32,7 @@ class Account(
     }
 
     @Ignore
-    constructor(user: User): this(user.id, user.name, user.screenName, 0, 0)
+    constructor(user: User): this(user.id, user.profileImageURLHttps, user.name, user.screenName, 0, 0)
 
     fun save() = dao.save(this)
     fun delete() = dao.delete(this)

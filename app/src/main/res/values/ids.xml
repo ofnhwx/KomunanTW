@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <item type="id" name="toolbar" />
     <item type="id" name="container" />
     <item type="id" name="timelines" />
+    <!-- Account -->
+    <item type="id" name="account_icon" />
+    <item type="id" name="account_name" />
+    <item type="id" name="account_screen_name" />
     <!-- Tweet -->
     <item type="id" name="tweet_user_icon" />
     <item type="id" name="tweet_user_name" />

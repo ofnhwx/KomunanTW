@@ -1,18 +1,21 @@
 package net.komunan.komunantw.ui.timelines
 
-import android.support.v4.view.ViewPager
-import net.komunan.komunantw.R
+import android.widget.ListView
+import net.komunan.komunantw.repository.entity.Timeline
 import org.jetbrains.anko.AnkoComponent
 import org.jetbrains.anko.AnkoContext
-import org.jetbrains.anko.support.v4.viewPager
+import org.jetbrains.anko.listView
 
 internal class TimelinesUI: AnkoComponent<TimelinesFragment> {
-    lateinit var timelines: ViewPager
+    lateinit var timelines: ListView
 
     override fun createView(ui: AnkoContext<TimelinesFragment>) = with(ui) {
-        viewPager {
+        listView {
             timelines = this
-            id = R.id.timelines
         }
+    }
+
+    fun bind(timelines: List<Timeline>) {
+        this.timelines.adapter = TimelinesAdapter(timelines)
     }
 }

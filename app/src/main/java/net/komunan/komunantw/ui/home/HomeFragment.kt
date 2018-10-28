@@ -1,4 +1,4 @@
-package net.komunan.komunantw.ui.timelines
+package net.komunan.komunantw.ui.home
 
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
@@ -9,14 +9,14 @@ import android.view.ViewGroup
 import net.komunan.komunantw.common.observeOnNotNull
 import org.jetbrains.anko.AnkoContext
 
-class TimelinesFragment: Fragment() {
+class HomeFragment: Fragment() {
     companion object {
         @JvmStatic
-        fun create() = TimelinesFragment()
+        fun create() = HomeFragment()
     }
 
-    private val viewModel by lazy { ViewModelProviders.of(this).get(TimelinesViewModel::class.java) }
-    private val ui = TimelinesUI()
+    private val viewModel by lazy { ViewModelProviders.of(this).get(HomeViewModel::class.java) }
+    private val ui = HomeUI()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return ui.createView(AnkoContext.create(context!!, this))
@@ -25,7 +25,9 @@ class TimelinesFragment: Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel.run {
-            timelines().observeOnNotNull(this@TimelinesFragment) { timelines -> ui.bind(timelines) }
+            columns().observeOnNotNull(this@HomeFragment) { columns ->
+                ui.timelines.adapter = HomeAdapter(fragmentManager, columns)
+            }
         }
     }
 }

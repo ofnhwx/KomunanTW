@@ -33,6 +33,7 @@ data class ConsumerKeySecret (
         private val dao = TWDatabase.instance.consumerKeySecretDao()
 
         @JvmStatic fun findAllAsync() = dao.findAllAsync()
+        @JvmStatic fun findAll() = dao.findAll()
         @JvmStatic fun count()= dao.count()
         @JvmStatic fun default() = ConsumerKeySecret("", "", "").apply { default = true }
     }

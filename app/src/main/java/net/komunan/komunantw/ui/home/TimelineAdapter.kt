@@ -1,4 +1,4 @@
-package net.komunan.komunantw.ui.timeline
+package net.komunan.komunantw.ui.home
 
 import android.arch.paging.PagedListAdapter
 import android.support.v7.util.DiffUtil

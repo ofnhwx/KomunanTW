@@ -10,6 +10,9 @@ abstract class ConsumerKeySecretDao {
     @Query("SELECT * FROM consumer_key_secret ORDER BY is_default DESC, name ASC")
     abstract fun findAllAsync(): LiveData<List<ConsumerKeySecret>>
 
+    @Query("SELECT * FROM consumer_key_secret ORDER BY is_default DESC, name ASC")
+    abstract fun findAll(): List<ConsumerKeySecret>
+
     @Query("SELECT COUNT(*) FROM consumer_key_secret")
     abstract fun count(): Int
 

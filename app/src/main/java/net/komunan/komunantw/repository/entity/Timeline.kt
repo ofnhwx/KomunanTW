@@ -22,6 +22,7 @@ data class Timeline(
         private val sourceDao = TWDatabase.instance.timelineSourceDao()
 
         @JvmStatic fun findAllAsync() = dao.findAllAsync()
+        @JvmStatic fun find(id: Long) = dao.find(id)
         @JvmStatic fun count() = dao.count()
         @JvmStatic fun firstSetup(account: Account) = dao.firstSetup(account)
     }

@@ -4,13 +4,12 @@ import android.content.Intent
 import android.net.Uri
 import net.komunan.komunantw.Preference
 import net.komunan.komunantw.common.BaseViewModel
-import net.komunan.komunantw.event.Transition
 import net.komunan.komunantw.repository.database.transaction
 import net.komunan.komunantw.repository.entity.*
 import net.komunan.komunantw.service.TwitterService.twitter
 
 internal class AuthViewModel: BaseViewModel() {
-    fun consumerKeys() = ConsumerKeySecret.findAllAsync()
+    //fun consumerKeys() = ConsumerKeySecret.findAllAsync()
 
     suspend fun startOAuth(consumerKeySecret: ConsumerKeySecret) = process {
         val requestToken = twitter(consumerKeySecret).oAuthRequestToken
@@ -30,11 +29,11 @@ internal class AuthViewModel: BaseViewModel() {
             Credential(account, consumerKeySecret, accessToken).save()
             Source.update(account)
             Timeline.firstSetup(account)
+
+            Timeline.find(1).addSource(Source.findByAccountId(account.id).first())
         }
 
         Preference.consumerKeySecret = null
         Preference.requestToken = null
-
-        Transition.execute(Transition.Target.BACK)
     }
 }

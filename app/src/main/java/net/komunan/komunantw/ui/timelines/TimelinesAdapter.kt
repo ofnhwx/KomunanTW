@@ -1,12 +1,25 @@
 package net.komunan.komunantw.ui.timelines
 
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentPagerAdapter
+import android.view.View
+import android.view.ViewGroup
+import net.komunan.komunantw.common.SimpleListAdapter
 import net.komunan.komunantw.repository.entity.Timeline
-import net.komunan.komunantw.ui.timeline.TimelineFragment
+import org.jetbrains.anko.AnkoContext
 
-internal class TimelineAdapter internal constructor(fm: FragmentManager?, private val timelines: List<Timeline>): FragmentPagerAdapter(fm) {
-    override fun getCount(): Int = timelines.size
-    override fun getItem(position: Int): Fragment = TimelineFragment.create(timelines[position])
+internal class TimelinesAdapter internal constructor(timelines: List<Timeline>): SimpleListAdapter<Timeline>(timelines) {
+    override fun newView(position: Int, parent: ViewGroup): View {
+        TimelineUI().let { ui ->
+            return ui.createView(AnkoContext.create(parent.context, parent)).also { view ->
+                view.tag = ui
+            }
+        }
+    }
+
+    override fun bindView(view: View, position: Int) {
+        (view.tag as TimelineUI).bind(items[position])
+    }
+
+    override fun getItemId(position: Int): Long {
+        return items[position].id
+    }
 }

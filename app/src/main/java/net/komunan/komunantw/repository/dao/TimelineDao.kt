@@ -16,6 +16,9 @@ abstract class TimelineDao {
     @Query("SELECT * FROM timeline ORDER BY position ASC")
     abstract fun findAllAsync(): LiveData<List<Timeline>>
 
+    @Query("SELECT * FROM timeline WHERE id = :id")
+    abstract fun find(id: Long): Timeline
+
     @Query("SELECT COUNT(*) FROM Timeline")
     abstract fun count(): Int
 

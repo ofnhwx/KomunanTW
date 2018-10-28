@@ -1,10 +1,15 @@
 <resources>
     <string name="app_name">KomunanTW</string>
     <!-- Misc -->
+    <string name="account_list">アカウント一覧</string>
+    <string name="add_account">アカウントを追加</string>
     <string name="authentication">認証</string>
     <string name="default_label">デフォルト</string>
+    <string name="home">ホーム</string>
     <string name="open_browser">ブラウザを開く</string>
     <string name="pin">PIN</string>
+    <string name="source_list">ソース一覧</string>
+    <string name="timeline_list">タイムライン一覧</string>
     <!-- Format -->
     <!--suppress AndroidDomInspection -->
     <string name="format_screen_name">@%s</string>
