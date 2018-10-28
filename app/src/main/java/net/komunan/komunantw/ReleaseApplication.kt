@@ -1,11 +1,12 @@
 package net.komunan.komunantw
 
+import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
+import com.github.ajalt.timberkt.Timber
 import com.marcinmoskala.kotlinpreferences.PreferenceHolder
-import net.komunan.komunantw.repository.database.TWDatabase
-import net.komunan.komunantw.repository.entity.ConsumerKeySecret
 
+@SuppressLint("Registered")
 open class ReleaseApplication: Application() {
     companion object {
         @JvmStatic
@@ -20,19 +21,9 @@ open class ReleaseApplication: Application() {
     override fun onCreate() {
         super.onCreate()
         instance = this
-        PreferenceHolder.setContext(this)
-
-        // アプリケーションの起動時にデフォルトの ConsumerKey/Secret を登録
-        TWDatabase.instance.consumerKeySecretDao().run {
-            if (count() == 0) {
-                save(ConsumerKeySecret().apply {
-                    default = true
-                })
-            }
-        }
+        PreferenceHolder.setContext(context)
+        Timber.plant(timberTree())
     }
 
-    override fun onTerminate() {
-        super.onTerminate()
-    }
+    protected open fun timberTree() = Timber.asTree()
 }

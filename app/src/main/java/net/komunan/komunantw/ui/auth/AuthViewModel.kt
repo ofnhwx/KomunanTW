@@ -1,46 +1,40 @@
 package net.komunan.komunantw.ui.auth
 
-import android.app.Application
-import android.arch.lifecycle.AndroidViewModel
-import android.arch.lifecycle.LiveData
 import android.content.Intent
 import android.net.Uri
-import kotlinx.coroutines.experimental.async
 import net.komunan.komunantw.Preference
-import net.komunan.komunantw.common.twitter
-import net.komunan.komunantw.repository.database.TWDatabase
-import net.komunan.komunantw.repository.entity.Account
-import net.komunan.komunantw.repository.entity.ConsumerKeySecret
-import net.komunan.komunantw.repository.entity.Credential
+import net.komunan.komunantw.common.BaseViewModel
+import net.komunan.komunantw.event.Transition
+import net.komunan.komunantw.repository.database.transaction
+import net.komunan.komunantw.repository.entity.*
+import net.komunan.komunantw.service.TwitterService.twitter
 
-class AuthViewModel(app: Application): AndroidViewModel(app) {
-    val consumerKeys: LiveData<List<ConsumerKeySecret>>
-        get() = TWDatabase.instance.consumerKeySecretDao().findAll()
+internal class AuthViewModel: BaseViewModel() {
+    fun consumerKeys() = ConsumerKeySecret.findAllAsync()
 
-    fun startOAuth(consumerKeySecret: ConsumerKeySecret) = async {
-        twitter(consumerKeySecret).oAuthRequestToken.let {
-            Preference.consumerKeySecret = consumerKeySecret
-            Preference.requestToken = it
-            getApplication<Application>().startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(it.authorizationURL)))
-        }
+    suspend fun startOAuth(consumerKeySecret: ConsumerKeySecret) = process {
+        val requestToken = twitter(consumerKeySecret).oAuthRequestToken
+        Preference.requestToken = requestToken
+        Preference.consumerKeySecret = consumerKeySecret
+        application.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(requestToken.authorizationURL)))
     }
 
-    fun finishOAuth(pin: String) = async {
-        twitter().getOAuthAccessToken(Preference.requestToken, pin).let { accessToken ->
-            val consumerKeySecret = Preference.consumerKeySecret!!
-            Account().apply {
-                id = accessToken.userId
-                screenName = accessToken.screenName
-            }.save()
-            Credential().apply {
-                accountId = accessToken.userId
-                consumerKey = consumerKeySecret.consumerKey
-                consumerSecret = consumerKeySecret.consumerSecret
-                token = accessToken.token
-                tokenSecret = accessToken.tokenSecret
-            }.save()
-            Preference.consumerKeySecret = null
-            Preference.requestToken = null
+    suspend fun finishOAuth(pin: String) = process {
+        val consumerKeySecret = Preference.consumerKeySecret!!
+        val requestToken = Preference.requestToken!!
+        val twitter = twitter(consumerKeySecret)
+        val accessToken = twitter.getOAuthAccessToken(requestToken, pin)
+
+        transaction {
+            val account = Account(twitter.showUser(accessToken.userId)).save()
+            Credential(account, consumerKeySecret, accessToken).save()
+            Source.update(account)
+            Timeline.firstSetup(account)
         }
+
+        Preference.consumerKeySecret = null
+        Preference.requestToken = null
+
+        Transition.execute(Transition.Target.BACK)
     }
 }

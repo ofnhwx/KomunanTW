@@ -1,21 +1,15 @@
 package net.komunan.komunantw.common
 
+import android.arch.lifecycle.LifecycleOwner
+import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.Observer
 import net.komunan.komunantw.ReleaseApplication
-import net.komunan.komunantw.repository.entity.ConsumerKeySecret
-import net.komunan.komunantw.repository.entity.Credential
-import twitter4j.Twitter
-import twitter4j.TwitterFactory
-import twitter4j.auth.RequestToken
 
 fun Int.string(): String = ReleaseApplication.context.getString(this)
+fun Int.toBoolean(): Boolean = this != 0
 
-fun twitter(): Twitter = TwitterFactory.getSingleton()
+fun Boolean.toInt(): Int = if (this) 1 else 0
 
-fun twitter(consumerKeySecret: ConsumerKeySecret): Twitter = TwitterFactory.getSingleton().also {
-    it.setOAuthConsumer(consumerKeySecret.consumerKey, consumerKeySecret.consumerSecret)
-}
-
-fun twitter(credential: Credential): Twitter = TwitterFactory.getSingleton().also {
-    it.setOAuthConsumer(credential.consumerKey, credential.consumerSecret)
-    it.oAuthAccessToken = credential.accessToken
+fun <T> LiveData<T>.observeOnNotNull(owner: LifecycleOwner, body: (data: T) -> Unit) {
+    this.observe(owner, Observer { it?.let(body) })
 }

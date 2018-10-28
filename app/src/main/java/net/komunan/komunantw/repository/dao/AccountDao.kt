@@ -2,25 +2,40 @@ package net.komunan.komunantw.repository.dao
 
 import android.arch.lifecycle.LiveData
 import android.arch.persistence.room.*
+import com.github.ajalt.timberkt.d
 import net.komunan.komunantw.repository.entity.Account
-import net.komunan.komunantw.repository.entity.AccountWithCredential
 
 @Dao
-interface AccountDao {
-    @Query("SELECT COUNT(*) FROM Account")
-    fun count(): Int
+abstract class AccountDao {
+    @Query("SELECT * FROM account ORDER BY name ASC")
+    abstract fun findAllAsync(): LiveData<List<Account>>
 
-    @Transaction
-    @Query("SELECT * FROM Account ORDER BY name ASC")
-    fun findAll(): LiveData<List<AccountWithCredential>>
+    @Query("SELECT * FROM account WHERE id = :id")
+    abstract fun find(id: Long): Account
 
-    @Transaction
-    @Query("SELECT * FROM Account WHERE id = :id")
-    fun find(id: Long): LiveData<AccountWithCredential>
+    @Query("SELECT COUNT(*) FROM account")
+    abstract fun count(): Int
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun save(account: Account)
+    @Insert(onConflict = OnConflictStrategy.ABORT)
+    abstract fun _insert(account: Account)
+
+    @Update
+    abstract fun _update(account: Account)
 
     @Delete
-    fun delete(account: Account)
+    abstract fun delete(account: Account)
+
+    fun save(account: Account): Account {
+        if (account.createAt == 0L) {
+            _insert(account.apply {
+                createAt = System.currentTimeMillis()
+            })
+        } else {
+            _update(account.apply {
+                updateAt = System.currentTimeMillis()
+            })
+        }
+        d { "save: $account" }
+        return account
+    }
 }

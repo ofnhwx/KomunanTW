@@ -1,19 +1,20 @@
 package net.komunan.komunantw
 
+import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import com.mikepenz.materialdrawer.Drawer
-import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch
 import net.komunan.komunantw.event.Transition
-import net.komunan.komunantw.repository.database.TWDatabase
+import net.komunan.komunantw.repository.entity.Account
 import net.komunan.komunantw.ui.accounts.AccountsFragment
 import net.komunan.komunantw.ui.auth.AuthFragment
-import net.komunan.komunantw.ui.timeline.TimelineFragment
+import net.komunan.komunantw.ui.timelines.TimelinesFragment
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.jetbrains.anko.AnkoComponent
@@ -23,16 +24,20 @@ import org.jetbrains.anko.setContentView
 
 class TWActivity: AppCompatActivity() {
     private lateinit var drawer: Drawer
-    private lateinit var ui: TWActivityUI
+    private val viewModel by lazy { ViewModelProviders.of(this).get(TWViewModel::class.java) }
+    private val ui = TWActivityUI()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        ui = TWActivityUI().also {
-            it.setContentView(this)
+        ui.run {
+            setContentView(this@TWActivity)
+            if (savedInstanceState == null) {
+                setupDrawer()
+                showStartup()
+            }
         }
-        if (savedInstanceState == null) {
-            setupDrawer()
-            showStartup()
+        viewModel.run {
+            startUpdate()
         }
     }
 
@@ -46,13 +51,24 @@ class TWActivity: AppCompatActivity() {
         EventBus.getDefault().unregister(this)
     }
 
+    override fun onBackPressed() {
+        supportFragmentManager.run {
+            when {
+                backStackEntryCount > 0 -> popBackStack()
+                findFragmentById(R.id.container) is TimelinesFragment -> super.onBackPressed()
+                else -> showStartup()
+            }
+        }
+    }
+
     @Suppress("unused")
     @Subscribe
     fun onTransition(transition: Transition) {
-        when (transition.getTarget()) {
-            Transition.Target.ACCOUNTS -> setContent(AccountsFragment.create())
-            Transition.Target.AUTH -> setContent(AuthFragment.create())
-            Transition.Target.TIMELINE -> setContent(TimelineFragment.create())
+        when (transition.target) {
+            Transition.Target.ACCOUNTS -> setContent(AccountsFragment.create(), transition.isChild)
+            Transition.Target.AUTH -> setContent(AuthFragment.create(), transition.isChild)
+            Transition.Target.TIMELINE -> setContent(TimelinesFragment.create(), transition.isChild)
+            Transition.Target.BACK -> onBackPressed()
         }
     }
 
@@ -60,19 +76,21 @@ class TWActivity: AppCompatActivity() {
     }
 
     private fun showStartup() = launch(UI) {
-        val fragment: Deferred<Fragment> = async {
-            if (TWDatabase.instance.accountDao().count() == 0) {
-                return@async AuthFragment.create()
-            } else {
-                return@async TimelineFragment.create()
-            }
+        val count = async(CommonPool) { Account.count() }
+        val fragment = if (count.await() == 0) {
+            AuthFragment.create()
+        } else {
+            TimelinesFragment.create()
         }
-        setContent(fragment.await())
+        setContent(fragment, false)
     }
 
-    private fun setContent(fragment: Fragment) {
-        supportFragmentManager.beginTransaction().also {
-            it.replace(ui.container.id, fragment)
+    private fun setContent(fragment: Fragment, isChild: Boolean) {
+        supportFragmentManager.beginTransaction().apply {
+            replace(ui.container.id, fragment)
+            if (isChild) {
+                addToBackStack(null)
+            }
         }.commit()
     }
 

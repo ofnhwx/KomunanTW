@@ -1,38 +1,84 @@
 package net.komunan.komunantw.repository.entity
 
-import android.arch.persistence.room.*
+import android.arch.persistence.room.ColumnInfo
+import android.arch.persistence.room.Entity
+import android.arch.persistence.room.Ignore
+import android.arch.persistence.room.PrimaryKey
 import net.komunan.komunantw.BuildConfig
 import net.komunan.komunantw.R
 import net.komunan.komunantw.common.string
+import net.komunan.komunantw.common.toBoolean
+import net.komunan.komunantw.common.toInt
 import net.komunan.komunantw.repository.database.TWDatabase
 
-@Entity
-class ConsumerKeySecret {
-    @PrimaryKey(autoGenerate = true)
-    var id: Long = 0
-    var name: String = ""
-        get() = if (default) R.string.default_label.string() else field
-    @ColumnInfo(name = "consumer_key")
-    var consumerKey: String = ""
-        get() = if (default) BuildConfig.DEFAULT_CONSUMER_KEY else field
-    @ColumnInfo(name = "consumer_secret")
-    var consumerSecret: String = ""
-        get() = if (default) BuildConfig.DEFAULT_CONSUMER_SECRET else field
-    @ColumnInfo(name = "is_default")
-    var defaultKey: Int = 0
+@Entity(tableName = "consumer_key_secret")
+data class ConsumerKeySecret (
+        @PrimaryKey(autoGenerate = true)
+        @ColumnInfo(name = "id")
+        var id: Long,
+        @ColumnInfo(name = "name")
+        var _name: String,
+        @ColumnInfo(name = "consumer_key")
+        var _consumerKey: String,
+        @ColumnInfo(name = "consumer_secret")
+        var _consumerSecret: String,
+        @ColumnInfo(name = "is_default")
+        var _default: Int,
+        @ColumnInfo(name = "create_at")
+        var createAt: Long,
+        @ColumnInfo(name = "update_at")
+        var updateAt: Long
+) {
+    companion object {
+        private val dao = TWDatabase.instance.consumerKeySecretDao()
+
+        @JvmStatic fun findAllAsync() = dao.findAllAsync()
+        @JvmStatic fun count()= dao.count()
+        @JvmStatic fun default() = ConsumerKeySecret("", "", "").apply { default = true }
+    }
+
+    var name: String
+        @Ignore
+        get() = if (default) R.string.default_label.string() else _name
+        set(value) {
+            if (!default) {
+                _name = value
+            }
+        }
+
+    var consumerKey: String
+        @Ignore
+        get() = if (default) BuildConfig.DEFAULT_CONSUMER_KEY else _consumerKey
+        set(value) {
+            if (!default) {
+                _consumerKey = value
+            }
+        }
+
+    var consumerSecret: String
+        @Ignore
+        get() = if (default) BuildConfig.DEFAULT_CONSUMER_SECRET else _consumerSecret
+        set(value) {
+            if (!default) {
+                _consumerSecret = value
+            }
+        }
 
     var default: Boolean
-        get() = defaultKey != 0
+        get() = _default.toBoolean()
         set(value) {
-            defaultKey = if (value) 1 else 0
+            _default = value.toInt()
+            if (value) {
+                _name = ""
+                _consumerKey = ""
+                _consumerSecret = ""
+            }
         }
 
-    fun save() = TWDatabase.instance.consumerKeySecretDao().save(this)
+    @Ignore
+    constructor(name: String, consumerKey: String, consumerSecret: String)
+            : this(0, name, consumerKey, consumerSecret, 0, 0, 0)
 
-    fun delete() {
-        if (default) {
-            return
-        }
-        TWDatabase.instance.consumerKeySecretDao().delete(this)
-    }
+    fun save() = dao.save(this)
+    fun delete() = dao.delete(this)
 }

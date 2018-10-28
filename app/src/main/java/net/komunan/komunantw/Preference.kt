@@ -1,38 +1,40 @@
 package net.komunan.komunantw
 
+import com.google.gson.Gson
 import com.marcinmoskala.kotlinpreferences.PreferenceHolder
 import net.komunan.komunantw.repository.entity.ConsumerKeySecret
 import twitter4j.auth.RequestToken
 
 object Preference: PreferenceHolder() {
+    private val gson = Gson()
+
     var useInMemoryDatabase: Boolean by bindToPreferenceField(false)
+    var fetchCount: Int by bindToPreferenceField(200)
+    var fetchInterval: Long by bindToPreferenceField(120)
 
-    private var requestTokenKey: String? by bindToPreferenceFieldNullable()
-    private var requestTokenSecret: String? by bindToPreferenceFieldNullable()
+    var fetchIntervalMillis: Long
+        get() = fetchInterval * 1000
+        set(value) {
+            fetchInterval = value / 1000
+        }
+
+    private var _requestToken: String? by bindToPreferenceFieldNullable()
+    private data class RequestTokenHolder(val token: String, val tokenSecret: String) {
+        companion object {
+            fun from(requestToken: RequestToken) = RequestTokenHolder(requestToken.token, requestToken.tokenSecret)
+        }
+        fun to() = RequestToken(token, tokenSecret)
+    }
     var requestToken: RequestToken?
-        get() {
-            val token = this.requestTokenKey
-            val tokenSecret = this.requestTokenSecret
-            return if (token == null || tokenSecret == null) null else RequestToken(token, tokenSecret)
-        }
+        get() = _requestToken?.let { gson.fromJson(it, RequestTokenHolder::class.java).to() }
         set(value) {
-            requestTokenKey = value?.token
-            requestTokenSecret = value?.tokenSecret
+            _requestToken = value?.let { gson.toJson(RequestTokenHolder.from(it)).toString() }
         }
 
-    private var consumerKey: String? by bindToPreferenceFieldNullable()
-    private var consumerSecret: String? by bindToPreferenceFieldNullable()
+    private var _consumerKeySecret: String? by bindToPreferenceFieldNullable()
     var consumerKeySecret: ConsumerKeySecret?
-        get() {
-            val consumerKey = this.consumerKey
-            val consumerSecret = this.consumerSecret
-            return if (consumerKey == null || consumerSecret == null) null else ConsumerKeySecret().apply {
-                this.consumerKey = consumerKey
-                this.consumerSecret = consumerSecret
-            }
-        }
+        get() = _consumerKeySecret?.let { gson.fromJson(it, ConsumerKeySecret::class.java) }
         set(value) {
-            consumerKey = value?.consumerKey
-            consumerSecret = value?.consumerSecret
+            _consumerKeySecret = value?.let { gson.toJson(value).toString() }
         }
 }

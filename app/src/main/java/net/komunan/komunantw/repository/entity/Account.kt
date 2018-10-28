@@ -1,21 +1,39 @@
 package net.komunan.komunantw.repository.entity
 
-import android.arch.persistence.room.*
+import android.arch.persistence.room.ColumnInfo
+import android.arch.persistence.room.Entity
+import android.arch.persistence.room.Ignore
+import android.arch.persistence.room.PrimaryKey
 import net.komunan.komunantw.repository.database.TWDatabase
+import twitter4j.User
 
-@Entity
-open class Account {
-    @PrimaryKey
-    var id: Long = 0
-    var name: String = ""
-    @ColumnInfo(name = "screen_name")
-    var screenName: String = ""
+@Entity(tableName = "account")
+class Account(
+        @PrimaryKey()
+        @ColumnInfo(name = "id")
+        var id: Long,
+        @ColumnInfo(name = "name")
+        var name: String,
+        @ColumnInfo(name = "screen_name")
+        var screenName: String,
+        @ColumnInfo(name = "create_at")
+        var createAt: Long,
+        @ColumnInfo(name = "update_at")
+        var updateAt: Long
+) {
+    companion object {
+        private val dao = TWDatabase.instance.accountDao()
 
-    open fun save() = TWDatabase.instance.accountDao().save(this)
-    open fun delete() = TWDatabase.instance.accountDao().delete(this)
-}
+        @JvmStatic fun findAllAsync() = dao.findAllAsync()
+        @JvmStatic fun find(id: Long) = dao.find(id)
+        @JvmStatic fun count() = dao.count()
+    }
 
-class AccountWithCredential: Account() {
-    @Relation(entity = Credential::class, parentColumn = "id", entityColumn = "account_id")
-    var credentials: List<Credential> = emptyList()
+    @Ignore
+    constructor(user: User): this(user.id, user.name, user.screenName, 0, 0)
+
+    fun save() = dao.save(this)
+    fun delete() = dao.delete(this)
+    fun credential() = Credential.findByAccountId(id).first()
+    fun sources() = Source.findByAccountId(id)
 }

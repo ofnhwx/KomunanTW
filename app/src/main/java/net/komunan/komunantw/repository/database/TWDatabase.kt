@@ -1,50 +1,47 @@
 package net.komunan.komunantw.repository.database
 
-import android.arch.persistence.room.*
-import net.komunan.komunantw.Preference
-import net.komunan.komunantw.ReleaseApplication
+import android.arch.persistence.room.Database
+import android.arch.persistence.room.RoomDatabase
 import net.komunan.komunantw.repository.dao.*
 import net.komunan.komunantw.repository.entity.*
+import kotlin.concurrent.thread
 
 @Database(
         entities = [
             Account::class,
-            Column::class,
-            ColumnSource::class,
+            Timeline::class,
+            TimelineSource::class,
             ConsumerKeySecret::class,
             Credential::class,
-            Source::class,
-            Tweet::class
+            Source::class
         ],
         version = 1,
         exportSchema = false
 )
 abstract class TWDatabase: RoomDatabase() {
     companion object {
-        private var instance_: TWDatabase? = null
+        private var _instance: TWDatabase? = null
 
         @JvmStatic
         val instance: TWDatabase
             get() {
-                if (instance_ == null) {
-                    val builder = if (Preference.useInMemoryDatabase) {
-                        Room.inMemoryDatabaseBuilder(ReleaseApplication.context, TWDatabase::class.java)
-                    } else {
-                        Room.databaseBuilder(ReleaseApplication.context, TWDatabase::class.java, TWDatabase::class.java.simpleName)
+                if (_instance == null) {
+                    _instance = TWBaseDatabase.getInstance(TWDatabase::class.java)
+                    thread {
+                        // 標準のAPIキーを登録
+                        if (ConsumerKeySecret.count() == 0) {
+                            ConsumerKeySecret.default().save()
+                        }
                     }
-                    instance_ = builder
-                            .allowMainThreadQueries()
-                            .build()
                 }
-                return instance_!!
+                return _instance!!
             }
     }
 
     abstract fun accountDao(): AccountDao
-    abstract fun columnDao(): ColumnDao
-    abstract fun columnSourceDao(): ColumnSourceDao
     abstract fun consumerKeySecretDao(): ConsumerKeySecretDao
     abstract fun credentialDao(): CredentialDao
     abstract fun sourceDao(): SourceDao
-    abstract fun tweetDao(): TweetDao
+    abstract fun timelineDao(): TimelineDao
+    abstract fun timelineSourceDao(): TimelineSourceDao
 }
