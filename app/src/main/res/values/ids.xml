@@ -2,4 +2,10 @@
 <resources>
     <item type="id" name="container" />
     <item type="id" name="timelines" />
+    <!-- Tweet -->
+    <item type="id" name="tweet_user_icon" />
+    <item type="id" name="tweet_user_name" />
+    <item type="id" name="tweet_user_screen_name" />
+    <item type="id" name="tweet_date_time" />
+    <item type="id" name="tweet_text" />
 </resources>

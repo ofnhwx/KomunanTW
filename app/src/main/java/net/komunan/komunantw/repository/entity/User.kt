@@ -11,6 +11,8 @@ import twitter4j.User as TwitterUser
 data class User(
         @PrimaryKey
         var id: Long,
+        @ColumnInfo(name = "image_url")
+        var imageUrl: String,
         @ColumnInfo(name = "name")
         var name: String,
         @ColumnInfo(name = "screen_name")
@@ -29,5 +31,5 @@ data class User(
     }
 
     @Ignore
-    constructor(user: TwitterUser): this(user.id, user.name, user.screenName, System.currentTimeMillis())
+    constructor(user: TwitterUser): this(user.id, user.profileImageURLHttps, user.name, user.screenName, System.currentTimeMillis())
 }

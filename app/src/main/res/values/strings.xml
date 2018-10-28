@@ -5,4 +5,7 @@
     <string name="default_label">デフォルト</string>
     <string name="open_browser">ブラウザを開く</string>
     <string name="pin">PIN</string>
+    <!-- Format -->
+    <!--suppress AndroidDomInspection -->
+    <string name="format_screen_name">@%s</string>
 </resources>

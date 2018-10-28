@@ -3,6 +3,7 @@ package net.komunan.komunantw
 import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
+import com.facebook.drawee.backends.pipeline.Fresco
 import com.github.ajalt.timberkt.Timber
 import com.marcinmoskala.kotlinpreferences.PreferenceHolder
 
@@ -21,6 +22,7 @@ open class ReleaseApplication: Application() {
     override fun onCreate() {
         super.onCreate()
         instance = this
+        Fresco.initialize(context)
         PreferenceHolder.setContext(context)
         Timber.plant(timberTree())
     }

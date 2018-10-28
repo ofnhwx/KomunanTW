@@ -13,7 +13,13 @@ internal class TimelineAdapter: PagedListAdapter<TweetDetail, TweetViewHolder>(D
             override fun areContentsTheSame(oldItem: TweetDetail, newItem: TweetDetail) = oldItem.id == newItem.id
         }
     }
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int)
-            = TweetViewHolder(TweetUI().createView(AnkoContext.create(parent.context, parent)))
-    override fun onBindViewHolder(holder: TweetViewHolder, position: Int) = holder.bindTo(getItem(position))
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TweetViewHolder {
+        val ui = TweetUI()
+        val view = ui.createView(AnkoContext.create(parent.context, parent)).apply { tag = ui }
+        return TweetViewHolder(view)
+    }
+
+    override fun onBindViewHolder(holder: TweetViewHolder, position: Int)
+            = holder.bind(getItem(position))
 }
