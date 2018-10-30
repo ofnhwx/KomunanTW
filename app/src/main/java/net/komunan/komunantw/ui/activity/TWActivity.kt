@@ -5,13 +5,11 @@ import android.content.ComponentName
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import com.crashlytics.android.Crashlytics
 import com.github.ajalt.timberkt.d
 import com.mikepenz.materialdrawer.DrawerBuilder
 import com.mikepenz.materialdrawer.model.DividerDrawerItem
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem
-import io.fabric.sdk.android.Fabric
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.launch
 import net.komunan.komunantw.R
@@ -39,7 +37,6 @@ class TWActivity: BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Fabric.with(this, Crashlytics())
         checkFirstRun()
         ui.run {
             setContentView(this@TWActivity)
