@@ -27,5 +27,5 @@ open class ReleaseApplication: Application() {
         Timber.plant(timberTree())
     }
 
-    protected open fun timberTree() = Timber.asTree()
+    protected open fun timberTree() = Timber.DebugTree()
 }
