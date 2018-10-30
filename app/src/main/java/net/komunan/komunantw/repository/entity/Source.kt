@@ -74,7 +74,7 @@ data class Source(
     fun delete() = dao.delete(this)
     fun updateFetchAt() = dao.updateFetchAt(this)
 
-    fun account(): Account = Account.find(accountId)
+    fun account() = Account.find(accountId)!!
     fun tweetCount() = Tweet.countBySourceId(id)
     fun maxTweetId() = Tweet.maxIdBySourceId(id)
     fun minTweetId() = Tweet.minIdBySourceId(id)

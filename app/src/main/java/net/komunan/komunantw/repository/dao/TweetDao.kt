@@ -20,12 +20,6 @@ ORDER BY t1.id DESC
 """)
     fun findBySourceIdsAsync(sourceIds: List<Long>): DataSource.Factory<Int, TweetDetail>
 
-    @Query("SELECT * FROM tweet WHERE id = :id")
-    fun find(id: Long): Tweet
-
-    @Query("SELECT COUNT(*) FROM tweet")
-    fun count(): Long
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun save(tweets: Collection<Tweet>)
 }

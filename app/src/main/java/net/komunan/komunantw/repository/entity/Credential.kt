@@ -41,8 +41,6 @@ data class Credential(
         private val dao = TWDatabase.instance.credentialDao()
 
         @JvmStatic fun findByAccountId(accountId: Long) = dao.findByAccountId(accountId)
-        @JvmStatic fun save(credentials: Collection<Credential>) = dao.save(credentials)
-        @JvmStatic fun delete(credentials: Collection<Credential>) = dao.delete(credentials)
     }
 
     @Ignore

@@ -25,8 +25,6 @@ data class Tweet(
 
         @JvmStatic fun findBySourceIdsAsync(sourceIds: List<Long>)
                 = LivePagedListBuilder(dao.findBySourceIdsAsync(sourceIds), 20).build()
-        @JvmStatic fun find(id: Long) = dao.find(id)
-        @JvmStatic fun count() = dao.count()
         @JvmStatic fun countBySourceId(sourceId: Long) = sourceDao.countBySourceId(sourceId)
         @JvmStatic fun maxIdBySourceId(sourceId: Long) = sourceDao.maxIdBySourceId(sourceId)
         @JvmStatic fun minIdBySourceId(sourceId: Long) = sourceDao.minIdBySourceId(sourceId)

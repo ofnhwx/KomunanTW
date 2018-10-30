@@ -11,15 +11,14 @@ import android.widget.ListView
 import android.widget.TextView
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.experimental.withContext
 import net.komunan.komunantw.R
-import net.komunan.komunantw.ui.common.SimpleListAdapter
-import net.komunan.komunantw.ui.common.TWBaseViewModel
 import net.komunan.komunantw.observeOnNotNull
-import net.komunan.komunantw.repository.entity.Account
 import net.komunan.komunantw.repository.entity.Source
 import net.komunan.komunantw.string
+import net.komunan.komunantw.ui.common.SimpleListAdapter
+import net.komunan.komunantw.ui.common.TWBaseViewModel
 import org.jetbrains.anko.*
 
 class SourcesFragment: Fragment() {
@@ -88,8 +87,8 @@ class SourcesFragment: Fragment() {
 
         fun bind(source: Source) {
             launch(UI) {
-                val account = async(CommonPool) { Account.find(source.accountId) }
-                this@SourceUI.account.text = account.await().name
+                val account = withContext(CommonPool) { source.account() }
+                this@SourceUI.account.text = account.name
                 this@SourceUI.name.text = when (Source.SourceType.valueOf(source.type)) {
                     Source.SourceType.HOME -> R.string.home.string()
                     Source.SourceType.MENTION -> R.string.mention.string()

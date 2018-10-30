@@ -11,7 +11,7 @@ abstract class AccountDao {
     abstract fun findAllAsync(): LiveData<List<Account>>
 
     @Query("SELECT * FROM account WHERE id = :id")
-    abstract fun find(id: Long): Account
+    abstract fun find(id: Long): Account?
 
     @Query("SELECT COUNT(*) FROM account")
     abstract fun count(): Int
@@ -26,12 +26,14 @@ abstract class AccountDao {
     abstract fun delete(account: Account)
 
     fun save(account: Account): Account {
-        if (account.createAt == 0L) {
+        val current = find(account.id)
+        if (current == null) {
             _insert(account.apply {
                 createAt = System.currentTimeMillis()
             })
         } else {
             _update(account.apply {
+                createAt = current.createAt
                 updateAt = System.currentTimeMillis()
             })
         }

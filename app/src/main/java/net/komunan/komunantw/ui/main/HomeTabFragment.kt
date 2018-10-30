@@ -17,14 +17,14 @@ import android.widget.ImageView
 import android.widget.TextView
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.experimental.withContext
 import net.komunan.komunantw.R
-import net.komunan.komunantw.ui.common.TWBaseViewModel
 import net.komunan.komunantw.draweeView
 import net.komunan.komunantw.observeOnNotNull
-import net.komunan.komunantw.string
 import net.komunan.komunantw.repository.entity.*
+import net.komunan.komunantw.string
+import net.komunan.komunantw.ui.common.TWBaseViewModel
 import org.jetbrains.anko.*
 import org.jetbrains.anko.recyclerview.v7.recyclerView
 
@@ -157,11 +157,15 @@ class HomeTabFragment: Fragment() {
 
         fun bind(tweet: TweetDetail) {
             launch(UI) {
-                val user = async(CommonPool) { User.find(tweet.userId) }
-                userIcon.setImageURI(Uri.parse(user.await().imageUrl))
-                userName.text = user.await().name
-                screenName.text = R.string.format_screen_name.string(user.await().screenName)
-                tweetDateTime.text = "test"
+                val user = withContext(CommonPool) { User.find(tweet.userId) }
+                if (user == null) {
+                    // TODO: 取得を試みてダメならダミー画像とかを設定
+                } else {
+                    userIcon.setImageURI(Uri.parse(user.imageUrl))
+                    userName.text = user.name
+                    screenName.text = R.string.format_screen_name.string(user.screenName)
+                }
+                tweetDateTime.text = "{{時間}}" // TODO: 時間をフォーマットして設定
                 tweetText.text = tweet.text
             }
         }

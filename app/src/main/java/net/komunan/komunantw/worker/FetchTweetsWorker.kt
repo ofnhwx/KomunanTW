@@ -40,7 +40,7 @@ class FetchTweetsWorker(context: Context, params: WorkerParameters): Worker(cont
         OLDER,
     }
 
-    private val source by lazy { Source.find(inputData.getLong(PARAMETER_SOURCE_ID, 0)) }
+    private val source by lazy { Source.find(inputData.getLong(PARAMETER_SOURCE_ID, 0))!! }
     private val fetchType by lazy { FetchType.valueOf(inputData.getString(PARAMETER_FETCH_TYPE)!!) }
     private val isInteractive by lazy { inputData.getBoolean(PARAMETER_IS_INTERACTIVE, false) }
     private val twitter by lazy { TwitterService.twitter(source.account().credential()) }

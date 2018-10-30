@@ -1,5 +1,6 @@
 package net.komunan.komunantw.ui.main
 
+import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -33,14 +34,15 @@ class HomeFragment: Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel.run {
-            columns().observeOnNotNull(this@HomeFragment) { columns ->
+            columns.observeOnNotNull(this@HomeFragment) { columns ->
                 ui.timelines.adapter = HomeAdapter(fragmentManager, columns)
             }
         }
     }
 
     private class HomeViewModel: TWBaseViewModel() {
-        fun columns() = Timeline.findAllAsync()
+        val columns: LiveData<List<Timeline>>
+            get() = Timeline.findAllAsync()
     }
 
     private class HomeAdapter internal constructor(fm: FragmentManager?, private val timelines: List<Timeline>): FragmentPagerAdapter(fm) {

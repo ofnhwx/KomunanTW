@@ -2,14 +2,20 @@ package net.komunan.komunantw.ui.common
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
+import android.arch.lifecycle.Transformations
 import android.arch.lifecycle.ViewModel
 import android.content.Context
 import net.komunan.komunantw.ReleaseApplication
 
 open class TWBaseViewModel: ViewModel() {
-    private val _isProcessing: MutableLiveData<Boolean> = MutableLiveData()
-    val isProcessing: LiveData<Boolean>
-        get() = _isProcessing
+    private val _isProcessing = MutableLiveData<Boolean>()
+
+    init {
+        _isProcessing.postValue(false)
+    }
+
+    val isIdle: LiveData<Boolean>
+        get() = Transformations.map(_isProcessing) { !it }
 
     val context: Context
         get() = ReleaseApplication.context

@@ -17,7 +17,7 @@ abstract class SourceDao {
     abstract fun findByTimelineIdAsync(timelineId: Long): LiveData<List<Source>>
 
     @Query("SELECT * FROM source WHERE id = :id")
-    abstract fun find(id: Long): Source
+    abstract fun find(id: Long): Source?
 
     @Query("SELECT * FROM source WHERE EXISTS (SELECT * FROM timeline_source WHERE source_id = source.id)")
     abstract fun findEnabled(): List<Source>

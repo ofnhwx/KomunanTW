@@ -11,14 +11,14 @@ import android.widget.ListView
 import android.widget.TextView
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.experimental.withContext
 import net.komunan.komunantw.R
+import net.komunan.komunantw.observeOnNotNull
+import net.komunan.komunantw.repository.entity.Timeline
+import net.komunan.komunantw.string
 import net.komunan.komunantw.ui.common.SimpleListAdapter
 import net.komunan.komunantw.ui.common.TWBaseViewModel
-import net.komunan.komunantw.observeOnNotNull
-import net.komunan.komunantw.string
-import net.komunan.komunantw.repository.entity.Timeline
 import org.jetbrains.anko.*
 
 class TimelinesFragment: Fragment() {
@@ -88,9 +88,9 @@ class TimelinesFragment: Fragment() {
 
         fun bind(timeline: Timeline) {
             launch(UI) {
-                val count = async(CommonPool) { timeline.sourceCount() }
+                val count = withContext(CommonPool) { timeline.sourceCount() }
                 name.text = timeline.name
-                description.text = R.string.format_timeline_srouce_count.string(count.await().toString())
+                description.text = R.string.format_timeline_srouce_count.string(count.toString())
             }
         }
     }
