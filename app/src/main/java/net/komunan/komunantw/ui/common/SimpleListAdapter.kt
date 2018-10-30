@@ -1,4 +1,4 @@
-package net.komunan.komunantw.common
+package net.komunan.komunantw.ui.common
 
 import android.view.LayoutInflater
 import android.view.View

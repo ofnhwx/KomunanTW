@@ -2,8 +2,8 @@ package net.komunan.komunantw.repository.entity
 
 import android.arch.paging.LivePagedListBuilder
 import android.arch.persistence.room.*
-import net.komunan.komunantw.common.toBoolean
-import net.komunan.komunantw.common.toInt
+import net.komunan.komunantw.toBoolean
+import net.komunan.komunantw.toInt
 import net.komunan.komunantw.repository.database.TWCacheDatabase
 import net.komunan.komunantw.repository.database.TransactionTarget
 import net.komunan.komunantw.repository.database.transaction

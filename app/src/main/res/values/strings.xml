@@ -6,11 +6,17 @@
     <string name="authentication">認証</string>
     <string name="default_label">デフォルト</string>
     <string name="home">ホーム</string>
+    <string name="mention">メンション</string>
     <string name="open_browser">ブラウザを開く</string>
     <string name="pin">PIN</string>
+    <string name="retweet">リツィート</string>
     <string name="source_list">ソース一覧</string>
     <string name="timeline_list">タイムライン一覧</string>
+    <string name="user">ユーザ</string>
     <!-- Format -->
     <!--suppress AndroidDomInspection -->
+    <string name="format_list_label">リスト: %s</string>
     <string name="format_screen_name">@%s</string>
+    <string name="format_search_label">検索: %s</string>
+    <string name="format_timeline_srouce_count">%s個のソース</string>
 </resources>

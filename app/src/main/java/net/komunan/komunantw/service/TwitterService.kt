@@ -1,7 +1,10 @@
 package net.komunan.komunantw.service
 
+import androidx.work.WorkManager
 import net.komunan.komunantw.repository.entity.ConsumerKeySecret
 import net.komunan.komunantw.repository.entity.Credential
+import net.komunan.komunantw.repository.entity.Source
+import net.komunan.komunantw.worker.FetchTweetsWorker
 import twitter4j.Twitter
 import twitter4j.TwitterFactory
 import twitter4j.auth.AccessToken
@@ -18,4 +21,12 @@ object TwitterService {
         setOAuthConsumer(credential.consumerKey, credential.consumerSecret)
         oAuthAccessToken = AccessToken(credential.token, credential.tokenSecret)
     }
+
+    fun fetchTweets() {
+        val requests = Source.findEnabled().map { FetchTweetsWorker.request(it.id, FetchTweetsWorker.FetchType.NEW) }
+        if (requests.any()) {
+            WorkManager.getInstance().enqueue(requests)
+        }
+    }
+
 }

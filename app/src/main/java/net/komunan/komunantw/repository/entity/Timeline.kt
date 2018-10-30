@@ -35,6 +35,8 @@ data class Timeline(
     fun moveTo(position: Int) = dao.moveTo(this, position)
     fun addSource(source: Source) = sourceDao.add(this, source)
     fun removeSource(source: Source) = sourceDao.remove(this, source)
+    fun sources() = Source.findByTimelineId(id)
+    fun sourceCount() = Source.countByTimelineId(id)
 }
 
 @Entity(
@@ -64,7 +66,4 @@ data class TimelineSource(
         var timelineId: Long,
         @ColumnInfo(name = "source_id", index = true)
         var sourceId: Long
-) {
-    @Ignore
-    constructor(timeline: Timeline, source: Source): this(timeline.id, source.id)
-}
+)

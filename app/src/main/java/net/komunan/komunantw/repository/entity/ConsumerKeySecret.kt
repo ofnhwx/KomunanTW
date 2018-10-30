@@ -6,9 +6,9 @@ import android.arch.persistence.room.Ignore
 import android.arch.persistence.room.PrimaryKey
 import net.komunan.komunantw.BuildConfig
 import net.komunan.komunantw.R
-import net.komunan.komunantw.common.string
-import net.komunan.komunantw.common.toBoolean
-import net.komunan.komunantw.common.toInt
+import net.komunan.komunantw.string
+import net.komunan.komunantw.toBoolean
+import net.komunan.komunantw.toInt
 import net.komunan.komunantw.repository.database.TWDatabase
 
 @Entity(tableName = "consumer_key_secret")

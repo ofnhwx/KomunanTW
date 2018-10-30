@@ -1,8 +1,8 @@
-package net.komunan.komunantw.common
+package net.komunan.komunantw.ui.common
 
 import android.support.v7.app.AppCompatActivity
 import com.mikepenz.materialdrawer.Drawer
 
-abstract class BaseActivity: AppCompatActivity() {
+abstract class TWBaseActivity: AppCompatActivity() {
     protected lateinit var drawer: Drawer
 }

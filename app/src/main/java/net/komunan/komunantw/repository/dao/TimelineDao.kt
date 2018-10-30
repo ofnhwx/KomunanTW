@@ -4,7 +4,7 @@ import android.arch.lifecycle.LiveData
 import android.arch.persistence.room.*
 import com.github.ajalt.timberkt.d
 import net.komunan.komunantw.R
-import net.komunan.komunantw.common.string
+import net.komunan.komunantw.string
 import net.komunan.komunantw.repository.database.transaction
 import net.komunan.komunantw.repository.entity.Account
 import net.komunan.komunantw.repository.entity.Source

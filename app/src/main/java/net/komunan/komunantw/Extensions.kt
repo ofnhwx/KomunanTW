@@ -1,11 +1,10 @@
-package net.komunan.komunantw.common
+package net.komunan.komunantw
 
 import android.arch.lifecycle.LifecycleOwner
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
 import android.view.ViewManager
 import com.facebook.drawee.view.SimpleDraweeView
-import net.komunan.komunantw.ReleaseApplication
 import org.jetbrains.anko.custom.ankoView
 
 fun Int.string(): String = ReleaseApplication.context.getString(this)

@@ -10,6 +10,9 @@ import net.komunan.komunantw.service.TwitterService
 
 @Dao
 abstract class SourceDao {
+    @Query("SELECT source.* FROM source LEFT OUTER JOIN account ON account.id = source.account_id ORDER BY account.name ASC, `order` ASC, label ASC")
+    abstract fun findAllAsync(): LiveData<List<Source>>
+
     @Query("SELECT * FROM source WHERE id in (SELECT source_id FROM timeline_source WHERE timeline_id = :timelineId)")
     abstract fun findByTimelineIdAsync(timelineId: Long): LiveData<List<Source>>
 
@@ -21,6 +24,12 @@ abstract class SourceDao {
 
     @Query("SELECT * FROM source WHERE account_id = :accountId")
     abstract fun findByAccountId(accountId: Long): List<Source>
+
+    @Query("SELECT * FROM source WHERE id IN (SELECT source_id FROM timeline_source WHERE timeline_id = :timelineId)")
+    abstract fun findByTimelineId(timelineId: Long): List<Source>
+
+    @Query("SELECT COUNT(*) FROM source WHERE id in (SELECT source_id FROM timeline_source WHERE timeline_id = :timelineId)")
+    abstract fun countByTimelineId(timelineId: Long): Int
 
     @Insert(onConflict = OnConflictStrategy.ABORT)
     abstract fun _insert(source: Source): Long
@@ -50,7 +59,7 @@ abstract class SourceDao {
                 updateAt = System.currentTimeMillis()
             })
         }
-        d { "save: $this" }
+        d { "save: $source" }
     }
 
     fun save(sources: Collection<Source>) {

@@ -54,10 +54,13 @@ data class Source(
     companion object {
         private val dao = TWDatabase.instance.sourceDao()
 
+        @JvmStatic fun findAllAsync() = dao.findAllAsync()
         @JvmStatic fun findByTimelineIdAsync(timelineId: Long) = dao.findByTimelineIdAsync(timelineId)
         @JvmStatic fun find(id: Long) = dao.find(id)
         @JvmStatic fun findEnabled() = dao.findEnabled()
         @JvmStatic fun findByAccountId(accountId: Long) = dao.findByAccountId(accountId)
+        @JvmStatic fun findByTimelineId(timelineId: Long) = dao.findByTimelineId(timelineId)
+        @JvmStatic fun countByTimelineId(timelineId: Long) = dao.countByTimelineId(timelineId)
         @JvmStatic fun save(sources: Collection<Source>) = dao.save(sources)
         @JvmStatic fun delete(sources: Collection<Source>) = dao.delete(sources)
         @JvmStatic fun update(account: Account) = dao.update(account)
