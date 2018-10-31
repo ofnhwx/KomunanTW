@@ -1,9 +1,8 @@
 package net.komunan.komunantw.repository.entity
 
 import android.arch.persistence.room.*
+import net.komunan.komunantw.Preference
 import net.komunan.komunantw.repository.database.TWDatabase
-import net.komunan.komunantw.repository.database.transaction
-import net.komunan.komunantw.service.TwitterService
 
 @Entity(
         tableName = "source",
@@ -74,9 +73,11 @@ data class Source(
     fun delete() = dao.delete(this)
     fun updateFetchAt() = dao.updateFetchAt(this)
 
-    fun account() = Account.find(accountId)!!
+    fun account() = Account.find(accountId)
     fun tweetCount() = Tweet.countBySourceId(id)
     fun maxTweetId() = Tweet.maxIdBySourceId(id)
     fun minTweetId() = Tweet.minIdBySourceId(id)
     fun prevTweetId(targetId: Long) = Tweet.prevIdBySourceId(id, targetId)
+
+    fun requireAutoFetch() = System.currentTimeMillis() > (fetchAt + Preference.fetchIntervalMillis * Preference.fetchIntervalThreshold)
 }

@@ -89,7 +89,7 @@ private class SourceUI: AnkoComponent<ViewGroup> {
     fun bind(source: Source) {
         launch(UI) {
             val account = withContext(CommonPool) { source.account() }
-            this@SourceUI.account.text = account.name
+            this@SourceUI.account.text = account?.name
             this@SourceUI.name.text = when (Source.SourceType.valueOf(source.type)) {
                 Source.SourceType.HOME -> R.string.home.string()
                 Source.SourceType.MENTION -> R.string.mention.string()

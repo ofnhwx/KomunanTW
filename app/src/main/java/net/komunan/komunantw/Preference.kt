@@ -11,6 +11,7 @@ object Preference: PreferenceHolder() {
     var useInMemoryDatabase: Boolean by bindToPreferenceField(false)
     var fetchCount: Int by bindToPreferenceField(200)
     var fetchInterval: Long by bindToPreferenceField(120)
+    var fetchIntervalThreshold: Float by bindToPreferenceField(0.8f)
 
     var fetchIntervalMillis: Long
         get() = fetchInterval * 1000

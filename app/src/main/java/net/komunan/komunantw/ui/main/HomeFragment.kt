@@ -34,15 +34,15 @@ class HomeFragment: Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel.run {
-            columns.observeOnNotNull(this@HomeFragment) { columns ->
-                ui.timelines.adapter = HomeAdapter(fragmentManager, columns)
+            timelines.observeOnNotNull(this@HomeFragment) { timelines ->
+                ui.timelines.adapter = HomeAdapter(fragmentManager, timelines)
             }
         }
     }
 }
 
 class HomeViewModel: TWBaseViewModel() {
-    val columns: LiveData<List<Timeline>>
+    val timelines: LiveData<List<Timeline>>
         get() = Timeline.findAllAsync()
 }
 
