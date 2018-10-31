@@ -42,56 +42,56 @@ class TimelinesFragment: Fragment() {
             }
         }
     }
+}
 
-    private class TimelinesViewModel: TWBaseViewModel() {
-        val timelines: LiveData<List<Timeline>>
-            get() = Timeline.findAllAsync()
-    }
+class TimelinesViewModel: TWBaseViewModel() {
+    val timelines: LiveData<List<Timeline>>
+        get() = Timeline.findAllAsync()
+}
 
-    private class TimelinesAdapter internal constructor(timelines: List<Timeline>): SimpleListAdapter<Timeline>(timelines) {
-        override fun newView(position: Int, parent: ViewGroup): View {
-            TimelineUI().let { ui ->
-                return ui.createView(AnkoContext.create(parent.context, parent)).also { view ->
-                    view.tag = ui
-                }
+private class TimelinesAdapter internal constructor(timelines: List<Timeline>): SimpleListAdapter<Timeline>(timelines) {
+    override fun newView(position: Int, parent: ViewGroup): View {
+        TimelineUI().let { ui ->
+            return ui.createView(AnkoContext.create(parent.context, parent)).also { view ->
+                view.tag = ui
             }
-        }
-
-        override fun bindView(view: View, position: Int) {
-            (view.tag as TimelineUI).bind(items[position])
-        }
-
-        override fun getItemId(position: Int): Long {
-            return items[position].id
         }
     }
 
-    private class TimelinesUI: AnkoComponent<TimelinesFragment> {
-        lateinit var timelines: ListView
+    override fun bindView(view: View, position: Int) {
+        (view.tag as TimelineUI).bind(items[position])
+    }
 
-        override fun createView(ui: AnkoContext<TimelinesFragment>): View = with(ui) {
-            timelines = listView {}
-            return@with timelines
+    override fun getItemId(position: Int): Long {
+        return items[position].id
+    }
+}
+
+private class TimelinesUI: AnkoComponent<TimelinesFragment> {
+    lateinit var timelines: ListView
+
+    override fun createView(ui: AnkoContext<TimelinesFragment>): View = with(ui) {
+        timelines = listView {}
+        return@with timelines
+    }
+}
+
+private class TimelineUI: AnkoComponent<ViewGroup> {
+    lateinit var name: TextView
+    lateinit var description: TextView
+
+    override fun createView(ui: AnkoContext<ViewGroup>): View = with(ui) {
+        verticalLayout {
+            name = textView().lparams(matchParent, wrapContent)
+            description = textView().lparams(matchParent, wrapContent)
         }
     }
 
-    private class TimelineUI: AnkoComponent<ViewGroup> {
-        lateinit var name: TextView
-        lateinit var description: TextView
-
-        override fun createView(ui: AnkoContext<ViewGroup>): View = with(ui) {
-            verticalLayout {
-                name = textView().lparams(matchParent, wrapContent)
-                description = textView().lparams(matchParent, wrapContent)
-            }
-        }
-
-        fun bind(timeline: Timeline) {
-            launch(UI) {
-                val count = withContext(CommonPool) { timeline.sourceCount() }
-                name.text = timeline.name
-                description.text = R.string.format_timeline_srouce_count.string(count.toString())
-            }
+    fun bind(timeline: Timeline) {
+        launch(UI) {
+            val count = withContext(CommonPool) { timeline.sourceCount() }
+            name.text = timeline.name
+            description.text = R.string.format_timeline_srouce_count.string(count.toString())
         }
     }
 }

@@ -64,64 +64,64 @@ class AccountsFragment: Fragment() {
             }
         }
     }
+}
 
-    private class AccountsViewModel: TWBaseViewModel() {
-        val accounts: LiveData<List<Account>>
-            get() = Account.findAllAsync()
+class AccountsViewModel: TWBaseViewModel() {
+    val accounts: LiveData<List<Account>>
+        get() = Account.findAllAsync()
+}
+
+private class AccountsAdapter internal constructor(accounts: List<Account>): SimpleListAdapter<Account>(accounts) {
+    override fun newView(position: Int, parent: ViewGroup): View {
+        AccountUI().let { ui ->
+            return ui.createView(AnkoContext.create(parent.context, parent)).also { view ->
+                view.tag = ui
+            }
+        }
     }
 
-    private class AccountsAdapter internal constructor(accounts: List<Account>): SimpleListAdapter<Account>(accounts) {
-        override fun newView(position: Int, parent: ViewGroup): View {
-            AccountUI().let { ui ->
-                return ui.createView(AnkoContext.create(parent.context, parent)).also { view ->
-                    view.tag = ui
+    override fun bindView(view: View, position: Int) {
+        (view.tag as AccountUI).bind(items[position])
+    }
+
+    override fun getItemId(position: Int): Long {
+        return items[position].id
+    }
+}
+
+private class AccountsUI: AnkoComponent<AccountsFragment> {
+    lateinit var accounts: ListView
+
+    override fun createView(ui: AnkoContext<AccountsFragment>): View = with(ui) {
+        accounts = listView {}
+        return@with accounts
+    }
+}
+
+private class AccountUI: AnkoComponent<ViewGroup> {
+    lateinit var userIcon: ImageView
+    lateinit var userName: TextView
+    lateinit var screenName: TextView
+
+    override fun createView(ui: AnkoContext<ViewGroup>): View = with(ui) {
+        linearLayout {
+            userIcon = draweeView {
+                id = R.id.account_icon
+            }.lparams(dip(48), dip(48))
+            verticalLayout {
+                userName = textView {
+                    id = R.id.account_name
+                }
+                screenName = textView {
+                    id = R.id.account_screen_name
                 }
             }
         }
-
-        override fun bindView(view: View, position: Int) {
-            (view.tag as AccountUI).bind(items[position])
-        }
-
-        override fun getItemId(position: Int): Long {
-            return items[position].id
-        }
     }
 
-    private class AccountsUI: AnkoComponent<AccountsFragment> {
-        lateinit var accounts: ListView
-
-        override fun createView(ui: AnkoContext<AccountsFragment>): View = with(ui) {
-            accounts = listView {}
-            return@with accounts
-        }
-    }
-
-    private class AccountUI: AnkoComponent<ViewGroup> {
-        lateinit var userIcon: ImageView
-        lateinit var userName: TextView
-        lateinit var screenName: TextView
-
-        override fun createView(ui: AnkoContext<ViewGroup>): View = with(ui) {
-            linearLayout {
-                userIcon = draweeView {
-                    id = R.id.account_icon
-                }.lparams(dip(48), dip(48))
-                verticalLayout {
-                    userName = textView {
-                        id = R.id.account_name
-                    }
-                    screenName = textView {
-                        id = R.id.account_screen_name
-                    }
-                }
-            }
-        }
-
-        fun bind(account: Account) {
-            userIcon.setImageURI(Uri.parse(account.imageUrl))
-            userName.text = account.name
-            screenName.text = R.string.format_screen_name.string(account.screenName)
-        }
+    fun bind(account: Account) {
+        userIcon.setImageURI(Uri.parse(account.imageUrl))
+        userName.text = account.name
+        screenName.text = R.string.format_screen_name.string(account.screenName)
     }
 }

@@ -117,36 +117,36 @@ class MainActivity: TWBaseActivity() {
             replace(ui.container.id, fragment)
         }.commit()
     }
+}
 
-    private class MainViewModel: TWBaseViewModel() {
-        private var timer = Timer()
-        fun startUpdate() {
-            timer.schedule(object: TimerTask() {
-                override fun run() {
-                    TwitterService.fetchTweets()
-                }
-            }, 0, Preference.fetchIntervalMillis)
-        }
-
-        override fun onCleared() {
-            super.onCleared()
-            timer.cancel()
-        }
+class MainViewModel: TWBaseViewModel() {
+    private var timer = Timer()
+    fun startUpdate() {
+        timer.schedule(object: TimerTask() {
+            override fun run() {
+                TwitterService.fetchTweets()
+            }
+        }, 0, Preference.fetchIntervalMillis)
     }
 
-    private class MainActivityUI: AnkoComponent<MainActivity> {
-        lateinit var toolbar: Toolbar
-        lateinit var container: View
+    override fun onCleared() {
+        super.onCleared()
+        timer.cancel()
+    }
+}
 
-        override fun createView(ui: AnkoContext<MainActivity>) = with(ui) {
-            verticalLayout {
-                toolbar = toolbar {
-                    id = R.id.toolbar
-                }.lparams(matchParent, wrapContent)
-                container = frameLayout {
-                    id = R.id.container
-                }.lparams(matchParent, dip(0), 1.0f)
-            }
+private class MainActivityUI: AnkoComponent<MainActivity> {
+    lateinit var toolbar: Toolbar
+    lateinit var container: View
+
+    override fun createView(ui: AnkoContext<MainActivity>) = with(ui) {
+        verticalLayout {
+            toolbar = toolbar {
+                id = R.id.toolbar
+            }.lparams(matchParent, wrapContent)
+            container = frameLayout {
+                id = R.id.container
+            }.lparams(matchParent, dip(0), 1.0f)
         }
     }
 }

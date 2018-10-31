@@ -42,61 +42,61 @@ class SourcesFragment: Fragment() {
             }
         }
     }
+}
 
-    private class SourcesViewModel: TWBaseViewModel() {
-        val sources: LiveData<List<Source>>
-            get() = Source.findAllAsync()
-    }
+class SourcesViewModel: TWBaseViewModel() {
+    val sources: LiveData<List<Source>>
+        get() = Source.findAllAsync()
+}
 
-    private class SourcesAdapter internal constructor(sources: List<Source>): SimpleListAdapter<Source>(sources) {
-        override fun newView(position: Int, parent: ViewGroup): View {
-            val ui = SourceUI()
-            return ui.createView(AnkoContext.create(parent.context, parent)).apply {
-                tag = ui
-            }
-        }
-
-        override fun bindView(view: View, position: Int) {
-            (view.tag as SourceUI).bind(items[position])
-        }
-
-        override fun getItemId(position: Int): Long {
-            return items[position].id
+private class SourcesAdapter internal constructor(sources: List<Source>): SimpleListAdapter<Source>(sources) {
+    override fun newView(position: Int, parent: ViewGroup): View {
+        val ui = SourceUI()
+        return ui.createView(AnkoContext.create(parent.context, parent)).apply {
+            tag = ui
         }
     }
 
-    private class SourcesUI: AnkoComponent<SourcesFragment> {
-        lateinit var sources: ListView
+    override fun bindView(view: View, position: Int) {
+        (view.tag as SourceUI).bind(items[position])
+    }
 
-        override fun createView(ui: AnkoContext<SourcesFragment>): View = with(ui) {
-            sources = listView {}
-            return@with sources
+    override fun getItemId(position: Int): Long {
+        return items[position].id
+    }
+}
+
+private class SourcesUI: AnkoComponent<SourcesFragment> {
+    lateinit var sources: ListView
+
+    override fun createView(ui: AnkoContext<SourcesFragment>): View = with(ui) {
+        sources = listView {}
+        return@with sources
+    }
+}
+
+private class SourceUI: AnkoComponent<ViewGroup> {
+    lateinit var account: TextView
+    lateinit var name: TextView
+
+    override fun createView(ui: AnkoContext<ViewGroup>): View = with(ui) {
+        verticalLayout {
+            account = textView().lparams(matchParent, wrapContent)
+            name = textView().lparams(matchParent, wrapContent)
         }
     }
 
-    private class SourceUI: AnkoComponent<ViewGroup> {
-        lateinit var account: TextView
-        lateinit var name: TextView
-
-        override fun createView(ui: AnkoContext<ViewGroup>): View = with(ui) {
-            verticalLayout {
-                account = textView().lparams(matchParent, wrapContent)
-                name = textView().lparams(matchParent, wrapContent)
-            }
-        }
-
-        fun bind(source: Source) {
-            launch(UI) {
-                val account = withContext(CommonPool) { source.account() }
-                this@SourceUI.account.text = account.name
-                this@SourceUI.name.text = when (Source.SourceType.valueOf(source.type)) {
-                    Source.SourceType.HOME -> R.string.home.string()
-                    Source.SourceType.MENTION -> R.string.mention.string()
-                    Source.SourceType.RETWEET -> R.string.retweet.string()
-                    Source.SourceType.USER -> R.string.user.string()
-                    Source.SourceType.LIST -> R.string.format_list_label.string(source.label)
-                    Source.SourceType.SEARCH -> R.string.format_search_label.string(source.label)
-                }
+    fun bind(source: Source) {
+        launch(UI) {
+            val account = withContext(CommonPool) { source.account() }
+            this@SourceUI.account.text = account.name
+            this@SourceUI.name.text = when (Source.SourceType.valueOf(source.type)) {
+                Source.SourceType.HOME -> R.string.home.string()
+                Source.SourceType.MENTION -> R.string.mention.string()
+                Source.SourceType.RETWEET -> R.string.retweet.string()
+                Source.SourceType.USER -> R.string.user.string()
+                Source.SourceType.LIST -> R.string.format_list_label.string(source.label)
+                Source.SourceType.SEARCH -> R.string.format_search_label.string(source.label)
             }
         }
     }

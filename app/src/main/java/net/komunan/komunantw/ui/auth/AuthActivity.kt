@@ -89,78 +89,78 @@ class AuthActivity: TWBaseActivity() {
         disposables.dispose()
         super.onDestroy()
     }
+}
 
-    private class AuthViewModel: TWBaseViewModel() {
-        private val isTokenValid = MutableLiveData<Boolean>()
+class AuthViewModel: TWBaseViewModel() {
+    private val isTokenValid = MutableLiveData<Boolean>()
 
-        val pin = MutableLiveData<String>()
-        val isPinEnabled = isTokenValid as LiveData<Boolean>
-        val isOpenBrowserEnabled = isIdle
-        val isSubmitEnabled = combineLatest(isIdle, pin) { isIdle, pin ->
-            return@combineLatest (isIdle ?: false) && (pin?.length == 7)
-        }
-
-        init {
-            isTokenValid.postValue(Preference.requestToken != null && Preference.consumerKeySecret != null)
-            pin.postValue("")
-        }
-
-        suspend fun startOAuth(consumerKeySecret: ConsumerKeySecret) = process {
-            val requestToken = TwitterService.twitter(consumerKeySecret).oAuthRequestToken
-            Preference.requestToken = requestToken
-            Preference.consumerKeySecret = consumerKeySecret
-            isTokenValid.postValue(true)
-            application.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(requestToken.authorizationURL)))
-        }
-
-        suspend fun finishOAuth() = process {
-            val consumerKeySecret = Preference.consumerKeySecret
-            val requestToken = Preference.requestToken
-            if (consumerKeySecret == null || requestToken == null) {
-                w { "ConsumerKeySecret or RequestToken is null: ConsumerKeySecret=$consumerKeySecret, RequestToken=$requestToken" }
-                return@process false
-            }
-
-            val twitter = TwitterService.twitter(consumerKeySecret)
-            try {
-                val accessToken = twitter.getOAuthAccessToken(requestToken, pin.value)
-                transaction {
-                    val account = Account(twitter.showUser(accessToken.userId)).save()
-                    Credential.findByAccountId(account.id).forEach { it.delete() }
-                    Credential(account, consumerKeySecret, accessToken).save()
-                    Source.update(account)
-                    Timeline.firstSetup(account)
-                    // 暫定対応
-                    Timeline.find(1)?.addSource(Source.findByAccountId(account.id).first())
-                }
-                Preference.consumerKeySecret = null
-                Preference.requestToken = null
-                isTokenValid.postValue(false)
-                return@process true
-            } catch (e: TwitterException) {
-                w(e)
-                return@process false
-            }
-        }
+    val pin = MutableLiveData<String>()
+    val isPinEnabled = isTokenValid as LiveData<Boolean>
+    val isOpenBrowserEnabled = isIdle
+    val isSubmitEnabled = combineLatest(isIdle, pin) { isIdle, pin ->
+        return@combineLatest (isIdle ?: false) && (pin?.length == 7)
     }
 
-    private class AuthUI: AnkoComponent<AuthActivity> {
-        lateinit var openBrowser: Button
-        lateinit var pin: EditText
-        lateinit var submit: Button
+    init {
+        isTokenValid.postValue(Preference.requestToken != null && Preference.consumerKeySecret != null)
+        pin.postValue("")
+    }
 
-        override fun createView(ui: AnkoContext<AuthActivity>) = with(ui) {
-            verticalLayout {
-                linearLayout {
-                    pin = editText {
-                        hint = R.string.pin.string()
-                    }.lparams(matchParent, wrapContent)
-                }.lparams(matchParent, dip(0), 1.0f)
-                linearLayout {
-                    openBrowser = button(R.string.open_browser).lparams(dip(0), matchParent, 1.0f)
-                    submit = button(R.string.authentication).lparams(dip(0), matchParent, 1.0f)
-                }.lparams(matchParent, wrapContent)
+    suspend fun startOAuth(consumerKeySecret: ConsumerKeySecret) = process {
+        val requestToken = TwitterService.twitter(consumerKeySecret).oAuthRequestToken
+        Preference.requestToken = requestToken
+        Preference.consumerKeySecret = consumerKeySecret
+        isTokenValid.postValue(true)
+        application.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(requestToken.authorizationURL)))
+    }
+
+    suspend fun finishOAuth() = process {
+        val consumerKeySecret = Preference.consumerKeySecret
+        val requestToken = Preference.requestToken
+        if (consumerKeySecret == null || requestToken == null) {
+            w { "ConsumerKeySecret or RequestToken is null: ConsumerKeySecret=$consumerKeySecret, RequestToken=$requestToken" }
+            return@process false
+        }
+
+        val twitter = TwitterService.twitter(consumerKeySecret)
+        try {
+            val accessToken = twitter.getOAuthAccessToken(requestToken, pin.value)
+            transaction {
+                val account = Account(twitter.showUser(accessToken.userId)).save()
+                Credential.findByAccountId(account.id).forEach { it.delete() }
+                Credential(account, consumerKeySecret, accessToken).save()
+                Source.update(account)
+                Timeline.firstSetup(account)
+                // 暫定対応
+                Timeline.find(1)?.addSource(Source.findByAccountId(account.id).first())
             }
+            Preference.consumerKeySecret = null
+            Preference.requestToken = null
+            isTokenValid.postValue(false)
+            return@process true
+        } catch (e: TwitterException) {
+            w(e)
+            return@process false
+        }
+    }
+}
+
+private class AuthUI: AnkoComponent<AuthActivity> {
+    lateinit var openBrowser: Button
+    lateinit var pin: EditText
+    lateinit var submit: Button
+
+    override fun createView(ui: AnkoContext<AuthActivity>) = with(ui) {
+        verticalLayout {
+            linearLayout {
+                pin = editText {
+                    hint = R.string.pin.string()
+                }.lparams(matchParent, wrapContent)
+            }.lparams(matchParent, dip(0), 1.0f)
+            linearLayout {
+                openBrowser = button(R.string.open_browser).lparams(dip(0), matchParent, 1.0f)
+                submit = button(R.string.authentication).lparams(dip(0), matchParent, 1.0f)
+            }.lparams(matchParent, wrapContent)
         }
     }
 }

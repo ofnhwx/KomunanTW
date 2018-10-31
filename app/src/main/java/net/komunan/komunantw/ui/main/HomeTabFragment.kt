@@ -67,116 +67,116 @@ class HomeTabFragment: Fragment() {
         val factory = HomeTabViewModel.Factory(timelineId)
         return ViewModelProviders.of(this, factory).get(HomeTabViewModel::class.java)
     }
+}
 
-    private class HomeTabViewModel(private val timelineId: Long): TWBaseViewModel() {
-        private val sources: LiveData<List<Source>>
-            get() = Source.findByTimelineIdAsync(timelineId)
-        private val sourceIds: LiveData<List<Long>>
-            get() = Transformations.map(sources) { sources -> sources.map { it.id } }
+class HomeTabViewModel(private val timelineId: Long): TWBaseViewModel() {
+    private val sources: LiveData<List<Source>>
+        get() = Source.findByTimelineIdAsync(timelineId)
+    private val sourceIds: LiveData<List<Long>>
+        get() = Transformations.map(sources) { sources -> sources.map { it.id } }
 
-        val tweets: LiveData<PagedList<TweetDetail>>
-            get() = Transformations.switchMap(sourceIds) { Tweet.findBySourceIdsAsync(it) }
+    val tweets: LiveData<PagedList<TweetDetail>>
+        get() = Transformations.switchMap(sourceIds) { Tweet.findBySourceIdsAsync(it) }
 
-        class Factory(private val timelineId: Long): ViewModelProvider.Factory {
-            override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-                if (modelClass == HomeTabViewModel::class.java) {
-                    @Suppress("UNCHECKED_CAST")
-                    return HomeTabViewModel(timelineId) as T
-                }
-                throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}.")
+    class Factory(private val timelineId: Long): ViewModelProvider.Factory {
+        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+            if (modelClass == HomeTabViewModel::class.java) {
+                @Suppress("UNCHECKED_CAST")
+                return HomeTabViewModel(timelineId) as T
+            }
+            throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}.")
+        }
+    }
+}
+
+private class HomeTabAdapter: PagedListAdapter<TweetDetail, TweetViewHolder>(DIFF_CALLBACK) {
+    companion object {
+        val DIFF_CALLBACK = object: DiffUtil.ItemCallback<TweetDetail>() {
+            override fun areItemsTheSame(oldItem: TweetDetail, newItem: TweetDetail): Boolean {
+                return oldItem.id == newItem.id
+            }
+
+            override fun areContentsTheSame(oldItem: TweetDetail, newItem: TweetDetail): Boolean {
+                return oldItem.id == newItem.id
             }
         }
     }
 
-    private class HomeTabAdapter: PagedListAdapter<TweetDetail, TweetViewHolder>(DIFF_CALLBACK) {
-        companion object {
-            val DIFF_CALLBACK = object: DiffUtil.ItemCallback<TweetDetail>() {
-                override fun areItemsTheSame(oldItem: TweetDetail, newItem: TweetDetail): Boolean {
-                    return oldItem.id == newItem.id
-                }
-
-                override fun areContentsTheSame(oldItem: TweetDetail, newItem: TweetDetail): Boolean {
-                    return oldItem.id == newItem.id
-                }
-            }
-        }
-
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TweetViewHolder {
-            val ui = TweetUI()
-            val view = ui.createView(AnkoContext.create(parent.context, parent))
-            return TweetViewHolder(ui, view)
-        }
-
-        override fun onBindViewHolder(holder: TweetViewHolder, position: Int) {
-            holder.bind(getItem(position))
-        }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TweetViewHolder {
+        val ui = TweetUI()
+        val view = ui.createView(AnkoContext.create(parent.context, parent))
+        return TweetViewHolder(ui, view)
     }
 
-    private class HomeTabUI: AnkoComponent<HomeTabFragment> {
-        lateinit var container: RecyclerView
-
-        override fun createView(ui: AnkoContext<HomeTabFragment>): View = with(ui) {
-            container = recyclerView {
-                layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-            }
-            return@with container
-        }
+    override fun onBindViewHolder(holder: TweetViewHolder, position: Int) {
+        holder.bind(getItem(position))
     }
+}
 
-    private class TweetUI: AnkoComponent<ViewGroup> {
-        lateinit var userIcon: ImageView
-        lateinit var userName: TextView
-        lateinit var screenName: TextView
-        lateinit var tweetDateTime: TextView
-        lateinit var tweetText: TextView
+private class HomeTabUI: AnkoComponent<HomeTabFragment> {
+    lateinit var container: RecyclerView
 
-        @SuppressLint("ResourceType")
-        override fun createView(ui: AnkoContext<ViewGroup>): View = with(ui) {
-            linearLayout {
-                userIcon = draweeView {
-                    id = R.id.tweet_user_icon
-                }.lparams(dip(48), dip(48))
-                verticalLayout {
-                    linearLayout {
-                        userName = textView {
-                            id = R.id.tweet_user_name
-                        }
-                        screenName = textView {
-                            id = R.id.tweet_user_screen_name
-                        }
-                        tweetDateTime = textView {
-                            id = R.id.tweet_date_time
-                        }
+    override fun createView(ui: AnkoContext<HomeTabFragment>): View = with(ui) {
+        container = recyclerView {
+            layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+        }
+        return@with container
+    }
+}
+
+private class TweetUI: AnkoComponent<ViewGroup> {
+    lateinit var userIcon: ImageView
+    lateinit var userName: TextView
+    lateinit var screenName: TextView
+    lateinit var tweetDateTime: TextView
+    lateinit var tweetText: TextView
+
+    @SuppressLint("ResourceType")
+    override fun createView(ui: AnkoContext<ViewGroup>): View = with(ui) {
+        linearLayout {
+            userIcon = draweeView {
+                id = R.id.tweet_user_icon
+            }.lparams(dip(48), dip(48))
+            verticalLayout {
+                linearLayout {
+                    userName = textView {
+                        id = R.id.tweet_user_name
                     }
-                    tweetText = textView {
-                        id = R.id.tweet_text
+                    screenName = textView {
+                        id = R.id.tweet_user_screen_name
+                    }
+                    tweetDateTime = textView {
+                        id = R.id.tweet_date_time
                     }
                 }
-            }
-        }
-
-        fun bind(tweet: TweetDetail) {
-            launch(UI) {
-                val user = withContext(CommonPool) { User.find(tweet.userId) }
-                if (user == null) {
-                    // TODO: 取得を試みてダメならダミー画像とかを設定
-                } else {
-                    userIcon.setImageURI(Uri.parse(user.imageUrl))
-                    userName.text = user.name
-                    screenName.text = R.string.format_screen_name.string(user.screenName)
+                tweetText = textView {
+                    id = R.id.tweet_text
                 }
-                tweetDateTime.text = "{{時間}}" // TODO: 時間をフォーマットして設定
-                tweetText.text = tweet.text
             }
         }
     }
 
-    private class TweetViewHolder(val ui: TweetUI, view: View): RecyclerView.ViewHolder(view) {
-        fun bind(tweet: TweetDetail?) {
-            if (tweet == null) {
-                return
+    fun bind(tweet: TweetDetail) {
+        launch(UI) {
+            val user = withContext(CommonPool) { User.find(tweet.userId) }
+            if (user == null) {
+                // TODO: 取得を試みてダメならダミー画像とかを設定
+            } else {
+                userIcon.setImageURI(Uri.parse(user.imageUrl))
+                userName.text = user.name
+                screenName.text = R.string.format_screen_name.string(user.screenName)
             }
-            ui.bind(tweet)
+            tweetDateTime.text = "{{時間}}" // TODO: 時間をフォーマットして設定
+            tweetText.text = tweet.text
         }
+    }
+}
+
+private class TweetViewHolder(val ui: TweetUI, view: View): RecyclerView.ViewHolder(view) {
+    fun bind(tweet: TweetDetail?) {
+        if (tweet == null) {
+            return
+        }
+        ui.bind(tweet)
     }
 }

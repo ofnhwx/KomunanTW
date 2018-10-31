@@ -13,8 +13,8 @@ abstract class SimpleListAdapter<out T>(protected val items: List<T>) : BaseAdap
         return items.size
     }
 
-    override fun getItem(position: Int): Any {
-        return items[position] as Any
+    override fun getItem(position: Int): T {
+        return items[position]
     }
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {

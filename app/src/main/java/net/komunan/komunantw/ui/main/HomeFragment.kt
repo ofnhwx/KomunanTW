@@ -39,30 +39,30 @@ class HomeFragment: Fragment() {
             }
         }
     }
+}
 
-    private class HomeViewModel: TWBaseViewModel() {
-        val columns: LiveData<List<Timeline>>
-            get() = Timeline.findAllAsync()
+class HomeViewModel: TWBaseViewModel() {
+    val columns: LiveData<List<Timeline>>
+        get() = Timeline.findAllAsync()
+}
+
+private class HomeAdapter internal constructor(fm: FragmentManager?, private val timelines: List<Timeline>): FragmentPagerAdapter(fm) {
+    override fun getCount(): Int {
+        return timelines.size
     }
 
-    private class HomeAdapter internal constructor(fm: FragmentManager?, private val timelines: List<Timeline>): FragmentPagerAdapter(fm) {
-        override fun getCount(): Int {
-            return timelines.size
-        }
-
-        override fun getItem(position: Int): Fragment {
-            return HomeTabFragment.create(timelines[position])
-        }
+    override fun getItem(position: Int): Fragment {
+        return HomeTabFragment.create(timelines[position])
     }
+}
 
-    private class HomeUI: AnkoComponent<HomeFragment> {
-        lateinit var timelines: ViewPager
+private class HomeUI: AnkoComponent<HomeFragment> {
+    lateinit var timelines: ViewPager
 
-        override fun createView(ui: AnkoContext<HomeFragment>): View = with(ui) {
-            timelines = viewPager {
-                id = R.id.timelines
-            }
-            return@with timelines
+    override fun createView(ui: AnkoContext<HomeFragment>): View = with(ui) {
+        timelines = viewPager {
+            id = R.id.timelines
         }
+        return@with timelines
     }
 }
