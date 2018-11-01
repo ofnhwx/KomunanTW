@@ -26,7 +26,7 @@ enum class TransactionTarget {
     CACHE_ONLY,
 }
 
-fun <R> transaction(target: TransactionTarget = TransactionTarget.NORMAL, body: () -> R): R {
+fun transaction(target: TransactionTarget = TransactionTarget.NORMAL, body: () -> Unit) {
     val databases = when (target) {
         TransactionTarget.NORMAL -> listOf(TWDatabase.instance)
         TransactionTarget.WITH_CACHE -> listOf(TWDatabase.instance, TWCacheDatabase.instance)

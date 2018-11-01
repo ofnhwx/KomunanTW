@@ -3,31 +3,29 @@ package net.komunan.komunantw.ui.main
 import android.arch.lifecycle.ViewModelProviders
 import android.content.ComponentName
 import android.content.Intent
+import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v7.widget.Toolbar
-import android.view.View
 import com.github.ajalt.timberkt.d
 import com.mikepenz.materialdrawer.DrawerBuilder
 import com.mikepenz.materialdrawer.model.DividerDrawerItem
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem
-import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.launch
-import net.komunan.komunantw.Preference
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import net.komunan.komunantw.R
 import net.komunan.komunantw.ReleaseApplication
-import net.komunan.komunantw.ui.common.TWBaseActivity
-import net.komunan.komunantw.ui.common.TWBaseViewModel
+import net.komunan.komunantw.databinding.ActivityMainBinding
 import net.komunan.komunantw.event.Transition
 import net.komunan.komunantw.repository.entity.Account
-import net.komunan.komunantw.service.TwitterService
 import net.komunan.komunantw.ui.auth.AuthActivity
+import net.komunan.komunantw.ui.common.TWBaseActivity
+import net.komunan.komunantw.ui.main.accounts.AccountsFragment
+import net.komunan.komunantw.ui.main.home.HomeFragment
+import net.komunan.komunantw.ui.main.sources.SourcesFragment
+import net.komunan.komunantw.ui.main.timelines.TimelinesFragment
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
-import org.jetbrains.anko.*
-import org.jetbrains.anko.appcompat.v7.toolbar
-import java.util.*
 
 class MainActivity: TWBaseActivity() {
     companion object {
@@ -35,22 +33,20 @@ class MainActivity: TWBaseActivity() {
         fun newIntent(): Intent = Intent.makeRestartActivityTask(ComponentName(ReleaseApplication.context, MainActivity::class.java))
     }
 
-    private val viewModel by lazy { ViewModelProviders.of(this).get(MainViewModel::class.java) }
-    private val ui = MainActivityUI()
+    private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+
         checkFirstRun()
-        ui.run {
-            setContentView(this@MainActivity)
-            setSupportActionBar(toolbar)
-            setupDrawer()
-            if (savedInstanceState == null) {
-                setContent(HomeFragment.create())
-            }
-        }
-        viewModel.run {
-            startUpdate()
+        setSupportActionBar(binding.toolbar)
+        setupDrawer()
+
+        ViewModelProviders.of(this).get(MainViewModel::class.java).startUpdate()
+
+        if (savedInstanceState == null) {
+            setContent(HomeFragment.create())
         }
     }
 
@@ -82,7 +78,7 @@ class MainActivity: TWBaseActivity() {
     private fun setupDrawer() {
         drawer = DrawerBuilder().apply {
             withActivity(this@MainActivity)
-            withToolbar(ui.toolbar)
+            withToolbar(binding.toolbar)
             addDrawerItems(
                     PrimaryDrawerItem().withIdentifier(R.string.home.toLong()).withName(R.string.home),
                     DividerDrawerItem(),
@@ -105,7 +101,7 @@ class MainActivity: TWBaseActivity() {
     }
 
     private fun checkFirstRun() {
-        launch(CommonPool) {
+        GlobalScope.launch {
             if (Account.count() == 0) {
                 startActivity(AuthActivity.newIntent(true))
             }
@@ -114,39 +110,7 @@ class MainActivity: TWBaseActivity() {
 
     private fun setContent(fragment: Fragment) {
         supportFragmentManager.beginTransaction().apply {
-            replace(ui.container.id, fragment)
+            replace(binding.container.id, fragment)
         }.commit()
-    }
-}
-
-class MainViewModel: TWBaseViewModel() {
-    private var timer = Timer()
-    fun startUpdate() {
-        timer.schedule(object: TimerTask() {
-            override fun run() {
-                TwitterService.fetchTweets()
-            }
-        }, 0, Preference.fetchIntervalMillis)
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        timer.cancel()
-    }
-}
-
-private class MainActivityUI: AnkoComponent<MainActivity> {
-    lateinit var toolbar: Toolbar
-    lateinit var container: View
-
-    override fun createView(ui: AnkoContext<MainActivity>) = with(ui) {
-        verticalLayout {
-            toolbar = toolbar {
-                id = R.id.toolbar
-            }.lparams(matchParent, wrapContent)
-            container = frameLayout {
-                id = R.id.container
-            }.lparams(matchParent, dip(0), 1.0f)
-        }
     }
 }

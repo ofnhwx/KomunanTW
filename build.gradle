@@ -2,10 +2,9 @@
 buildscript {
     // Android Support Library
     ext.asl_version = "27.1.1"
-    // Kotlin + Anko
-    ext.kotlin_version = "1.2.71"
-    ext.kotlin_coroutines_version = "0.23.4"
-    ext.anko_version = "0.10.7"
+    // Kotlin
+    ext.kotlin_version = "1.3.0"
+    ext.kotlin_coroutines_version = "1.0.0"
     // Android Architecture Components
     ext.lifecycle_version = "1.1.1"
     ext.room_version = "1.1.1"
@@ -36,7 +35,4 @@ allprojects {
 }
 task clean(type: Delete) {
     delete rootProject.buildDir
-}
-
-dependencies {
 }
