@@ -6,7 +6,8 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import net.komunan.komunantw.databinding.SimpleListViewBinding
+import kotlinx.android.synthetic.main.simple_list_view.*
+import net.komunan.komunantw.R
 import net.komunan.komunantw.observeOnNotNull
 
 class SourcesFragment: Fragment() {
@@ -15,10 +16,8 @@ class SourcesFragment: Fragment() {
         fun create(): Fragment = SourcesFragment()
     }
 
-    private lateinit var binding: SimpleListViewBinding
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return SimpleListViewBinding.inflate(inflater, container, false).apply { binding = this }.root
+        return inflater.inflate(R.layout.simple_list_view, container, false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -26,7 +25,7 @@ class SourcesFragment: Fragment() {
         super.onActivityCreated(savedInstanceState)
         val viewModel = ViewModelProviders.of(this).get(SourcesViewModel::class.java)
         viewModel.sources.observeOnNotNull(this) { sources ->
-            binding.container.adapter = SourcesAdapter(sources)
+            container.adapter = SourcesAdapter(sources)
         }
     }
 }

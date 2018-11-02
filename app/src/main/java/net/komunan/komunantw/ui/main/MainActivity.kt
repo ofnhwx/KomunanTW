@@ -3,7 +3,6 @@ package net.komunan.komunantw.ui.main
 import android.arch.lifecycle.ViewModelProviders
 import android.content.ComponentName
 import android.content.Intent
-import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import com.github.ajalt.timberkt.d
@@ -11,11 +10,11 @@ import com.mikepenz.materialdrawer.DrawerBuilder
 import com.mikepenz.materialdrawer.model.DividerDrawerItem
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import net.komunan.komunantw.R
 import net.komunan.komunantw.ReleaseApplication
-import net.komunan.komunantw.databinding.ActivityMainBinding
 import net.komunan.komunantw.event.Transition
 import net.komunan.komunantw.repository.entity.Account
 import net.komunan.komunantw.ui.auth.AuthActivity
@@ -33,18 +32,13 @@ class MainActivity: TWBaseActivity() {
         fun newIntent(): Intent = Intent.makeRestartActivityTask(ComponentName(ReleaseApplication.context, MainActivity::class.java))
     }
 
-    private lateinit var binding: ActivityMainBinding
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-
+        setContentView(R.layout.activity_main)
+        setSupportActionBar(toolbar)
         checkFirstRun()
-        setSupportActionBar(binding.toolbar)
         setupDrawer()
-
-        ViewModelProviders.of(this).get(MainViewModel::class.java).startUpdate()
-
+        startUpdate()
         if (savedInstanceState == null) {
             setContent(HomeFragment.create())
         }
@@ -78,7 +72,7 @@ class MainActivity: TWBaseActivity() {
     private fun setupDrawer() {
         drawer = DrawerBuilder().apply {
             withActivity(this@MainActivity)
-            withToolbar(binding.toolbar)
+            withToolbar(toolbar)
             addDrawerItems(
                     PrimaryDrawerItem().withIdentifier(R.string.home.toLong()).withName(R.string.home),
                     DividerDrawerItem(),
@@ -108,9 +102,13 @@ class MainActivity: TWBaseActivity() {
         }
     }
 
+    private fun startUpdate() {
+        ViewModelProviders.of(this).get(MainViewModel::class.java).startUpdate()
+    }
+
     private fun setContent(fragment: Fragment) {
         supportFragmentManager.beginTransaction().apply {
-            replace(binding.container.id, fragment)
+            replace(container.id, fragment)
         }.commit()
     }
 }

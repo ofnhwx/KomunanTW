@@ -1,41 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
-    <data />
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <com.facebook.drawee.view.SimpleDraweeView
+            app:roundAsCircle="true"
+            android:id="@+id/tweet_user_icon"
+            android:layout_width="48dp"
+            android:layout_height="48dp" />
     <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:layout_width="0dp"
             android:layout_height="wrap_content">
-        <com.facebook.drawee.view.SimpleDraweeView
-                app:roundAsCircle="true"
-                android:id="@+id/tweet_user_icon"
-                android:layout_width="48dp"
-                android:layout_height="48dp" />
         <LinearLayout
-                android:orientation="vertical"
-                android:layout_weight="1"
-                android:layout_width="0dp"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-            <LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                <TextView
-                        android:id="@+id/tweet_user_name"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-                <TextView
-                        android:id="@+id/tweet_user_screen_name"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-                <TextView
-                        android:id="@+id/tweet_date_time"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-            </LinearLayout>
             <TextView
-                    android:id="@+id/tweet_text"
-                    android:layout_width="match_parent"
+                    android:id="@+id/tweet_user_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            <TextView
+                    android:id="@+id/tweet_user_screen_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            <TextView
+                    android:id="@+id/tweet_date_time"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
         </LinearLayout>
+        <TextView
+                android:id="@+id/tweet_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
     </LinearLayout>
-</layout>
+</LinearLayout>

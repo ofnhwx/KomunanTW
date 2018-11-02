@@ -6,7 +6,8 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import net.komunan.komunantw.databinding.SimpleViewPagerBinding
+import kotlinx.android.synthetic.main.simple_view_pager.*
+import net.komunan.komunantw.R
 import net.komunan.komunantw.observeOnNotNull
 
 class HomeFragment: Fragment() {
@@ -15,17 +16,15 @@ class HomeFragment: Fragment() {
         fun create() = HomeFragment()
     }
 
-    private lateinit var binding: SimpleViewPagerBinding
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return SimpleViewPagerBinding.inflate(inflater, container, false).apply { binding = this }.root
+        return inflater.inflate(R.layout.simple_view_pager, container, false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         val viewModel = ViewModelProviders.of(this).get(HomeViewModel::class.java)
         viewModel.timelines.observeOnNotNull(this) { timelines ->
-            binding.container.adapter = HomeAdapter(fragmentManager, timelines)
+            container.adapter = HomeAdapter(fragmentManager, timelines)
         }
     }
 }

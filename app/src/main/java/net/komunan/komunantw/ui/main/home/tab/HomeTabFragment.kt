@@ -7,7 +7,8 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import net.komunan.komunantw.databinding.SimpleRecyclerViewBinding
+import kotlinx.android.synthetic.main.simple_recycler_view.*
+import net.komunan.komunantw.R
 import net.komunan.komunantw.observeOnNotNull
 import net.komunan.komunantw.repository.entity.Timeline
 
@@ -27,18 +28,15 @@ class HomeTabFragment: Fragment() {
 
     private val viewModel: HomeTabViewModel by lazy { makeViewModel() }
     private val adapter = HomeTabAdapter()
-    private lateinit var binding: SimpleRecyclerViewBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return SimpleRecyclerViewBinding.inflate(inflater, container, false).apply {
-            binding = this
-            binding.container.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-            binding.container.adapter = adapter
-        }.root
+        return inflater.inflate(R.layout.simple_recycler_view, container, false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        container.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+        container.adapter = adapter
         viewModel.tweets.observeOnNotNull(this) { tweets ->
             adapter.submitList(tweets)
         }
