@@ -10,7 +10,6 @@ fun Int.string(): String = ReleaseApplication.context.getString(this)
 fun Int.string(arg: String): String = ReleaseApplication.context.getString(this, arg)
 fun Int.toBoolean(): Boolean = this != 0
 
-
 fun Boolean.toInt(): Int = if (this) 1 else 0
 
 fun <T> LiveData<T>.observeOnNotNull(owner: LifecycleOwner, body: (data: T) -> Unit) {

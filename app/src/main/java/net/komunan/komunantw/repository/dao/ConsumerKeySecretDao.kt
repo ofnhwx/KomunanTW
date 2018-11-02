@@ -5,33 +5,42 @@ import androidx.room.*
 import com.github.ajalt.timberkt.d
 import net.komunan.komunantw.repository.entity.ConsumerKeySecret
 
+@Suppress("FunctionName")
 @Dao
 abstract class ConsumerKeySecretDao {
-    @Query("SELECT * FROM consumer_key_secret ORDER BY is_default DESC, name ASC")
-    abstract fun findAllAsync(): LiveData<List<ConsumerKeySecret>>
+    fun findAllAsync() = __findAllAsync()
+    fun findAll() = __findAll()
+    fun findDefault() = __findDefault()
+    fun count() = __count()
+    fun save(consumerKeySecret: ConsumerKeySecret) = __save__(consumerKeySecret)
+    fun delete(consumerKeySecret: ConsumerKeySecret) = __delete__(consumerKeySecret)
+
+    /* ==================== SQL Definitions. ==================== */
 
     @Query("SELECT * FROM consumer_key_secret ORDER BY is_default DESC, name ASC")
-    abstract fun findAll(): List<ConsumerKeySecret>
-
+    protected abstract fun __findAllAsync(): LiveData<List<ConsumerKeySecret>>
+    @Query("SELECT * FROM consumer_key_secret ORDER BY is_default DESC, name ASC")
+    protected abstract fun __findAll(): List<ConsumerKeySecret>
+    @Query("SELECT * FROM consumer_key_secret WHERE is_default = 1")
+    protected abstract fun __findDefault(): ConsumerKeySecret?
     @Query("SELECT COUNT(*) FROM consumer_key_secret")
-    abstract fun count(): Int
-
+    protected abstract fun __count(): Int
     @Insert(onConflict = OnConflictStrategy.ABORT)
-    abstract fun _insert(consumerKeySecret: ConsumerKeySecret): Long
-
+    protected abstract fun __insert(consumerKeySecret: ConsumerKeySecret): Long
     @Update
-    abstract fun _update(consumerKeySecret: ConsumerKeySecret)
-
+    protected abstract fun __update(consumerKeySecret: ConsumerKeySecret)
     @Delete
-    abstract fun _delete(consumerKeySecret: ConsumerKeySecret)
+    protected abstract fun __delete(consumerKeySecret: ConsumerKeySecret)
 
-    fun save(consumerKeySecret: ConsumerKeySecret): ConsumerKeySecret {
+    /* ==================== Private Functions. ==================== */
+
+    private fun __save__(consumerKeySecret: ConsumerKeySecret): ConsumerKeySecret {
         if (consumerKeySecret.id == 0L) {
-            consumerKeySecret.id = _insert(consumerKeySecret.apply {
+            consumerKeySecret.id = __insert(consumerKeySecret.apply {
                 createAt = System.currentTimeMillis()
             })
         } else {
-            _update(consumerKeySecret.apply {
+            __update(consumerKeySecret.apply {
                 updateAt = System.currentTimeMillis()
             })
         }
@@ -39,10 +48,10 @@ abstract class ConsumerKeySecretDao {
         return consumerKeySecret
     }
 
-    fun delete(consumerKeySecret: ConsumerKeySecret) {
+    private fun __delete__(consumerKeySecret: ConsumerKeySecret) {
         if (consumerKeySecret.default) {
             return
         }
-        _delete(consumerKeySecret)
+        __delete(consumerKeySecret)
     }
 }

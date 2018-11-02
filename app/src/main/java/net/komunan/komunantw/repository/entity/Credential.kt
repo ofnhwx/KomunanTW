@@ -37,14 +37,20 @@ data class Credential(
     companion object {
         private val dao = TWDatabase.instance.credentialDao()
 
-        @JvmStatic fun findByAccountId(accountId: Long) = dao.findByAccountId(accountId)
+        @JvmStatic fun findByAccount(account: Account) = dao.findByAccount(account)
     }
 
     @Ignore
-    constructor(account: Account, consumerKeySecret: ConsumerKeySecret, accessToken: AccessToken)
-        : this(account.id, consumerKeySecret.consumerKey, consumerKeySecret.consumerSecret, accessToken.token, accessToken.tokenSecret, 0, 0)
+    constructor(account: Account, consumerKeySecret: ConsumerKeySecret, accessToken: AccessToken): this(
+            accountId = account.id,
+            consumerKey = consumerKeySecret.consumerKey,
+            consumerSecret = consumerKeySecret.consumerSecret,
+            token = accessToken.token,
+            tokenSecret = accessToken.tokenSecret,
+            createAt = 0,
+            updateAt = 0
+    )
 
     fun save(): Credential = dao.save(this)
     fun delete() = dao.delete(this)
-
 }

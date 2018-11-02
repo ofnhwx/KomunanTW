@@ -50,9 +50,9 @@ class AuthViewModel: TWBaseViewModel() {
             val accessToken = twitter.getOAuthAccessToken(requestToken, pin.value)
             transaction {
                 val account = Account(twitter.showUser(accessToken.userId)).save()
-                Credential.findByAccountId(account.id).forEach { it.delete() }
+                Credential.findByAccount(account).forEach { it.delete() }
                 Credential(account, consumerKeySecret, accessToken).save()
-                Source.update(account)
+                Source.updateFor(account)
                 Timeline.firstSetup(account)
             }
             Preference.consumerKeySecret = null

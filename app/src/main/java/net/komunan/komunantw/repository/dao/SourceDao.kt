@@ -6,77 +6,84 @@ import com.github.ajalt.timberkt.d
 import net.komunan.komunantw.repository.database.transaction
 import net.komunan.komunantw.repository.entity.Account
 import net.komunan.komunantw.repository.entity.Source
+import net.komunan.komunantw.repository.entity.Timeline
 import net.komunan.komunantw.service.TwitterService
 
+@Suppress("FunctionName")
 @Dao
 abstract class SourceDao {
+    fun findAllAsync() = __findAllAsync()
+    fun findByTimelineAsync(timeline: Timeline) = __findByTimelineIdAsync(timeline.id)
+    fun find(id: Long) = __find(id)
+    fun findEnabled() = __findEnabled()
+    fun findByAccount(account: Account) = __findByAccountId(account.id)
+    fun findByTimeline(timeline: Timeline) = __findByTimelineId(timeline.id)
+    fun countByTimeline(timeline: Timeline) = __countByTimelineId(timeline.id)
+    fun save(source: Source) = __save__(source)
+    fun save(sources: List<Source>) = __save__(sources)
+    fun delete(source: Source) = __delete(source)
+    fun delete(sources: List<Source>) = __delete(sources)
+    fun updateFetchAt(source: Source) = __updateFetchAt__(source)
+    fun updateFor(account: Account) = __updateFor__(account)
+
+    /* ==================== SQL Definitions. ==================== */
     @Query("SELECT source.* FROM source LEFT OUTER JOIN account ON account.id = source.account_id ORDER BY account.name ASC, `order` ASC, label ASC")
-    abstract fun findAllAsync(): LiveData<List<Source>>
-
-    @Query("SELECT * FROM source WHERE id in (SELECT source_id FROM timeline_source WHERE timeline_id = :timelineId)")
-    abstract fun findByTimelineIdAsync(timelineId: Long): LiveData<List<Source>>
-
+    protected abstract fun __findAllAsync(): LiveData<List<Source>>
+    @Query("SELECT * FROM source WHERE id in (SELECT source_id FROM timeline_source WHERE timeline_id = :timelineId) ORDER BY id ASC")
+    protected abstract fun __findByTimelineIdAsync(timelineId: Long): LiveData<List<Source>>
     @Query("SELECT * FROM source WHERE id = :id")
-    abstract fun find(id: Long): Source?
-
-    @Query("SELECT * FROM source WHERE EXISTS (SELECT * FROM timeline_source WHERE source_id = source.id)")
-    abstract fun findEnabled(): List<Source>
-
+    protected abstract fun __find(id: Long): Source?
+    @Query("SELECT * FROM source WHERE EXISTS (SELECT * FROM timeline_source WHERE source_id = source.id) ORDER BY id ASC")
+    protected abstract fun __findEnabled(): List<Source>
     @Query("SELECT * FROM source WHERE account_id = :accountId")
-    abstract fun findByAccountId(accountId: Long): List<Source>
-
+    protected abstract fun __findByAccountId(accountId: Long): List<Source>
     @Query("SELECT * FROM source WHERE id IN (SELECT source_id FROM timeline_source WHERE timeline_id = :timelineId)")
-    abstract fun findByTimelineId(timelineId: Long): List<Source>
-
+    protected abstract fun __findByTimelineId(timelineId: Long): List<Source>
     @Query("SELECT COUNT(*) FROM source WHERE id in (SELECT source_id FROM timeline_source WHERE timeline_id = :timelineId)")
-    abstract fun countByTimelineId(timelineId: Long): Int
-
+    protected abstract fun __countByTimelineId(timelineId: Long): Int
     @Insert(onConflict = OnConflictStrategy.ABORT)
-    abstract fun _insert(source: Source): Long
-
+    protected abstract fun __insert(source: Source): Long
     @Insert(onConflict = OnConflictStrategy.ABORT)
-    abstract fun _insert(sources: Collection<Source>): List<Long>
-
+    protected abstract fun __insert(sources: Collection<Source>): List<Long>
     @Update
-    abstract fun _update(source: Source)
-
+    protected abstract fun __update(source: Source)
     @Update
-    abstract fun _update(sources: Collection<Source>)
-
+    protected abstract fun __update(sources: Collection<Source>)
     @Delete
-    abstract fun delete(source: Source)
-
+    protected abstract fun __delete(source: Source)
     @Delete
-    abstract fun delete(sources: Collection<Source>)
+    protected abstract fun __delete(sources: Collection<Source>)
 
-    fun save(source: Source) {
+    /* ==================== Private Functions. ==================== */
+
+    private fun __save__(source: Source): Source {
         if (source.id == 0L) {
-            source.id = _insert(source.apply {
+            source.id = __insert(source.apply {
                 createAt = System.currentTimeMillis()
             })
         } else {
-            _update(source.apply {
+            __update(source.apply {
                 updateAt = System.currentTimeMillis()
             })
         }
         d { "save: $source" }
+        return source
     }
 
-    fun save(sources: Collection<Source>) {
-        _update(sources.filter { it.id != 0L }.map { it.apply { updateAt = System.currentTimeMillis() } })
-        val insertIds = _insert(sources.filter { it.id == 0L }.map { it.apply { createAt = System.currentTimeMillis() } })
+    private fun __save__(sources: Collection<Source>) {
+        __update(sources.filter { it.id != 0L }.map { it.apply { updateAt = System.currentTimeMillis() } })
+        val insertIds = __insert(sources.filter { it.id == 0L }.map { it.apply { createAt = System.currentTimeMillis() } })
         sources.zip(insertIds).forEach {
             it.first.id = it.second
         }
     }
 
-    fun updateFetchAt(source: Source) {
+    private fun __updateFetchAt__(source: Source) {
         source.fetchAt = System.currentTimeMillis()
-        save(source)
+        __save__(source)
     }
 
-
-    fun update(account: Account) = transaction {
+    private fun __updateFor__(account: Account) = transaction {
         val credential = account.credential()
         val twitter = TwitterService.twitter(credential)
         val sources = mutableListOf<Source>()

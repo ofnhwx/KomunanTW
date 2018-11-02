@@ -17,30 +17,36 @@ data class Tweet(
         @ColumnInfo(name = "user_id")
         var userId: Long,
         @ColumnInfo(name = "text")
-        var text: String
+        var text: String,
+        @ColumnInfo(name = "timestamp")
+        var timestamp: Long
 ) {
     companion object {
         private val dao = TWCacheDatabase.instance.tweetDao()
         private val sourceDao = TWCacheDatabase.instance.tweetSourceDao()
 
-        @JvmStatic fun findBySourceIdsAsync(sourceIds: List<Long>)
-                = LivePagedListBuilder(dao.findBySourceIdsAsync(sourceIds), 20).build()
-        @JvmStatic fun countBySourceId(sourceId: Long) = sourceDao.countBySourceId(sourceId)
-        @JvmStatic fun maxIdBySourceId(sourceId: Long) = sourceDao.maxIdBySourceId(sourceId)
-        @JvmStatic fun minIdBySourceId(sourceId: Long) = sourceDao.minIdBySourceId(sourceId)
-        @JvmStatic fun prevIdBySourceId(sourceId: Long, tweetId: Long) = sourceDao.prevIdBySourceId(sourceId, tweetId)
-        @JvmStatic fun addMissingMark(sourceId: Long, missTweetId: Long) = sourceDao.addMissingMark(sourceId, missTweetId)
-        @JvmStatic fun removeMissingMark(sourceId: Long, missTweetId: Long) = sourceDao.removeMissingMark(sourceId, missTweetId)
+        @JvmStatic fun findBySourcesAsync(sources: List<Source>) = LivePagedListBuilder(dao.findBySourcesAsync(sources), 20).build()
+        @JvmStatic fun countBySource(source: Source) = sourceDao.countBySource(source)
+        @JvmStatic fun maxIdBySource(source: Source) = sourceDao.maxIdBySource(source)
+        @JvmStatic fun minIdBySource(source: Source) = sourceDao.minIdBySource(source)
+        @JvmStatic fun prevIdBySource(source: Source, tweetId: Long) = sourceDao.prevIdBySource(source, tweetId)
+        @JvmStatic fun addMissingMark(source: Source, missTweetId: Long) = sourceDao.addMissingMark(source, missTweetId)
+        @JvmStatic fun removeMissingMark(source: Source, missTweetId: Long) = sourceDao.removeMissingMark(source, missTweetId)
 
         @JvmStatic
-        fun save(tweets: Collection<Tweet>, source: Source) = transaction(TransactionTarget.CACHE_ONLY) {
+        fun save(source: Source, tweets: List<Tweet>) = transaction(TransactionTarget.CACHE_ONLY) {
             dao.save(tweets)
             sourceDao.save(tweets.map { TweetSource(source.id, it.id) })
         }
     }
 
     @Ignore
-    constructor(status: Status): this(status.id, status.user.id, status.text)
+    constructor(status: Status): this(
+            id = status.id,
+            userId = status.user.id,
+            text = status.text,
+            timestamp = status.createdAt.time
+    )
 }
 
 @Entity(
@@ -56,7 +62,11 @@ data class TweetSource(
         var _isMissing: Int
 ) {
     @Ignore
-    constructor(sourceId: Long, tweetId: Long): this(sourceId, tweetId, 0)
+    constructor(sourceId: Long, tweetId: Long): this(
+            sourceId = sourceId,
+            tweetId = tweetId,
+            _isMissing = 0
+    )
 }
 
 class TweetDetail {
@@ -66,6 +76,8 @@ class TweetDetail {
     var userId: Long = 0
     @ColumnInfo(name = "text")
     lateinit var text: String
+    @ColumnInfo(name = "timestamp")
+    var timestamp: Long = 0
     @ColumnInfo(name = "is_missing")
     var _isMissing: Int = 0
     @ColumnInfo(name = "source_ids")

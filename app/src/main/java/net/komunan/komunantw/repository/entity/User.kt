@@ -18,15 +18,18 @@ data class User(
         var cacheAt: Long
 ) {
     companion object {
-        private fun dao() = TWCacheDatabase.instance.userDao()
+        private val dao = TWCacheDatabase.instance.userDao()
 
-        @JvmStatic
-        fun find(id: Long) = dao().find(id)
-
-        @JvmStatic
-        fun save(users: Collection<User>) = dao().save(users)
+        @JvmStatic fun find(id: Long) = dao.find(id)
+        @JvmStatic fun save(users: List<User>) = dao.save(users)
     }
 
     @Ignore
-    constructor(user: TwitterUser): this(user.id, user.profileImageURLHttps, user.name, user.screenName, System.currentTimeMillis())
+    constructor(user: TwitterUser): this(
+            id = user.id,
+            imageUrl = user.profileImageURLHttps,
+            name = user.name,
+            screenName = user.screenName,
+            cacheAt = System.currentTimeMillis()
+    )
 }

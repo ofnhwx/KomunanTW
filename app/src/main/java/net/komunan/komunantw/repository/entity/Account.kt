@@ -29,10 +29,17 @@ class Account(
     }
 
     @Ignore
-    constructor(user: User): this(user.id, user.profileImageURLHttps, user.name, user.screenName, 0, 0)
+    constructor(user: User): this(
+            id = user.id,
+            imageUrl = user.profileImageURLHttps,
+            name = user.name,
+            screenName = user.screenName,
+            createAt = 0,
+            updateAt = 0
+    )
 
     fun save() = dao.save(this)
     fun delete() = dao.delete(this)
-    fun credential() = Credential.findByAccountId(id).first()
-    fun sources() = Source.findByAccountId(id)
+    fun credential() = Credential.findByAccount(this).first()
+    fun sources() = Source.findByAccount(this)
 }

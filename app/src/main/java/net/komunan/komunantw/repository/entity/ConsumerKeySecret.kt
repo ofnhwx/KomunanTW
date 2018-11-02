@@ -32,7 +32,7 @@ data class ConsumerKeySecret (
         @JvmStatic fun findAllAsync() = dao.findAllAsync()
         @JvmStatic fun findAll() = dao.findAll()
         @JvmStatic fun count()= dao.count()
-        @JvmStatic fun default() = ConsumerKeySecret("", "", "").apply { default = true }
+        @JvmStatic fun default() = dao.findDefault() ?: ConsumerKeySecret("", "", "").apply { default = true }.save()
     }
 
     var name: String
@@ -74,8 +74,15 @@ data class ConsumerKeySecret (
         }
 
     @Ignore
-    constructor(name: String, consumerKey: String, consumerSecret: String)
-            : this(0, name, consumerKey, consumerSecret, 0, 0, 0)
+    constructor(name: String, consumerKey: String, consumerSecret: String): this(
+            id = 0,
+            _name = name,
+            _consumerKey = consumerKey,
+            _consumerSecret = consumerSecret,
+            _default = 0,
+            createAt = 0,
+            updateAt = 0
+    )
 
     fun save() = dao.save(this)
     fun delete() = dao.delete(this)

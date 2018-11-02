@@ -54,30 +54,41 @@ data class Source(
         private val dao = TWDatabase.instance.sourceDao()
 
         @JvmStatic fun findAllAsync() = dao.findAllAsync()
-        @JvmStatic fun findByTimelineIdAsync(timelineId: Long) = dao.findByTimelineIdAsync(timelineId)
+        @JvmStatic fun findByTimelineAsync(timeline: Timeline) = dao.findByTimelineAsync(timeline)
         @JvmStatic fun find(id: Long) = dao.find(id)
         @JvmStatic fun findEnabled() = dao.findEnabled()
-        @JvmStatic fun findByAccountId(accountId: Long) = dao.findByAccountId(accountId)
-        @JvmStatic fun findByTimelineId(timelineId: Long) = dao.findByTimelineId(timelineId)
-        @JvmStatic fun countByTimelineId(timelineId: Long) = dao.countByTimelineId(timelineId)
-        @JvmStatic fun save(sources: Collection<Source>) = dao.save(sources)
-        @JvmStatic fun delete(sources: Collection<Source>) = dao.delete(sources)
-        @JvmStatic fun update(account: Account) = dao.update(account)
+        @JvmStatic fun findByAccount(account: Account) = dao.findByAccount(account)
+        @JvmStatic fun findByTimeline(timeline: Timeline) = dao.findByTimeline(timeline)
+        @JvmStatic fun countByTimeline(timeline: Timeline) = dao.countByTimeline(timeline)
+        @JvmStatic fun save(sources: List<Source>) = dao.save(sources)
+        @JvmStatic fun delete(sources: List<Source>) = dao.delete(sources)
+        @JvmStatic fun updateFor(account: Account) = dao.updateFor(account)
     }
 
     @Ignore
-    constructor(account: Account, type: SourceType)
-            : this(0, account.id, type.ordinal, type.toString(), "", null, 0, 0, 0, 0, 0)
+    constructor(account: Account, type: SourceType): this(
+            id = 0,
+            accountId = account.id,
+            order = type.ordinal,
+            type = type.toString(),
+            label = "",
+            query = null,
+            listOwner = 0,
+            listId = 0,
+            fetchAt = 0,
+            createAt = 0,
+            updateAt = 0
+    )
 
     fun save() = dao.save(this)
     fun delete() = dao.delete(this)
     fun updateFetchAt() = dao.updateFetchAt(this)
 
     fun account() = Account.find(accountId)
-    fun tweetCount() = Tweet.countBySourceId(id)
-    fun maxTweetId() = Tweet.maxIdBySourceId(id)
-    fun minTweetId() = Tweet.minIdBySourceId(id)
-    fun prevTweetId(targetId: Long) = Tweet.prevIdBySourceId(id, targetId)
+    fun tweetCount() = Tweet.countBySource(this)
+    fun maxTweetId() = Tweet.maxIdBySource(this)
+    fun minTweetId() = Tweet.minIdBySource(this)
+    fun prevTweetId(targetId: Long) = Tweet.prevIdBySource(this, targetId)
 
     fun requireAutoFetch() = System.currentTimeMillis() > (fetchAt + Preference.fetchIntervalMillis * Preference.fetchIntervalThreshold)
 }

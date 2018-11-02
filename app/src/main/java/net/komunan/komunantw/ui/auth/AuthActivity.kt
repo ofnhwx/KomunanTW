@@ -52,7 +52,7 @@ class AuthActivity: TWBaseActivity() {
         })
         open_browser.setOnClickListener {
             GlobalScope.launch(Dispatchers.Main) {
-                viewModel.startOAuth(ConsumerKeySecret.default())
+                withContext(Dispatchers.Default) { viewModel.startOAuth(ConsumerKeySecret.default()) }
             }
         }
         authentication.setOnClickListener {

@@ -5,6 +5,7 @@
     <string name="add_account">アカウントを追加</string>
     <string name="authentication">認証</string>
     <string name="default_label">デフォルト</string>
+    <string name="dummy">{{dummy}}</string>
     <string name="home">ホーム</string>
     <string name="mention">メンション</string>
     <string name="open_browser">ブラウザを開く</string>

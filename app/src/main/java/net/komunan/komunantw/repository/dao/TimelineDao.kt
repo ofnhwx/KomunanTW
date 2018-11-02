@@ -1,3 +1,5 @@
+@file:Suppress("FunctionName")
+
 package net.komunan.komunantw.repository.dao
 
 import androidx.lifecycle.LiveData
@@ -13,41 +15,48 @@ import net.komunan.komunantw.repository.entity.TimelineSource
 
 @Dao
 abstract class TimelineDao {
+    fun findAllAsync() = __findAllAsync()
+    fun findAsync(id: Long) = __findAsync(id)
+    fun find(id: Long) = __find(id)
+    fun count() = __count()
+    fun save(timeline: Timeline) = __save__(timeline)
+    fun delete(timeline: Timeline) = __delete__(timeline)
+    fun moveTo(timeline: Timeline, position: Int) = __moveTo__(timeline, position)
+    fun firstSetup(account: Account) = __firstSetup__(account)
+
+    /* ==================== SQL Definitions. ==================== */
+
     @Query("SELECT * FROM timeline ORDER BY position ASC")
-    abstract fun findAllAsync(): LiveData<List<Timeline>>
-
+    abstract fun __findAllAsync(): LiveData<List<Timeline>>
     @Query("SELECT * FROM timeline WHERE id = :id")
-    abstract fun find(id: Long): Timeline?
-
+    abstract fun __findAsync(id: Long): LiveData<Timeline>
+    @Query("SELECT * FROM timeline WHERE id = :id")
+    abstract fun __find(id: Long): Timeline?
     @Query("SELECT COUNT(*) FROM Timeline")
-    abstract fun count(): Int
-
+    abstract fun __count(): Int
     @Query("UPDATE timeline SET position = position - 1 WHERE position > :deleted")
-    abstract fun _packPosition(deleted: Int)
-
+    abstract fun __packPosition(deleted: Int)
     @Query("UPDATE timeline SET position = position - 1 WHERE position BETWEEN :begin AND :end")
-    abstract fun _shiftLeft(begin: Int, end: Int)
-
+    abstract fun __shiftLeft(begin: Int, end: Int)
     @Query("UPDATE timeline SET position = position + 1 WHERE position BETWEEN :begin AND :end")
-    abstract fun _shiftRight(begin: Int, end: Int)
-
+    abstract fun __shiftRight(begin: Int, end: Int)
     @Insert(onConflict = OnConflictStrategy.ABORT)
-    abstract fun _insert(timeline: Timeline): Long
-
+    abstract fun __insert(timeline: Timeline): Long
     @Update
-    abstract fun _update(timeline: Timeline)
-
+    abstract fun __update(timeline: Timeline)
     @Delete
-    abstract fun _delete(timeline: Timeline)
+    abstract fun __delete(timeline: Timeline)
 
-    fun save(timeline: Timeline): Timeline {
+    /* ==================== Private Functions. ==================== */
+
+   private fun __save__(timeline: Timeline): Timeline {
         if (timeline.id == 0L) {
-            timeline.id = _insert(timeline.apply {
-                position = count() + 1
+            timeline.id = __insert(timeline.apply {
+                position = __count() + 1
                 createAt = System.currentTimeMillis()
             })
         } else {
-            _update(timeline.apply {
+            __update(timeline.apply {
                 updateAt = System.currentTimeMillis()
             })
         }
@@ -55,31 +64,31 @@ abstract class TimelineDao {
         return timeline
     }
 
-    fun delete(timeline: Timeline) {
+    private fun __delete__(timeline: Timeline) {
         transaction {
-            _delete(timeline)
-            _packPosition(timeline.position)
+            __delete(timeline)
+            __packPosition(timeline.position)
         }
     }
 
-    fun moveTo(timeline: Timeline, position: Int) {
+    private fun __moveTo__(timeline: Timeline, position: Int) {
         transaction {
             when {
-                position > timeline.position -> _shiftLeft(timeline.position + 1, position)
-                position < timeline.position -> _shiftRight(position, timeline.position - 1)
+                position > timeline.position -> __shiftLeft(timeline.position + 1, position)
+                position < timeline.position -> __shiftRight(position, timeline.position - 1)
             }
             timeline.position = position
-            save(timeline)
+            __save__(timeline)
         }
     }
 
-    fun firstSetup(account: Account) {
+    private fun __firstSetup__(account: Account) {
         transaction {
             if (Timeline.count() > 0) {
                 return@transaction
             }
-            val timeline = save(Timeline(R.string.default_label.string()))
-            val homeSource = Source.findByAccountId(account.id).first { Source.SourceType.valueOf(it.type) == Source.SourceType.HOME }
+            val timeline = __save__(Timeline(R.string.default_label.string()))
+            val homeSource = Source.findByAccount(account).first { Source.SourceType.valueOf(it.type) == Source.SourceType.HOME }
             timeline.addSource(homeSource)
         }
     }
@@ -87,20 +96,16 @@ abstract class TimelineDao {
 
 @Dao
 abstract class TimelineSourceDao {
+    fun count() = __count()
+    fun add(timeline: Timeline, source: Source) = __save(TimelineSource(timeline.id, source.id))
+    fun remove(timeline: Timeline, source: Source) = __delete(TimelineSource(timeline.id, source.id))
+
+    /* ==================== SQL Definitions. ==================== */
+
     @Query("SELECT COUNT(*) FROM timeline_source")
-    abstract fun count(): Int
-
+    protected abstract fun __count(): Int
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract fun _save(timelineSource: TimelineSource)
-
+    protected abstract fun __save(timelineSource: TimelineSource)
     @Delete
-    abstract fun _delete(timelineSource: TimelineSource)
-
-    fun add(timeline: Timeline, source: Source) {
-        _save(TimelineSource(timeline.id, source.id))
-    }
-
-    fun remove(timeline: Timeline, source: Source) {
-        _delete(TimelineSource(timeline.id, source.id))
-    }
+    protected abstract fun __delete(timelineSource: TimelineSource)
 }

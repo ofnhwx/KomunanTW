@@ -22,21 +22,28 @@ data class Timeline(
         private val sourceDao = TWDatabase.instance.timelineSourceDao()
 
         @JvmStatic fun findAllAsync() = dao.findAllAsync()
+        @JvmStatic fun findAsync(id: Long) = dao.findAsync(id)
         @JvmStatic fun find(id: Long) = dao.find(id)
         @JvmStatic fun count() = dao.count()
         @JvmStatic fun firstSetup(account: Account) = dao.firstSetup(account)
     }
 
     @Ignore
-    constructor(name: String): this(0, name, 0, 0, 0)
+    constructor(name: String): this(
+            id = 0,
+            name = name,
+            position = 0,
+            createAt = 0,
+            updateAt = 0
+    )
 
     fun save() = dao.save(this)
     fun delete() = dao.delete(this)
     fun moveTo(position: Int) = dao.moveTo(this, position)
     fun addSource(source: Source) = sourceDao.add(this, source)
     fun removeSource(source: Source) = sourceDao.remove(this, source)
-    fun sources() = Source.findByTimelineId(id)
-    fun sourceCount() = Source.countByTimelineId(id)
+    fun sources() = Source.findByTimeline(this)
+    fun sourceCount() = Source.countByTimeline(this)
 }
 
 @Entity(

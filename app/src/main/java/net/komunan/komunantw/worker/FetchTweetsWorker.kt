@@ -85,10 +85,10 @@ class FetchTweetsWorker(context: Context, params: WorkerParameters): Worker(cont
 
         transaction {
             if (fetchType == FetchType.MISSING && tweets.isEmpty()) {
-                Tweet.removeMissingMark(source.id, missTweetId)
+                Tweet.removeMissingMark(source, missTweetId)
             }
 
-            Tweet.save(tweets, source)
+            Tweet.save(source, tweets)
             User.save(users)
             source.updateFetchAt()
 
@@ -106,7 +106,7 @@ class FetchTweetsWorker(context: Context, params: WorkerParameters): Worker(cont
         if (tweet == null || tweet.id == target) {
             return
         }
-        Tweet.addMissingMark(source.id, tweet.id - 1)
+        Tweet.addMissingMark(source, tweet.id - 1)
     }
 
     private fun fetchTweets(): Pair<List<Tweet>, List<User>> {

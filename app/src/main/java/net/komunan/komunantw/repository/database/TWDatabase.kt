@@ -2,9 +2,10 @@ package net.komunan.komunantw.repository.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import net.komunan.komunantw.repository.dao.*
 import net.komunan.komunantw.repository.entity.*
-import kotlin.concurrent.thread
 
 @Database(
         entities = [
@@ -27,10 +28,10 @@ abstract class TWDatabase: RoomDatabase() {
             get() {
                 if (_instance == null) {
                     _instance = TWBaseDatabase.getInstance(TWDatabase::class.java)
-                    thread {
+                    GlobalScope.launch {
                         // 標準のAPIキーを登録
                         if (ConsumerKeySecret.count() == 0) {
-                            ConsumerKeySecret.default().save()
+                            ConsumerKeySecret.default()
                         }
                     }
                 }
