@@ -1,7 +1,7 @@
 package net.komunan.komunantw.repository.dao
 
-import android.arch.lifecycle.LiveData
-import android.arch.persistence.room.*
+import androidx.lifecycle.LiveData
+import androidx.room.*
 import com.github.ajalt.timberkt.d
 import net.komunan.komunantw.R
 import net.komunan.komunantw.string

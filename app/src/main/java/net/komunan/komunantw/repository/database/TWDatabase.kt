@@ -1,7 +1,7 @@
 package net.komunan.komunantw.repository.database
 
-import android.arch.persistence.room.Database
-import android.arch.persistence.room.RoomDatabase
+import androidx.room.Database
+import androidx.room.RoomDatabase
 import net.komunan.komunantw.repository.dao.*
 import net.komunan.komunantw.repository.entity.*
 import kotlin.concurrent.thread

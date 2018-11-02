@@ -12,11 +12,11 @@ buildProperties {
 }
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion 28
     defaultConfig {
         applicationId "net.komunan.komunan_tw"
         minSdkVersion 23
-        targetSdkVersion 27
+        targetSdkVersion 28
         versionCode 8
         versionName "0.6.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -35,17 +35,21 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 
     // Android Support Library
-    implementation "com.android.support:appcompat-v7:$asl_version"
-    implementation "com.android.support:support-annotations:$asl_version"
-    implementation "com.android.support:design:$asl_version"
+    implementation 'androidx.appcompat:appcompat:1.0.0'
+    implementation 'androidx.annotation:annotation:1.0.0'
+    implementation 'com.google.android.material:material:1.1.0-alpha01'
 
-    // AAC: Lifecycle + Room + Paging
-    implementation "android.arch.lifecycle:extensions:$lifecycle_version"
-    kapt "android.arch.lifecycle:compiler:$lifecycle_version"
-    implementation "android.arch.persistence.room:runtime:$room_version"
-    kapt "android.arch.persistence.room:compiler:$room_version"
-    implementation "android.arch.paging:runtime:$paging_version"
-    implementation "android.arch.work:work-runtime:$work_version"
+    // Android Architecture Components
+    def lifecycle_version = "2.0.0"
+    implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
+    kapt "androidx.lifecycle:lifecycle-compiler:$lifecycle_version"
+    def room_version = "2.1.0-alpha02"
+    implementation "androidx.room:room-runtime:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
+    def paging_version = "2.1.0-beta01"
+    implementation "androidx.paging:paging-runtime-ktx:$paging_version"
+    def work_version = "1.0.0-alpha10"
+    implementation "android.arch.work:work-runtime-ktx:$work_version"
 
     // Firebase
     implementation 'com.google.firebase:firebase-core:16.0.4'
@@ -63,9 +67,7 @@ dependencies {
     implementation 'com.github.ajalt:timberkt:1.5.1'
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'com.marcinmoskala.PreferenceHolder:preferenceholder:1.51'
-    implementation('com.mikepenz:materialdrawer:6.0.7@aar') {
-        transitive = true
-    }
+    implementation 'com.mikepenz:materialdrawer:6.1.1'
     implementation 'org.greenrobot:eventbus:3.1.1'
     implementation 'org.twitter4j:twitter4j-core:4.0.7'
 

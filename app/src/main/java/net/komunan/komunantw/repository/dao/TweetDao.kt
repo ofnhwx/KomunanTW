@@ -1,7 +1,10 @@
 package net.komunan.komunantw.repository.dao
 
-import android.arch.paging.DataSource
-import android.arch.persistence.room.*
+import androidx.paging.DataSource
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
 import net.komunan.komunantw.repository.entity.Tweet
 import net.komunan.komunantw.repository.entity.TweetDetail
 import net.komunan.komunantw.repository.entity.TweetSource

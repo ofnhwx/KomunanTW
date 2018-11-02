@@ -1,6 +1,6 @@
 package net.komunan.komunantw.repository.dao
 
-import android.arch.persistence.room.*
+import androidx.room.*
 import com.github.ajalt.timberkt.d
 import net.komunan.komunantw.repository.entity.Credential
 

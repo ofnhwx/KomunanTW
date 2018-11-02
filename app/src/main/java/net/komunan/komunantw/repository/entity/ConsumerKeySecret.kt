@@ -1,9 +1,6 @@
 package net.komunan.komunantw.repository.entity
 
-import android.arch.persistence.room.ColumnInfo
-import android.arch.persistence.room.Entity
-import android.arch.persistence.room.Ignore
-import android.arch.persistence.room.PrimaryKey
+import androidx.room.*
 import net.komunan.komunantw.BuildConfig
 import net.komunan.komunantw.R
 import net.komunan.komunantw.string

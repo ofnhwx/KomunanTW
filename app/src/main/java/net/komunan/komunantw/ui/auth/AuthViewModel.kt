@@ -1,10 +1,10 @@
 package net.komunan.komunantw.ui.auth
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.Transformations
 import android.content.Intent
 import android.net.Uri
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import com.github.ajalt.timberkt.w
 import net.komunan.komunantw.Preference
 import net.komunan.komunantw.combineLatest

@@ -1,12 +1,12 @@
 package net.komunan.komunantw.ui.auth
 
-import android.arch.lifecycle.ViewModelProviders
 import android.content.ComponentName
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.widget.Toast
+import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.activity_auth.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope

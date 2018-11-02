@@ -1,23 +1,24 @@
 package net.komunan.komunantw.ui.main.home.tab
 
-import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.simple_recycler_view.*
 import net.komunan.komunantw.R
 import net.komunan.komunantw.observeOnNotNull
 import net.komunan.komunantw.repository.entity.Timeline
+import net.komunan.komunantw.ui.common.TWBaseFragment
 
-class HomeTabFragment: Fragment() {
+class HomeTabFragment: TWBaseFragment() {
     companion object {
         private const val PARAMETER_COLUMN_ID = "HomeTabFragment.PARAMETER_COLUMN_ID"
 
         @JvmStatic
-        fun create(timeline: Timeline): Fragment {
+        fun create(timeline: Timeline): HomeTabFragment {
             return HomeTabFragment().apply {
                 arguments = Bundle().apply {
                     putLong(PARAMETER_COLUMN_ID, timeline.id)
@@ -35,7 +36,7 @@ class HomeTabFragment: Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        container.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+        container.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
         container.adapter = adapter
         viewModel.tweets.observeOnNotNull(this) { tweets ->
             adapter.submitList(tweets)

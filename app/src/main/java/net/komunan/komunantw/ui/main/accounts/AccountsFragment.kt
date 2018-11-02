@@ -1,15 +1,15 @@
 package net.komunan.komunantw.ui.main.accounts
 
-import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.view.*
+import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.simple_list_view.*
 import net.komunan.komunantw.R
 import net.komunan.komunantw.event.Transition
 import net.komunan.komunantw.observeOnNotNull
+import net.komunan.komunantw.ui.common.TWBaseFragment
 
-class AccountsFragment: Fragment() {
+class AccountsFragment: TWBaseFragment() {
     companion object {
         @JvmStatic
         fun create() = AccountsFragment()

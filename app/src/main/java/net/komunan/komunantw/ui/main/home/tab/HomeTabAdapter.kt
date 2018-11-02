@@ -1,12 +1,12 @@
 package net.komunan.komunantw.ui.main.home.tab
 
-import android.arch.paging.PagedListAdapter
 import android.net.Uri
-import android.support.v7.util.DiffUtil
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.paging.PagedListAdapter
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.item_tweet.view.*
 import kotlinx.coroutines.*
 import net.komunan.komunantw.R

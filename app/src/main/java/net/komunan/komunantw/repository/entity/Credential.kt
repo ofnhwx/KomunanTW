@@ -1,9 +1,6 @@
 package net.komunan.komunantw.repository.entity
 
-import android.arch.persistence.room.ColumnInfo
-import android.arch.persistence.room.Entity
-import android.arch.persistence.room.ForeignKey
-import android.arch.persistence.room.Ignore
+import androidx.room.*
 import net.komunan.komunantw.repository.database.TWDatabase
 import twitter4j.auth.AccessToken
 

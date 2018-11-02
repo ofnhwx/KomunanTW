@@ -1,7 +1,7 @@
 package net.komunan.komunantw.repository.entity
 
-import android.arch.paging.LivePagedListBuilder
-import android.arch.persistence.room.*
+import androidx.room.*
+import androidx.paging.LivePagedListBuilder
 import net.komunan.komunantw.toBoolean
 import net.komunan.komunantw.toInt
 import net.komunan.komunantw.repository.database.TWCacheDatabase

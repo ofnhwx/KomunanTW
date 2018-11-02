@@ -1,7 +1,7 @@
 package net.komunan.komunantw.repository.database
 
-import android.arch.persistence.room.Room
-import android.arch.persistence.room.RoomDatabase
+import androidx.room.Room
+import androidx.room.RoomDatabase
 import net.komunan.komunantw.Preference
 import net.komunan.komunantw.ReleaseApplication
 

@@ -1,9 +1,10 @@
 package net.komunan.komunantw
 
-import android.arch.lifecycle.LifecycleOwner
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MediatorLiveData
-import android.arch.lifecycle.Observer
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.Observer
+
 
 fun Int.string(): String = ReleaseApplication.context.getString(this)
 fun Int.string(arg: String): String = ReleaseApplication.context.getString(this, arg)

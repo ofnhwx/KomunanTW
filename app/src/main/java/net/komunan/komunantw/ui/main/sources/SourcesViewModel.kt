@@ -1,6 +1,6 @@
 package net.komunan.komunantw.ui.main.sources
 
-import android.arch.lifecycle.LiveData
+import androidx.lifecycle.LiveData
 import net.komunan.komunantw.repository.entity.Source
 import net.komunan.komunantw.ui.common.TWBaseViewModel
 

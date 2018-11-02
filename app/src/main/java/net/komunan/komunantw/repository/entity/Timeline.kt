@@ -1,6 +1,6 @@
 package net.komunan.komunantw.repository.entity
 
-import android.arch.persistence.room.*
+import androidx.room.*
 import net.komunan.komunantw.repository.database.TWDatabase
 
 @Entity(tableName = "timeline")

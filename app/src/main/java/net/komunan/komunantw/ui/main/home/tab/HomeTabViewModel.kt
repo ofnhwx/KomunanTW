@@ -1,7 +1,10 @@
 package net.komunan.komunantw.ui.main.home.tab
 
-import android.arch.lifecycle.*
-import android.arch.paging.PagedList
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Transformations
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.paging.PagedList
 import net.komunan.komunantw.repository.entity.Source
 import net.komunan.komunantw.repository.entity.Tweet
 import net.komunan.komunantw.repository.entity.TweetDetail

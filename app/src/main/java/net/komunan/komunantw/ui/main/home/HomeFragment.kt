@@ -1,16 +1,16 @@
 package net.komunan.komunantw.ui.main.home
 
-import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.simple_view_pager.*
 import net.komunan.komunantw.R
 import net.komunan.komunantw.observeOnNotNull
+import net.komunan.komunantw.ui.common.TWBaseFragment
 
-class HomeFragment: Fragment() {
+class HomeFragment: TWBaseFragment() {
     companion object {
         @JvmStatic
         fun create() = HomeFragment()
