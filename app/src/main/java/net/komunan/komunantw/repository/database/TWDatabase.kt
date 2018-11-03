@@ -20,11 +20,13 @@ import net.komunan.komunantw.repository.entity.*
         exportSchema = false
 )
 abstract class TWDatabase: RoomDatabase() {
+    @Suppress("ObjectPropertyName")
     companion object {
         private var _instance: TWDatabase? = null
 
         @JvmStatic
         val instance: TWDatabase
+            @Synchronized
             get() {
                 if (_instance == null) {
                     _instance = TWBaseDatabase.getInstance(TWDatabase::class.java)
