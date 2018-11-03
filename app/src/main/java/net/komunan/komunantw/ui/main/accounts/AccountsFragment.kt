@@ -3,7 +3,9 @@ package net.komunan.komunantw.ui.main.accounts
 import android.os.Bundle
 import android.view.*
 import androidx.lifecycle.ViewModelProviders
-import kotlinx.android.synthetic.main.simple_list_view.*
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import kotlinx.android.synthetic.main.simple_recycler_view.*
 import net.komunan.komunantw.R
 import net.komunan.komunantw.event.Transition
 import net.komunan.komunantw.observeOnNotNull
@@ -21,13 +23,14 @@ class AccountsFragment: TWBaseFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.simple_list_view, container, false)
+        return inflater.inflate(R.layout.simple_recycler_view, container, false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         val viewModel = ViewModelProviders.of(this).get(AccountsViewModel::class.java)
         viewModel.accounts.observeOnNotNull(this) { accounts ->
+            container.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
             container.adapter = AccountsAdapter(accounts)
         }
     }

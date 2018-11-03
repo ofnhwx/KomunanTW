@@ -20,4 +20,6 @@
     <string name="format_screen_name">@%s</string>
     <string name="format_search_label">検索: %s</string>
     <string name="format_timeline_srouce_count">%s個のソース</string>
+    <string name="format_twitter_permalink">&lt;a href=\"https://twitter.com/%s/status/%s\"&gt;%s&lt;/a&gt;</string>
+    <string name="format_via">via %s</string>
 </resources>

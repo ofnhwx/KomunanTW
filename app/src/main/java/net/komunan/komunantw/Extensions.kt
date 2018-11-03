@@ -7,7 +7,9 @@ import androidx.lifecycle.Observer
 
 
 fun Int.string(): String = ReleaseApplication.context.getString(this)
-fun Int.string(arg: String): String = ReleaseApplication.context.getString(this, arg)
+fun Int.string(arg: String?): String = ReleaseApplication.context.getString(this, arg)
+fun Int.string(arg1: String?, arg2: String?): String = ReleaseApplication.context.getString(this, arg1, arg2)
+fun Int.string(arg1: String?, arg2: String?, arg3: String?): String = ReleaseApplication.context.getString(this, arg1, arg2, arg3)
 fun Int.toBoolean(): Boolean = this != 0
 
 fun Boolean.toInt(): Int = if (this) 1 else 0

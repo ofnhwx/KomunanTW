@@ -18,6 +18,8 @@ data class Tweet(
         var userId: Long,
         @ColumnInfo(name = "text")
         var text: String,
+        @ColumnInfo(name = "via")
+        var via: String,
         @ColumnInfo(name = "timestamp")
         var timestamp: Long
 ) {
@@ -45,6 +47,7 @@ data class Tweet(
             id = status.id,
             userId = status.user.id,
             text = status.text,
+            via = status.source,
             timestamp = status.createdAt.time
     )
 }
@@ -69,15 +72,18 @@ data class TweetSource(
     )
 }
 
+@Suppress("PropertyName")
 class TweetDetail {
     @ColumnInfo(name = "id")
     var id: Long = 0
     @ColumnInfo(name = "user_id")
-    var userId: Long = 0
+    var userId: Long? = null
     @ColumnInfo(name = "text")
-    lateinit var text: String
+    var text: String? = null
     @ColumnInfo(name = "timestamp")
-    var timestamp: Long = 0
+    var timestamp: Long? = null
+    @ColumnInfo(name = "via")
+    var via: String? = null
     @ColumnInfo(name = "is_missing")
     var _isMissing: Int = 0
     @ColumnInfo(name = "source_ids")

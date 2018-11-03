@@ -2,6 +2,9 @@ package net.komunan.komunantw.ui.main.home.tab
 
 import android.annotation.SuppressLint
 import android.net.Uri
+import android.text.Html
+import android.text.Spanned
+import android.text.method.LinkMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -68,7 +71,7 @@ class HomeTabAdapter: PagedListAdapter<TweetDetail, HomeTabAdapter.TweetViewHold
                 return
             }
             GlobalScope.launch(Dispatchers.Main) {
-                val user = withContext(Dispatchers.Default) { User.find(tweet.userId) }
+                val user = withContext(Dispatchers.Default) { User.find(tweet.userId ?: 0) }
                 if (user == null) {
                     // TODO: 取得を試みてダメならダミー画像とかを設定
                 } else {
@@ -76,12 +79,29 @@ class HomeTabAdapter: PagedListAdapter<TweetDetail, HomeTabAdapter.TweetViewHold
                     itemView.tweet_user_name.text = user.name
                     itemView.tweet_user_screen_name.text = R.string.format_screen_name.string(user.screenName)
                 }
-                itemView.tweet_date_time.text = formatTime(tweet.timestamp)
                 itemView.tweet_text.text = tweet.text
+                itemView.tweet_date_time.run {
+                    text = makePermLink(formatTime(tweet.timestamp), user?.screenName, tweet.id)
+                    movementMethod = LinkMovementMethod.getInstance()
+                }
+                itemView.tweet_via.run {
+                    text = Html.fromHtml(R.string.format_via.string(tweet.via))
+                    movementMethod = LinkMovementMethod.getInstance()
+                }
             }
         }
 
-        private fun formatTime(timestamp: Long): String {
+        private fun makePermLink(text: String?, screenName: String?, tweetId: Long?): Spanned? {
+            if (text == null || screenName == null || tweetId == null) {
+                return null
+            }
+            return Html.fromHtml(R.string.format_twitter_permalink.string(screenName, tweetId.toString(), text))
+        }
+
+        private fun formatTime(timestamp: Long?): String? {
+            if (timestamp == null) {
+                return null
+            }
             calendar.timeZone = UTC
             calendar.timeInMillis = timestamp
             calendar.timeZone = TimeZone.getDefault()

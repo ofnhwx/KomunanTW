@@ -1,29 +1,39 @@
 package net.komunan.komunantw.ui.main.timelines
 
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.item_timeline.view.*
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import net.komunan.komunantw.R
 import net.komunan.komunantw.repository.entity.Timeline
 import net.komunan.komunantw.string
-import net.komunan.komunantw.ui.common.SimpleListAdapter
 
-class TimelinesAdapter(timelines: List<Timeline>): SimpleListAdapter<Timeline>(timelines) {
-    override fun newView(position: Int, parent: ViewGroup): View {
-        return inflater.inflate(R.layout.item_timeline, parent, false)
+class TimelinesAdapter(private val timelines: List<Timeline>): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        val inflater = LayoutInflater.from(parent.context)
+        return ViewHolder(inflater.inflate(R.layout.item_timeline, parent, false))
     }
 
-    override fun bindView(view: View, position: Int) {
-        GlobalScope.launch(Dispatchers.Main) {
-            val timeline = getItem(position)
-            val sourceCount = withContext(Dispatchers.Default) { timeline.sourceCount().toString() }
-            view.timeline_name.text = timeline.name
-            view.timeline_source_count.text = R.string.format_timeline_srouce_count.string(sourceCount)
+    override fun getItemCount(): Int {
+        return timelines.size
+    }
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        (holder as ViewHolder).bind(timelines[position])
+    }
+
+    private class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
+        fun bind(timeline: Timeline) {
+            GlobalScope.launch(Dispatchers.Main) {
+                val sourceCount = withContext(Dispatchers.Default) { timeline.sourceCount().toString() }
+                itemView.timeline_name.text = timeline.name
+                itemView.timeline_source_count.text = R.string.format_timeline_srouce_count.string(sourceCount)
+            }
         }
-    }
-
-    override fun getItemId(position: Int): Long {
-        return getItem(position).id
     }
 }
