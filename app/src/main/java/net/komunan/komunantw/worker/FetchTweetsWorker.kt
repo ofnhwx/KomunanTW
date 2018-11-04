@@ -1,10 +1,7 @@
 package net.komunan.komunantw.worker
 
 import android.content.Context
-import androidx.work.Data
-import androidx.work.OneTimeWorkRequest
-import androidx.work.Worker
-import androidx.work.WorkerParameters
+import androidx.work.*
 import com.github.ajalt.timberkt.d
 import com.github.ajalt.timberkt.w
 import net.komunan.komunantw.Preference
@@ -25,6 +22,7 @@ class FetchTweetsWorker(context: Context, params: WorkerParameters): Worker(cont
         @JvmStatic
         fun request(sourceId: Long, fetchType: FetchType = FetchType.NEW, isInteractive: Boolean = false, targetTweetId: Long = 0): OneTimeWorkRequest {
             return OneTimeWorkRequest.Builder(FetchTweetsWorker::class.java)
+                    .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())
                     .setInputData(Data.Builder().apply {
                         putLong(PARAMETER_SOURCE_ID, sourceId)
                         putString(PARAMETER_FETCH_TYPE, fetchType.toString())
