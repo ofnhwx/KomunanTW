@@ -8,10 +8,7 @@ import android.text.TextWatcher
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.activity_auth.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import net.komunan.komunantw.R
 import net.komunan.komunantw.ReleaseApplication
 import net.komunan.komunantw.observeOnNotNull
@@ -51,8 +48,8 @@ class AuthActivity: TWBaseActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
         open_browser.setOnClickListener {
-            GlobalScope.launch(Dispatchers.Main) {
-                withContext(Dispatchers.Default) { viewModel.startOAuth(ConsumerKeySecret.default()) }
+            GlobalScope.launch {
+                viewModel.startOAuth(this@AuthActivity, ConsumerKeySecret.default())
             }
         }
         authentication.setOnClickListener {

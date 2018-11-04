@@ -1,5 +1,6 @@
 package net.komunan.komunantw.ui.auth
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.lifecycle.LiveData
@@ -29,12 +30,12 @@ class AuthViewModel: TWBaseViewModel() {
         tokenValid.postValue(Preference.requestToken != null && Preference.consumerKeySecret != null)
     }
 
-    suspend fun startOAuth(consumerKeySecret: ConsumerKeySecret): Unit = process {
+    suspend fun startOAuth(context: Context, consumerKeySecret: ConsumerKeySecret): Unit = process {
         val requestToken = TwitterService.twitter(consumerKeySecret).oAuthRequestToken
         Preference.requestToken = requestToken
         Preference.consumerKeySecret = consumerKeySecret
         tokenValid.postValue(true)
-        application.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(requestToken.authorizationURL)))
+        context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(requestToken.authorizationURL)))
     }
 
     suspend fun finishOAuth(): Boolean = process {
