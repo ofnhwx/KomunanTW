@@ -17,8 +17,8 @@ android {
         applicationId "net.komunan.komunan_tw"
         minSdkVersion 23
         targetSdkVersion 28
-        versionCode 11
-        versionName "0.8.1"
+        versionCode 12
+        versionName "0.9.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         buildConfigField "String", "DEFAULT_CONSUMER_KEY", "\"" + buildProperties.secrets['consumer_key'].string + "\""
         buildConfigField "String", "DEFAULT_CONSUMER_SECRET", "\"" + buildProperties.secrets['consumer_secret'].string + "\""

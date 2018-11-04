@@ -3,11 +3,13 @@
     <!-- Misc -->
     <string name="account_list">アカウント一覧</string>
     <string name="add_account">アカウントを追加</string>
+    <string name="add_timeline">タイムラインを追加</string>
     <string name="authentication">認証</string>
     <string name="default_label">デフォルト</string>
     <string name="dummy">{{dummy}}</string>
     <string name="home">ホーム</string>
     <string name="mention">メンション</string>
+    <string name="new_timeline">新規タイムライン</string>
     <string name="open_browser">ブラウザを開く</string>
     <string name="pin">PIN</string>
     <string name="retweet">リツィート</string>
