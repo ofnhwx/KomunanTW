@@ -15,19 +15,19 @@ import net.komunan.komunantw.ui.common.TWBaseFragment
 
 class HomeTabFragment: TWBaseFragment() {
     companion object {
-        private const val PARAMETER_COLUMN_ID = "HomeTabFragment.PARAMETER_COLUMN_ID"
+        private const val PARAMETER_TIMELINE_ID = "HomeTabFragment.PARAMETER_TIMELINE_ID"
 
         @JvmStatic
         fun create(timeline: Timeline): HomeTabFragment {
             return HomeTabFragment().apply {
                 arguments = Bundle().apply {
-                    putLong(PARAMETER_COLUMN_ID, timeline.id)
+                    putLong(PARAMETER_TIMELINE_ID, timeline.id)
                 }
             }
         }
     }
 
-    private val viewModel: HomeTabViewModel by lazy { makeViewModel() }
+    private val viewModel: HomeTabViewModel by lazy { makeViewModel(arguments!!.getLong(PARAMETER_TIMELINE_ID)) }
     private val adapter = HomeTabAdapter()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -43,8 +43,7 @@ class HomeTabFragment: TWBaseFragment() {
         }
     }
 
-    private fun makeViewModel(): HomeTabViewModel {
-        val timelineId: Long = arguments!!.getLong(PARAMETER_COLUMN_ID)
+    private fun makeViewModel(timelineId: Long): HomeTabViewModel {
         val factory = HomeTabViewModel.Factory(timelineId)
         return ViewModelProviders.of(this, factory).get(HomeTabViewModel::class.java)
     }

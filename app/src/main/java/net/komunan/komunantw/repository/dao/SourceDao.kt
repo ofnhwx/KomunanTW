@@ -6,6 +6,7 @@ import com.github.ajalt.timberkt.d
 import net.komunan.komunantw.repository.database.transaction
 import net.komunan.komunantw.repository.entity.Account
 import net.komunan.komunantw.repository.entity.Source
+import net.komunan.komunantw.repository.entity.SourceForSelect
 import net.komunan.komunantw.repository.entity.Timeline
 import net.komunan.komunantw.service.TwitterService
 
@@ -14,6 +15,7 @@ import net.komunan.komunantw.service.TwitterService
 abstract class SourceDao {
     fun findAllAsync() = __findAllAsync()
     fun findByTimelineAsync(timeline: Timeline) = __findByTimelineIdAsync(timeline.id)
+    fun findForTimelineEditAsync(timeline: Timeline) = __findForTimelineEditAsync(timeline.id)
     fun find(id: Long) = __find(id)
     fun findEnabled() = __findEnabled()
     fun findByAccount(account: Account) = __findByAccountId(account.id)
@@ -31,6 +33,12 @@ abstract class SourceDao {
     protected abstract fun __findAllAsync(): LiveData<List<Source>>
     @Query("SELECT * FROM source WHERE id in (SELECT source_id FROM timeline_source WHERE timeline_id = :timelineId) ORDER BY id ASC")
     protected abstract fun __findByTimelineIdAsync(timelineId: Long): LiveData<List<Source>>
+    @Query("""SELECT s.*, ifnull(ts.timeline_id, 0) AS is_active
+FROM source AS s
+LEFT OUTER JOIN timeline_source AS ts ON ts.source_id = s.id AND ts.timeline_id = :timelineId
+LEFT OUTER JOIN account AS a ON s.account_id = a.id
+ORDER BY a.name ASC, s.`order` ASC, s.label ASC""")
+    protected abstract fun __findForTimelineEditAsync(timelineId: Long): LiveData<List<SourceForSelect>>
     @Query("SELECT * FROM source WHERE id = :id")
     protected abstract fun __find(id: Long): Source?
     @Query("SELECT * FROM source WHERE EXISTS (SELECT * FROM timeline_source WHERE source_id = source.id) ORDER BY id ASC")

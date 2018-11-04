@@ -22,6 +22,7 @@ import net.komunan.komunantw.ui.common.TWBaseActivity
 import net.komunan.komunantw.ui.main.accounts.AccountsFragment
 import net.komunan.komunantw.ui.main.home.HomeFragment
 import net.komunan.komunantw.ui.main.sources.SourcesFragment
+import net.komunan.komunantw.ui.main.timelines.TimelineEditFragment
 import net.komunan.komunantw.ui.main.timelines.TimelinesFragment
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -63,6 +64,7 @@ class MainActivity: TWBaseActivity() {
             Transition.Target.HOME -> setContent(HomeFragment.create())
             Transition.Target.ACCOUNTS -> setContent(AccountsFragment.create())
             Transition.Target.TIMELINES -> setContent(TimelinesFragment.create())
+            Transition.Target.TIMELINE_EDIT -> setContent(TimelineEditFragment.create(transition.id), true)
             Transition.Target.SOURCES -> setContent(SourcesFragment.create())
             // Auth
             Transition.Target.AUTH -> startActivity(AuthActivity.newIntent(false))
@@ -106,9 +108,10 @@ class MainActivity: TWBaseActivity() {
         ViewModelProviders.of(this).get(MainViewModel::class.java).startUpdate()
     }
 
-    private fun setContent(fragment: Fragment) {
+    private fun setContent(fragment: Fragment, child: Boolean = false) {
         supportFragmentManager.beginTransaction().apply {
             replace(container.id, fragment)
+            if (child) { addToBackStack(null) }
         }.commit()
     }
 }

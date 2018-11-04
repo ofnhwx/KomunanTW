@@ -10,6 +10,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.komunan.komunantw.R
+import net.komunan.komunantw.event.Transition
 import net.komunan.komunantw.repository.entity.Timeline
 import net.komunan.komunantw.string
 
@@ -33,6 +34,9 @@ class TimelinesAdapter(private val timelines: List<Timeline>): RecyclerView.Adap
                 val sourceCount = withContext(Dispatchers.Default) { timeline.sourceCount().toString() }
                 itemView.timeline_name.text = timeline.name
                 itemView.timeline_source_count.text = R.string.format_timeline_srouce_count.string(sourceCount)
+                itemView.setOnClickListener {
+                    Transition.execute(Transition.Target.TIMELINE_EDIT, timeline.id)
+                }
             }
         }
     }
