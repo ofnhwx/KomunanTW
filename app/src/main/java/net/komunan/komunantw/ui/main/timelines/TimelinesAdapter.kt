@@ -28,12 +28,16 @@ class TimelinesAdapter(private val timelines: List<Timeline>): RecyclerView.Adap
         (holder as ViewHolder).bind(timelines[position])
     }
 
+    override fun getItemId(position: Int): Long {
+        return timelines[position].id
+    }
+
     private class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         fun bind(timeline: Timeline) {
             GlobalScope.launch(Dispatchers.Main) {
                 val sourceCount = withContext(Dispatchers.Default) { timeline.sourceCount().toString() }
                 itemView.timeline_name.text = timeline.name
-                itemView.timeline_source_count.text = R.string.format_timeline_srouce_count.string(sourceCount)
+                itemView.timeline_source_count.text = R.string.format_timeline_source_count.string(sourceCount)
                 itemView.setOnClickListener {
                     Transition.execute(Transition.Target.TIMELINE_EDIT, timeline.id)
                 }

@@ -39,12 +39,12 @@ class AccountsFragment: TWBaseFragment() {
         if (menu == null) {
             return
         }
-        menu.add(0, R.string.add_account, 1, R.string.add_account)
+        menu.add(0, R.string.add, 1, R.string.add)
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         return when (item?.itemId) {
-            R.string.add_account -> {
+            R.string.add -> {
                 Transition.execute(Transition.Target.AUTH)
                 true
             }

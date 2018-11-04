@@ -3,6 +3,7 @@ package net.komunan.komunantw.ui.main.home
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
+import androidx.viewpager.widget.PagerAdapter
 import net.komunan.komunantw.repository.entity.Timeline
 import net.komunan.komunantw.ui.main.home.tab.HomeTabFragment
 
@@ -13,5 +14,17 @@ class HomeAdapter(fm: FragmentManager?, private val timelines: List<Timeline>): 
 
     override fun getItem(position: Int): Fragment {
         return HomeTabFragment.create(timelines[position])
+    }
+
+    override fun getItemId(position: Int): Long {
+        return timelines[position].id
+    }
+
+    override fun getItemPosition(`object`: Any): Int {
+        return PagerAdapter.POSITION_NONE
+    }
+
+    override fun getPageTitle(position: Int): CharSequence? {
+        return timelines[position].name
     }
 }

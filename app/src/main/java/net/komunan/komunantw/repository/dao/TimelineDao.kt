@@ -74,6 +74,7 @@ abstract class TimelineDao {
     private fun __moveTo__(timeline: Timeline, position: Int) {
         transaction {
             when {
+                position == timeline.position -> return@transaction
                 position > timeline.position -> __shiftLeft(timeline.position + 1, position)
                 position < timeline.position -> __shiftRight(position, timeline.position - 1)
             }

@@ -2,19 +2,20 @@ package net.komunan.komunantw.ui.main.timelines
 
 import android.graphics.Color
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.afollestad.materialdialogs.MaterialDialog
 import com.mikepenz.google_material_typeface_library.GoogleMaterial
 import com.mikepenz.iconics.IconicsDrawable
 import kotlinx.android.synthetic.main.edit_timeline.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import net.komunan.komunantw.R
+import net.komunan.komunantw.event.Transition
 import net.komunan.komunantw.observeOnNotNull
+import net.komunan.komunantw.repository.entity.Timeline
 import net.komunan.komunantw.ui.common.TWBaseFragment
 
 class TimelineEditFragment: TWBaseFragment() {
@@ -31,6 +32,11 @@ class TimelineEditFragment: TWBaseFragment() {
 
     private val timelineId by lazy { arguments!!.getLong(PARAMETER_TIMELINE_ID) }
     private val viewModel by lazy { makeViewModel(timelineId) }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.edit_timeline, container, false)
@@ -67,6 +73,33 @@ class TimelineEditFragment: TWBaseFragment() {
             setImageDrawable(IconicsDrawable(context).icon(GoogleMaterial.Icon.gmd_cancel).color(Color.RED))
             setOnClickListener {
                 viewModel.editMode.postValue(false)
+            }
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        if (menu == null) {
+            return
+        }
+        menu.add(0, R.string.delete, 1, R.string.delete)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        return when (item?.itemId) {
+            R.string.delete -> {
+                MaterialDialog(context!!)
+                        .message(R.string.confirm_delete_timeline)
+                        .positiveButton(R.string.do_delete) {
+                            GlobalScope.launch {
+                                Timeline.find(timelineId)?.delete()
+                            }
+                        }
+                        .negativeButton(R.string.do_not_delete)
+                        .show()
+                true
+            }
+            else -> {
+                super.onOptionsItemSelected(item)
             }
         }
     }

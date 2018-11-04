@@ -5,10 +5,12 @@ import com.marcinmoskala.kotlinpreferences.PreferenceHolder
 import net.komunan.komunantw.repository.entity.ConsumerKeySecret
 import twitter4j.auth.RequestToken
 
+@Suppress("ObjectPropertyName")
 object Preference: PreferenceHolder() {
     private val gson = Gson()
 
     var useInMemoryDatabase: Boolean by bindToPreferenceField(false)
+    var currentPage: Int by bindToPreferenceField(0)
     var fetchCount: Int by bindToPreferenceField(200)
     var fetchInterval: Long by bindToPreferenceField(120)
     var fetchIntervalThreshold: Float by bindToPreferenceField(0.8f)
