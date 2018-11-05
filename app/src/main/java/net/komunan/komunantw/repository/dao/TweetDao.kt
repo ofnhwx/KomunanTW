@@ -16,7 +16,16 @@ abstract class TweetDao {
 
     /* ==================== SQL Definitions. ==================== */
 
-    @Query("""SELECT ts.tweet_id AS id, t.user_id, t.text, t.via, t.timestamp, t.retweeted_by, t.retweeted_id, ts.is_missing, ts.source_ids
+    @Query("""SELECT
+    ts.tweet_id AS id,
+    ifnull(t.user_id, 0) AS user_id,
+    ifnull(t.text, '') AS text,
+    ifnull(t.via, '') AS via,
+    ifnull(t.timestamp, 0) AS timestamp,
+    ifnull(t.retweeted_by, 0) AS retweeted_by,
+    ifnull(t.retweeted_id, 0) AS retweeted_id,
+    ts.is_missing,
+    ts.source_ids
 FROM (SELECT tweet_id, sum(is_missing) AS is_missing, group_concat(source_id) AS source_ids FROM tweet_source WHERE source_id in (:sourceIds) GROUP BY tweet_id) AS ts
 LEFT OUTER JOIN tweet AS t ON t.id = ts.tweet_id
 ORDER BY t.id DESC""")
