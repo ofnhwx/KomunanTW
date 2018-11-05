@@ -10,29 +10,22 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.komunan.komunantw.R
+import net.komunan.komunantw.common.TWListAdapter
 import net.komunan.komunantw.event.Transition
 import net.komunan.komunantw.repository.entity.Timeline
 import net.komunan.komunantw.string
 
-class TimelinesAdapter(private val timelines: List<Timeline>): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+class TimelinesAdapter: TWListAdapter<Timeline, TimelinesAdapter.ViewHolder>() {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         return ViewHolder(inflater.inflate(R.layout.item_timeline, parent, false))
     }
 
-    override fun getItemCount(): Int {
-        return timelines.size
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        holder.bind(getItem(position))
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        (holder as ViewHolder).bind(timelines[position])
-    }
-
-    override fun getItemId(position: Int): Long {
-        return timelines[position].id
-    }
-
-    private class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
+    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(timeline: Timeline) {
             GlobalScope.launch(Dispatchers.Main) {
                 val sourceCount = withContext(Dispatchers.Default) { timeline.sourceCount().toString() }

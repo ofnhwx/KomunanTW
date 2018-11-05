@@ -18,7 +18,7 @@ import net.komunan.komunantw.ReleaseApplication
 import net.komunan.komunantw.event.Transition
 import net.komunan.komunantw.repository.entity.Account
 import net.komunan.komunantw.ui.auth.AuthActivity
-import net.komunan.komunantw.ui.common.TWBaseActivity
+import net.komunan.komunantw.common.TWBaseActivity
 import net.komunan.komunantw.ui.main.accounts.AccountsFragment
 import net.komunan.komunantw.ui.main.home.HomeFragment
 import net.komunan.komunantw.ui.main.sources.SourcesFragment

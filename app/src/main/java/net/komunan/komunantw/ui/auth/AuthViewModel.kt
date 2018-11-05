@@ -12,7 +12,7 @@ import net.komunan.komunantw.combineLatest
 import net.komunan.komunantw.repository.database.transaction
 import net.komunan.komunantw.repository.entity.*
 import net.komunan.komunantw.service.TwitterService
-import net.komunan.komunantw.ui.common.TWBaseViewModel
+import net.komunan.komunantw.common.TWBaseViewModel
 import twitter4j.TwitterException
 
 class AuthViewModel: TWBaseViewModel() {

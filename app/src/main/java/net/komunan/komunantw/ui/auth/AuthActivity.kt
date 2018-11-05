@@ -13,7 +13,7 @@ import net.komunan.komunantw.R
 import net.komunan.komunantw.ReleaseApplication
 import net.komunan.komunantw.observeOnNotNull
 import net.komunan.komunantw.repository.entity.ConsumerKeySecret
-import net.komunan.komunantw.ui.common.TWBaseActivity
+import net.komunan.komunantw.common.TWBaseActivity
 import net.komunan.komunantw.ui.main.MainActivity
 
 class AuthActivity: TWBaseActivity() {

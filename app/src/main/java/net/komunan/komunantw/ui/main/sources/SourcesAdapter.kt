@@ -11,24 +11,21 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.komunan.komunantw.R
+import net.komunan.komunantw.common.TWListAdapter
 import net.komunan.komunantw.repository.entity.Source
 import net.komunan.komunantw.string
 
-class SourcesAdapter(private val sources: List<Source>): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+class SourcesAdapter: TWListAdapter<Source, SourcesAdapter.ViewHolder>() {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         return ViewHolder(inflater.inflate(R.layout.item_source, parent, false))
     }
 
-    override fun getItemCount(): Int {
-        return sources.size
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        holder.bind(getItem(position))
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        (holder as ViewHolder).bind(sources[position])
-    }
-
-    private class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
+    class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         fun bind(source: Source) {
             GlobalScope.launch(Dispatchers.Main) {
                 val account = withContext(Dispatchers.Default) { source.account() }

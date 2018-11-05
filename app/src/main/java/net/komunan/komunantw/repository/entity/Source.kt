@@ -2,6 +2,7 @@ package net.komunan.komunantw.repository.entity
 
 import androidx.room.*
 import net.komunan.komunantw.Preference
+import net.komunan.komunantw.common.Diffable
 import net.komunan.komunantw.repository.database.TWDatabase
 import net.komunan.komunantw.toBoolean
 import net.komunan.komunantw.toInt
@@ -22,7 +23,7 @@ import net.komunan.komunantw.toInt
             Index("account_id")
         ]
 )
-open class Source() {
+open class Source(): Diffable {
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")         var id       : Long = 0
     @ColumnInfo(name = "account_id") var accountId: Long = 0
@@ -94,6 +95,23 @@ open class Source() {
                 "createAt=$createAt, " +
                 "updateAt=$updateAt }"
     }
+
+    override fun isTheSame(other: Diffable): Boolean {
+        return other is Source
+                && this.id == other.id
+    }
+
+    override fun isContentsTheSame(other: Diffable): Boolean {
+        return other is Source
+                && this.id == other.id
+                && this.accountId == other.accountId
+                && this.order == other.order
+                && this.type == other.type
+                && this.label == other.label
+                && this.query == other.query
+                && this.listId == other.listId
+                && this.listOwner == other.listOwner
+    }
 }
 
 @Suppress("PropertyName")
@@ -108,5 +126,11 @@ class SourceForSelect: Source() {
 
     override fun toString(): String {
         return "${SourceForSelect::class.simpleName}{ base=${super.toString()}, isActive=$isActive }"
+    }
+
+    override fun isContentsTheSame(other: Diffable): Boolean {
+        return super.isContentsTheSame(other)
+            && other is SourceForSelect
+            && this.isActive == other.isActive
     }
 }

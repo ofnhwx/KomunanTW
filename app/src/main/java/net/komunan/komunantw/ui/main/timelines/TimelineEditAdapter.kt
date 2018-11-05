@@ -5,6 +5,8 @@ import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.mikepenz.google_material_typeface_library.GoogleMaterial
 import com.mikepenz.iconics.IconicsDrawable
@@ -14,26 +16,35 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.komunan.komunantw.R
+import net.komunan.komunantw.common.TWListAdapter
 import net.komunan.komunantw.repository.entity.Source
 import net.komunan.komunantw.repository.entity.SourceForSelect
 import net.komunan.komunantw.repository.entity.Timeline
 import net.komunan.komunantw.string
 
-class TimelineEditAdapter(protected val timelineId: Long, private val sources: List<SourceForSelect>): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+class TimelineEditAdapter(private val timelineId: Long): TWListAdapter<SourceForSelect, TimelineEditAdapter.ViewHolder>() {
+    companion object {
+        val ITEM_CALLBACK = object: DiffUtil.ItemCallback<SourceForSelect>() {
+            override fun areItemsTheSame(oldItem: SourceForSelect, newItem: SourceForSelect): Boolean {
+                return oldItem.id == newItem.id
+            }
+
+            override fun areContentsTheSame(oldItem: SourceForSelect, newItem: SourceForSelect): Boolean {
+                return oldItem.isActive == newItem.isActive
+            }
+        }
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         return ViewHolder(timelineId, inflater.inflate(R.layout.item_source, parent, false))
     }
 
-    override fun getItemCount(): Int {
-        return sources.size
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        holder.bind(getItem(position))
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        (holder as ViewHolder).bind(sources[position])
-    }
-
-    private class ViewHolder(private val timelineId: Long, itemView: View): RecyclerView.ViewHolder(itemView) {
+    class ViewHolder(val timelineId: Long, itemView: View): RecyclerView.ViewHolder(itemView) {
         fun bind(source: SourceForSelect) {
             GlobalScope.launch(Dispatchers.Main) {
                 val account = withContext(Dispatchers.Default) { source.account() }

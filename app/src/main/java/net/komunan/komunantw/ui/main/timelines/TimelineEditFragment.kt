@@ -15,7 +15,7 @@ import net.komunan.komunantw.R
 import net.komunan.komunantw.event.Transition
 import net.komunan.komunantw.observeOnNotNull
 import net.komunan.komunantw.repository.entity.Timeline
-import net.komunan.komunantw.ui.common.TWBaseFragment
+import net.komunan.komunantw.common.TWBaseFragment
 
 class TimelineEditFragment: TWBaseFragment() {
     companion object {
@@ -31,6 +31,7 @@ class TimelineEditFragment: TWBaseFragment() {
 
     private val timelineId by lazy { arguments!!.getLong(PARAMETER_TIMELINE_ID) }
     private val viewModel by lazy { makeViewModel(timelineId) }
+    private val adapter by lazy { TimelineEditAdapter(timelineId) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,12 +44,13 @@ class TimelineEditFragment: TWBaseFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        sources_container.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+        sources_container.adapter = adapter
         viewModel.timeline.observeOnNotNull(this) {
             timeline_name_show.text = it?.name
         }
         viewModel.sources.observeOnNotNull(this) {
-            sources_container.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
-            sources_container.adapter = TimelineEditAdapter(timelineId, it)
+            adapter.submitList(it)
         }
         viewModel.editMode.observeOnNotNull(this) {
             timeline_name_show_container.visibility = if (it) View.GONE else View.VISIBLE

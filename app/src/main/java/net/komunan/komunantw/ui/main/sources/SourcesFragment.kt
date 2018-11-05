@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.simple_recycler_view.*
 import net.komunan.komunantw.R
 import net.komunan.komunantw.observeOnNotNull
-import net.komunan.komunantw.ui.common.TWBaseFragment
+import net.komunan.komunantw.common.TWBaseFragment
 
 class SourcesFragment: TWBaseFragment() {
     companion object {
@@ -18,17 +18,19 @@ class SourcesFragment: TWBaseFragment() {
         fun create() = SourcesFragment()
     }
 
+    private val viewModel by lazy { ViewModelProviders.of(this).get(SourcesViewModel::class.java) }
+    private val adapter = SourcesAdapter()
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.simple_recycler_view, container, false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        super.onActivityCreated(savedInstanceState)
-        val viewModel = ViewModelProviders.of(this).get(SourcesViewModel::class.java)
+        container.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+        container.adapter = adapter
         viewModel.sources.observeOnNotNull(this) { sources ->
-            container.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
-            container.adapter = SourcesAdapter(sources)
+            adapter.submitList(sources)
         }
     }
 }

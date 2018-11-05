@@ -9,13 +9,16 @@ import kotlinx.android.synthetic.main.simple_recycler_view.*
 import net.komunan.komunantw.R
 import net.komunan.komunantw.event.Transition
 import net.komunan.komunantw.observeOnNotNull
-import net.komunan.komunantw.ui.common.TWBaseFragment
+import net.komunan.komunantw.common.TWBaseFragment
 
 class AccountsFragment: TWBaseFragment() {
     companion object {
         @JvmStatic
         fun create() = AccountsFragment()
     }
+
+    private val viewModel by lazy { ViewModelProviders.of(this).get(AccountsViewModel::class.java) }
+    private val adapter = AccountsAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,10 +31,10 @@ class AccountsFragment: TWBaseFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        val viewModel = ViewModelProviders.of(this).get(AccountsViewModel::class.java)
+        container.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+        container.adapter = adapter
         viewModel.accounts.observeOnNotNull(this) { accounts ->
-            container.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
-            container.adapter = AccountsAdapter(accounts)
+            adapter.submitList(accounts)
         }
     }
 

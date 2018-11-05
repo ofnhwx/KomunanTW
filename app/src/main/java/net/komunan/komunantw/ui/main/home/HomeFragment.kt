@@ -10,7 +10,7 @@ import kotlinx.android.synthetic.main.simple_view_pager.*
 import net.komunan.komunantw.Preference
 import net.komunan.komunantw.R
 import net.komunan.komunantw.observeOnNotNull
-import net.komunan.komunantw.ui.common.TWBaseFragment
+import net.komunan.komunantw.common.TWBaseFragment
 
 class HomeFragment: TWBaseFragment() {
     companion object {

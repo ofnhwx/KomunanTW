@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 import net.komunan.komunantw.R
 import net.komunan.komunantw.observeOnNotNull
 import net.komunan.komunantw.repository.entity.Timeline
-import net.komunan.komunantw.ui.common.TWBaseFragment
+import net.komunan.komunantw.common.TWBaseFragment
 
 class TimelinesFragment: TWBaseFragment() {
     companion object {
@@ -22,6 +22,7 @@ class TimelinesFragment: TWBaseFragment() {
     }
 
     private val viewModel by lazy { ViewModelProviders.of(this).get(TimelinesViewModel::class.java) }
+    private val adapter = TimelinesAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,9 +35,10 @@ class TimelinesFragment: TWBaseFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        container.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+        container.adapter = adapter
         viewModel.timelines.observeOnNotNull(this) { timelines ->
-            container.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
-            container.adapter = TimelinesAdapter(timelines)
+            adapter.submitList(timelines)
         }
         ItemTouchHelper(object: ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0) {
             override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {

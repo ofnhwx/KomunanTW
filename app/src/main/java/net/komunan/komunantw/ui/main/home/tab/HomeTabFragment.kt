@@ -11,7 +11,7 @@ import kotlinx.android.synthetic.main.simple_recycler_view.*
 import net.komunan.komunantw.R
 import net.komunan.komunantw.observeOnNotNull
 import net.komunan.komunantw.repository.entity.Timeline
-import net.komunan.komunantw.ui.common.TWBaseFragment
+import net.komunan.komunantw.common.TWBaseFragment
 
 class HomeTabFragment: TWBaseFragment() {
     companion object {

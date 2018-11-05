@@ -1,6 +1,7 @@
 package net.komunan.komunantw.repository.entity
 
 import androidx.room.*
+import net.komunan.komunantw.common.Diffable
 import net.komunan.komunantw.repository.database.TWDatabase
 import twitter4j.User
 
@@ -19,7 +20,7 @@ class Account(
         var createAt: Long,
         @ColumnInfo(name = "update_at")
         var updateAt: Long
-) {
+): Diffable {
     companion object {
         private val dao = TWDatabase.instance.accountDao()
 
@@ -42,4 +43,17 @@ class Account(
     fun delete() = dao.delete(this)
     fun credential() = Credential.findByAccount(this).first()
     fun sources() = Source.findByAccount(this)
+
+    override fun isTheSame(other: Diffable): Boolean {
+        return other is Account
+                && this.id == other.id
+    }
+
+    override fun isContentsTheSame(other: Diffable): Boolean {
+        return other is Account
+                && this.id == other.id
+                && this.imageUrl == other.imageUrl
+                && this.name == other.name
+                && this.screenName == other.screenName
+    }
 }

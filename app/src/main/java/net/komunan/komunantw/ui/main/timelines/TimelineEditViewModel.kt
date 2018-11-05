@@ -4,7 +4,7 @@ import androidx.lifecycle.*
 import net.komunan.komunantw.repository.entity.Source
 import net.komunan.komunantw.repository.entity.SourceForSelect
 import net.komunan.komunantw.repository.entity.Timeline
-import net.komunan.komunantw.ui.common.TWBaseViewModel
+import net.komunan.komunantw.common.TWBaseViewModel
 
 class TimelineEditViewModel(private val timelineId: Long): TWBaseViewModel() {
     val timeline = Timeline.findAsync(timelineId)

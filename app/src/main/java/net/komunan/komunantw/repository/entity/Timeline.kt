@@ -1,6 +1,7 @@
 package net.komunan.komunantw.repository.entity
 
 import androidx.room.*
+import net.komunan.komunantw.common.Diffable
 import net.komunan.komunantw.repository.database.TWDatabase
 
 @Entity(tableName = "timeline")
@@ -16,7 +17,7 @@ data class Timeline(
         var createAt: Long,
         @ColumnInfo(name = "update_at")
         var updateAt: Long
-) {
+): Diffable {
     companion object {
         private val dao = TWDatabase.instance.timelineDao()
         private val sourceDao = TWDatabase.instance.timelineSourceDao()
@@ -44,6 +45,18 @@ data class Timeline(
     fun removeSource(source: Source) = sourceDao.remove(this, source)
     fun sources() = Source.findByTimeline(this)
     fun sourceCount() = Source.countByTimeline(this)
+
+    override fun isTheSame(other: Diffable): Boolean {
+        return other is Timeline
+                && this.id == other.id
+    }
+
+    override fun isContentsTheSame(other: Diffable): Boolean {
+        return other is Timeline
+                && this.id == other.id
+                && this.name == other.name
+                && this.position == other.position
+    }
 }
 
 @Entity(

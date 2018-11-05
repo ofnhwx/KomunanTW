@@ -6,7 +6,7 @@ import net.komunan.komunantw.repository.entity.Source
 import net.komunan.komunantw.repository.entity.Timeline
 import net.komunan.komunantw.repository.entity.Tweet
 import net.komunan.komunantw.repository.entity.TweetDetail
-import net.komunan.komunantw.ui.common.TWBaseViewModel
+import net.komunan.komunantw.common.TWBaseViewModel
 
 class HomeTabViewModel(private val timelineId: Long): TWBaseViewModel() {
     private val timeline: LiveData<Timeline?>
