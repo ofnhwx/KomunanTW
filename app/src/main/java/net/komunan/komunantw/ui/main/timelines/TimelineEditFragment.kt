@@ -10,8 +10,7 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.mikepenz.google_material_typeface_library.GoogleMaterial
 import com.mikepenz.iconics.IconicsDrawable
 import kotlinx.android.synthetic.main.edit_timeline.*
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import net.komunan.komunantw.R
 import net.komunan.komunantw.event.Transition
 import net.komunan.komunantw.observeOnNotNull
@@ -45,7 +44,7 @@ class TimelineEditFragment: TWBaseFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel.timeline.observeOnNotNull(this) {
-            timeline_name_show.text = it.name
+            timeline_name_show.text = it?.name
         }
         viewModel.sources.observeOnNotNull(this) {
             sources_container.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
@@ -65,7 +64,9 @@ class TimelineEditFragment: TWBaseFragment() {
         timeline_name_edit_save.run {
             setImageDrawable(IconicsDrawable(context).icon(GoogleMaterial.Icon.gmd_check).color(Color.GREEN))
             setOnClickListener {
-                GlobalScope.launch {  viewModel.updateName(timeline_name_edit.text.toString()) }
+                GlobalScope.launch {
+                    Timeline.find(timelineId)?.apply { name = timeline_name_edit.text.toString() }?.save()
+                }
                 viewModel.editMode.postValue(false)
             }
         }
@@ -90,8 +91,9 @@ class TimelineEditFragment: TWBaseFragment() {
                 MaterialDialog(context!!)
                         .message(R.string.confirm_delete_timeline)
                         .positiveButton(R.string.do_delete) {
-                            GlobalScope.launch {
-                                Timeline.find(timelineId)?.delete()
+                            GlobalScope.launch(Dispatchers.Main) {
+                                withContext(Dispatchers.Default) { Timeline.find(timelineId)?.delete() }
+                                Transition.execute(Transition.Target.BACK)
                             }
                         }
                         .negativeButton(R.string.do_not_delete)

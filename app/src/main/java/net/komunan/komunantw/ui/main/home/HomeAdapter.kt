@@ -25,6 +25,10 @@ class HomeAdapter(fm: FragmentManager?, private val timelines: List<Timeline>): 
     }
 
     override fun getPageTitle(position: Int): CharSequence? {
-        return timelines[position].name
+        return if (position >= 0 && position < timelines.size) {
+            timelines[position].name
+        } else {
+            null
+        }
     }
 }

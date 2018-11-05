@@ -29,7 +29,7 @@ abstract class TimelineDao {
     @Query("SELECT * FROM timeline ORDER BY position ASC")
     abstract fun __findAllAsync(): LiveData<List<Timeline>>
     @Query("SELECT * FROM timeline WHERE id = :id")
-    abstract fun __findAsync(id: Long): LiveData<Timeline>
+    abstract fun __findAsync(id: Long): LiveData<Timeline?>
     @Query("SELECT * FROM timeline WHERE id = :id")
     abstract fun __find(id: Long): Timeline?
     @Query("SELECT COUNT(*) FROM Timeline")

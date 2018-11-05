@@ -68,6 +68,8 @@ class MainActivity: TWBaseActivity() {
             Transition.Target.SOURCES -> setContent(SourcesFragment.create())
             // Auth
             Transition.Target.AUTH -> startActivity(AuthActivity.newIntent(false))
+            // Back
+            Transition.Target.BACK -> onBackPressed()
         }
     }
 
