@@ -10,19 +10,16 @@ import net.komunan.komunantw.repository.database.transaction
 import twitter4j.Status
 
 @Entity(tableName = "tweet")
-data class Tweet(
-        @PrimaryKey
-        @ColumnInfo(name = "id")
-        var id: Long,
-        @ColumnInfo(name = "user_id")
-        var userId: Long,
-        @ColumnInfo(name = "text")
-        var text: String,
-        @ColumnInfo(name = "via")
-        var via: String,
-        @ColumnInfo(name = "timestamp")
-        var timestamp: Long
-) {
+open class Tweet() {
+    @PrimaryKey
+    @ColumnInfo(name = "id")           var id         : Long = 0
+    @ColumnInfo(name = "user_id")      var userId     : Long = 0
+    @ColumnInfo(name = "text")         var text       : String = ""
+    @ColumnInfo(name = "via")          var via        : String = ""
+    @ColumnInfo(name = "timestamp")    var timestamp  : Long = 0
+    @ColumnInfo(name = "retweeted_by") var retweetedBy: Long = 0
+    @ColumnInfo(name = "retweeted_id") var retweetedId: Long = 0
+
     companion object {
         private val dao = TWCacheDatabase.instance.tweetDao()
         private val sourceDao = TWCacheDatabase.instance.tweetSourceDao()
@@ -43,13 +40,30 @@ data class Tweet(
     }
 
     @Ignore
-    constructor(status: Status): this(
-            id = status.id,
-            userId = status.user.id,
-            text = status.text,
-            via = status.source,
-            timestamp = status.createdAt.time
-    )
+    constructor(status: Status): this() {
+        this.id = status.id
+        if (status.isRetweet) {
+            val retweeted = status.retweetedStatus
+            this.userId = retweeted.user.id
+            this.text = retweeted.text
+            this.via = retweeted.source
+            this.timestamp = retweeted.createdAt.time
+            this.retweetedBy = status.user.id
+            this.retweetedId = retweeted.id
+        } else {
+            this.userId = status.user.id
+            this.text = status.text
+            this.via = status.source
+            this.timestamp = status.createdAt.time
+        }
+    }
+
+    val isRetweet: Boolean
+        get() = retweetedBy != 0L
+
+    override fun toString(): String {
+        return "${Tweet::class.simpleName}{ id=$id, userId=$userId, text=$text, via=$via, timestamp=$timestamp }"
+    }
 }
 
 @Entity(
@@ -73,25 +87,17 @@ data class TweetSource(
 }
 
 @Suppress("PropertyName")
-class TweetDetail {
-    @ColumnInfo(name = "id")
-    var id: Long = 0
-    @ColumnInfo(name = "user_id")
-    var userId: Long? = null
-    @ColumnInfo(name = "text")
-    var text: String? = null
-    @ColumnInfo(name = "timestamp")
-    var timestamp: Long? = null
-    @ColumnInfo(name = "via")
-    var via: String? = null
-    @ColumnInfo(name = "is_missing")
-    var _isMissing: Int = 0
-    @ColumnInfo(name = "source_ids")
-    lateinit var sourceIds: String
+class TweetDetail: Tweet() {
+    @ColumnInfo(name = "is_missing") var _isMissing: Int = 0
+    @ColumnInfo(name = "source_ids") var sourceIds : String = ""
 
     var isMissing: Boolean
         get() = _isMissing.toBoolean()
         set(value) {
             _isMissing = value.toInt()
         }
+
+    override fun toString(): String {
+        return "${TweetDetail::class.simpleName}{ base=${super.toString()}, isMissing=$isMissing, sourceIds=[$sourceIds] }"
+    }
 }

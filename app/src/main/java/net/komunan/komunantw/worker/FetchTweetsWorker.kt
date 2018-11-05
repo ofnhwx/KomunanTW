@@ -129,8 +129,11 @@ class FetchTweetsWorker(context: Context, params: WorkerParameters): Worker(cont
                 checkResult(twitter.search(makeQuery()))
             }
         }
+
         val tweets = result.map { Tweet(it) }
-        val users = result.map { User(it.user) }.distinctBy { it.id }
+        val users = mutableListOf<User>()
+        users.addAll(result.map { User(it.user) }.distinctBy { it.id })
+        users.addAll(result.mapNotNull { it.retweetedStatus }.map { User(it.user) }.distinctBy { it.id })
         return Pair(tweets, users)
     }
 

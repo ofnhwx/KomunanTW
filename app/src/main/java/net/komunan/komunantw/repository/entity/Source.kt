@@ -97,7 +97,7 @@ open class Source() {
 }
 
 @Suppress("PropertyName")
-class SourceForSelect(): Source() {
+class SourceForSelect: Source() {
     @ColumnInfo(name = "is_active") var _isActive: Int = 0
 
     var isActive: Boolean
