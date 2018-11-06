@@ -55,6 +55,10 @@ class HomeFragment: TWBaseFragment() {
         }
     }
 
+    override fun fragmentName(): String? {
+        return null
+    }
+
     private fun updateTitle(page: Int) {
         activity?.title = pager.adapter?.getPageTitle(page)
     }

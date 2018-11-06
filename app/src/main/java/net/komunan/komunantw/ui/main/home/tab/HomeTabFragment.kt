@@ -47,4 +47,8 @@ class HomeTabFragment: TWBaseFragment() {
         val factory = HomeTabViewModel.Factory(timelineId)
         return ViewModelProviders.of(this, factory).get(HomeTabViewModel::class.java)
     }
+
+    override fun fragmentName(): String? {
+        return null
+    }
 }

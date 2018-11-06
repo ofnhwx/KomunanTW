@@ -11,6 +11,7 @@ import kotlinx.android.synthetic.main.simple_recycler_view.*
 import net.komunan.komunantw.R
 import net.komunan.komunantw.observeOnNotNull
 import net.komunan.komunantw.common.TWBaseFragment
+import net.komunan.komunantw.string
 
 class SourcesFragment: TWBaseFragment() {
     companion object {
@@ -32,5 +33,9 @@ class SourcesFragment: TWBaseFragment() {
         viewModel.sources.observeOnNotNull(this) { sources ->
             adapter.submitList(sources)
         }
+    }
+
+    override fun fragmentName(): String? {
+        return R.string.source_list.string()
     }
 }

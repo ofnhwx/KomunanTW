@@ -16,6 +16,7 @@ import net.komunan.komunantw.event.Transition
 import net.komunan.komunantw.observeOnNotNull
 import net.komunan.komunantw.repository.entity.Timeline
 import net.komunan.komunantw.common.TWBaseFragment
+import net.komunan.komunantw.string
 
 class TimelineEditFragment: TWBaseFragment() {
     companion object {
@@ -106,6 +107,10 @@ class TimelineEditFragment: TWBaseFragment() {
                 super.onOptionsItemSelected(item)
             }
         }
+    }
+
+    override fun fragmentName(): String? {
+        return R.string.timeline_edit.string()
     }
 
     private fun makeViewModel(timelineId: Long): TimelineEditViewModel {

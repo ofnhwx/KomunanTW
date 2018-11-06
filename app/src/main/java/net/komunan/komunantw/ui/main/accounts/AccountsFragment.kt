@@ -10,6 +10,7 @@ import net.komunan.komunantw.R
 import net.komunan.komunantw.event.Transition
 import net.komunan.komunantw.observeOnNotNull
 import net.komunan.komunantw.common.TWBaseFragment
+import net.komunan.komunantw.string
 
 class AccountsFragment: TWBaseFragment() {
     companion object {
@@ -55,5 +56,9 @@ class AccountsFragment: TWBaseFragment() {
                 super.onOptionsItemSelected(item)
             }
         }
+    }
+
+    override fun fragmentName(): String? {
+        return R.string.account_list.string()
     }
 }

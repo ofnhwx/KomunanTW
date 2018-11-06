@@ -4,6 +4,7 @@ import android.content.ComponentName
 import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProviders
 import com.github.ajalt.timberkt.d
 import com.mikepenz.materialdrawer.DrawerBuilder
@@ -111,9 +112,14 @@ class MainActivity: TWBaseActivity() {
     }
 
     private fun setContent(fragment: Fragment, child: Boolean = false) {
-        supportFragmentManager.beginTransaction().apply {
-            replace(container.id, fragment)
-            if (child) { addToBackStack(null) }
-        }.commit()
+        supportFragmentManager.run {
+            if (!child && backStackEntryCount > 0) {
+                popBackStack(getBackStackEntryAt(0).id, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+            }
+            beginTransaction().apply {
+                replace(container.id, fragment)
+                if (child) { addToBackStack(null) }
+            }.commit()
+        }
     }
 }

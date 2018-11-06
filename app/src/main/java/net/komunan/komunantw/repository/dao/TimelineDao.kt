@@ -73,6 +73,7 @@ abstract class TimelineDao {
 
     private fun __moveTo__(timeline: Timeline, position: Int) {
         transaction {
+            d { "move: $timeline to position=$position" }
             when {
                 position == timeline.position -> return@transaction
                 position > timeline.position -> __shiftLeft(timeline.position + 1, position)

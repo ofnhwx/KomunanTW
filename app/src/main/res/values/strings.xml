@@ -13,6 +13,7 @@
     <string name="pin">PIN</string>
     <string name="retweet">リツイート</string>
     <string name="source_list">ソース一覧</string>
+    <string name="timeline_edit">タイムライン編集</string>
     <string name="timeline_list">タイムライン一覧</string>
     <string name="user">ユーザ</string>
     <!-- Action -->

@@ -8,12 +8,15 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.ajalt.timberkt.d
 import kotlinx.android.synthetic.main.simple_recycler_view.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import net.komunan.komunantw.R
+import net.komunan.komunantw.common.TWBaseFragment
 import net.komunan.komunantw.observeOnNotNull
 import net.komunan.komunantw.repository.entity.Timeline
-import net.komunan.komunantw.common.TWBaseFragment
+import net.komunan.komunantw.string
 
 class TimelinesFragment: TWBaseFragment() {
     companion object {
@@ -38,16 +41,37 @@ class TimelinesFragment: TWBaseFragment() {
         container.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
         container.adapter = adapter
         viewModel.timelines.observeOnNotNull(this) { timelines ->
-            adapter.submitList(timelines)
+            adapter.submitList(timelines.toMutableList())
         }
         ItemTouchHelper(object: ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0) {
+            var dragFrom: Int = -1
+            var dragTo: Int = -1
+            var timelineId: Long = 0
+
             override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
-                val from = viewHolder.adapterPosition
-                val to = target.adapterPosition
-                val timelineId = container.adapter!!.getItemId(from)
-                d { "Timeline moved. id=$id position={ from=${from + 1}, to=${to + 1} }" }
-                GlobalScope.launch { Timeline.find(timelineId)?.run { moveTo(to + 1) } }
+                val fromPosition = viewHolder.adapterPosition
+                val toPosition = target.adapterPosition
+                if (dragFrom == -1) {
+                    dragFrom = fromPosition
+                    timelineId = container.adapter!!.getItemId(dragFrom)
+                }
+                dragTo = toPosition
+                d { "Timeline moving. id=$timelineId position={ from=${dragFrom + 1}, to=${toPosition + 1} }" }
+                adapter.onItemMoved(fromPosition, toPosition)
                 return true
+            }
+
+            override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
+                super.clearView(recyclerView, viewHolder)
+                if (dragFrom != -1 && dragTo != -1 && dragFrom != dragTo) {
+                    GlobalScope.launch(Dispatchers.Main) {
+                        withContext(Dispatchers.Default) {
+                            Timeline.find(timelineId)?.run { moveTo(dragTo + 1) }
+                        }
+                        dragFrom = -1
+                        dragTo = -1
+                    }
+                }
             }
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {}
@@ -72,5 +96,9 @@ class TimelinesFragment: TWBaseFragment() {
                 super.onOptionsItemSelected(item)
             }
         }
+    }
+
+    override fun fragmentName(): String? {
+        return R.string.timeline_list.string()
     }
 }

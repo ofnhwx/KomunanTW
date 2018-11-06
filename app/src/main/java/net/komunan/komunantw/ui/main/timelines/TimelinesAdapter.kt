@@ -16,6 +16,8 @@ import net.komunan.komunantw.repository.entity.Timeline
 import net.komunan.komunantw.string
 
 class TimelinesAdapter: TWListAdapter<Timeline, TimelinesAdapter.ViewHolder>() {
+    private lateinit var refList: MutableList<Timeline>
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         return ViewHolder(inflater.inflate(R.layout.item_timeline, parent, false))
@@ -23,6 +25,20 @@ class TimelinesAdapter: TWListAdapter<Timeline, TimelinesAdapter.ViewHolder>() {
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(getItem(position))
+    }
+
+    override fun getItemId(position: Int): Long {
+        return getItem(position).id
+    }
+
+    override fun submitList(list: MutableList<Timeline>?) {
+        super.submitList(list)
+        refList = list!!
+    }
+
+    fun onItemMoved(from: Int, to: Int) {
+        refList.add(to, refList.removeAt(from))
+        notifyItemMoved(from, to)
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
