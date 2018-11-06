@@ -6,7 +6,7 @@ import net.komunan.komunantw.repository.entity.SourceForSelect
 import net.komunan.komunantw.repository.entity.Timeline
 import net.komunan.komunantw.common.TWBaseViewModel
 
-class TimelineEditViewModel(private val timelineId: Long): TWBaseViewModel() {
+class TimelineEditViewModel(timelineId: Long): TWBaseViewModel() {
     val timeline = Timeline.findAsync(timelineId)
     val sources: LiveData<List<SourceForSelect>> = Transformations.switchMap(timeline) {
         if (it == null) {

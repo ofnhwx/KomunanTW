@@ -6,11 +6,12 @@
     <string name="default_label">デフォルト</string>
     <string name="delete">削除</string>
     <string name="dummy">{{dummy}}</string>
+    <string name="favorite">お気に入り</string>
     <string name="home">ホーム</string>
     <string name="mention">メンション</string>
     <string name="new_timeline">新規タイムライン</string>
     <string name="pin">PIN</string>
-    <string name="retweet">リツィート</string>
+    <string name="retweet">リツイート</string>
     <string name="source_list">ソース一覧</string>
     <string name="timeline_list">タイムライン一覧</string>
     <string name="user">ユーザ</string>
@@ -22,12 +23,11 @@
     <string name="do_delete">削除する</string>
     <string name="do_not_delete">削除しない</string>
     <!-- Format -->
-    <!--suppress AndroidDomInspection -->
     <string name="format_list_label">リスト: %s</string>
     <string name="format_retweeted_by">Retweeted by %s</string>
+    <!--suppress AndroidDomInspection -->
     <string name="format_screen_name">@%s</string>
     <string name="format_search_label">検索: %s</string>
     <string name="format_timeline_source_count">%s個のソース</string>
-    <string name="format_twitter_permalink">&lt;a href=\"https://twitter.com/%s/status/%s\"&gt;%s&lt;/a&gt;</string>
     <string name="format_via">via %s</string>
 </resources>

@@ -1,4 +1,4 @@
-package net.komunan.komunantw.repository.dao;
+package net.komunan.komunantw.repository.dao
 
 import androidx.room.*
 import net.komunan.komunantw.repository.entity.User

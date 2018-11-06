@@ -1,6 +1,11 @@
 package net.komunan.komunantw.service
 
+import android.content.Intent
+import android.net.Uri
+import android.text.Html
+import android.text.Spanned
 import androidx.work.WorkManager
+import net.komunan.komunantw.ReleaseApplication
 import net.komunan.komunantw.repository.entity.ConsumerKeySecret
 import net.komunan.komunantw.repository.entity.Credential
 import net.komunan.komunantw.repository.entity.Source
@@ -29,4 +34,40 @@ object TwitterService {
         }
     }
 
+    fun doOfficialTweet(tweetId: Long? = null) {
+        if (tweetId == null) {
+            doOfficialAction(buildTwitterUri { it.path("intent/tweet") })
+        } else {
+            doOfficialAction(buildTwitterUri { it.path("intent/tweet").appendQueryParameter("tweet_id", tweetId.toString()) })
+        }
+    }
+
+    fun doOfficialRetweet(tweetId: Long) {
+        doOfficialAction(buildTwitterUri { it.path("intent/retweet").appendQueryParameter("tweet_id", tweetId.toString()) })
+    }
+
+    fun doOfficialLike(tweetId: Long) {
+        doOfficialAction(buildTwitterUri { it.path("intent/like").appendQueryParameter("tweet_id", tweetId.toString()) })
+    }
+
+    fun doOfficialProfile(userId: Long) {
+        doOfficialAction(buildTwitterUri { it.path("intent/user").appendQueryParameter("user_id", userId.toString()) })
+    }
+
+    fun buildTwitterUri(body: (Uri.Builder) -> Uri.Builder): Uri {
+        val builder = Uri.Builder().scheme("https").authority("twitter.com")
+        return body.invoke(builder).build()
+    }
+
+    private fun doOfficialAction(uri: Uri) {
+        ReleaseApplication.context.startActivity(Intent(Intent.ACTION_VIEW, uri))
+    }
+
+    @Suppress("DEPRECATION")
+    fun makeStatusPermalink(text: String?, screenName: String?, tweetId: Long?): Spanned? {
+        if (text == null || screenName == null || tweetId == null) {
+            return null
+        }
+        return Html.fromHtml("""<a href="https://twitter.com/%s/status/%s">%s</a>""".format(screenName, tweetId, text))
+    }
 }

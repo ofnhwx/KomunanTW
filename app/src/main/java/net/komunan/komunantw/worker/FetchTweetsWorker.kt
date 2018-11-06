@@ -116,11 +116,11 @@ class FetchTweetsWorker(context: Context, params: WorkerParameters): Worker(cont
             Source.SourceType.MENTION -> {
                 checkResult(twitter.getMentionsTimeline(makePaging()))
             }
-            Source.SourceType.RETWEET -> {
-                checkResult(twitter.getRetweetsOfMe(makePaging()))
-            }
             Source.SourceType.USER -> {
                 checkResult(twitter.getUserTimeline(makePaging()))
+            }
+            Source.SourceType.LIKE -> {
+                checkResult(twitter.getFavorites(makePaging()))
             }
             Source.SourceType.LIST -> {
                 checkResult(twitter.getUserListStatuses(source.listId, makePaging()))

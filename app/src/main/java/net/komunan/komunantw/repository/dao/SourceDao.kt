@@ -100,7 +100,7 @@ ORDER BY a.name ASC, s.`order` ASC, s.label ASC""")
 
         // 標準
         fun processDefaultSources() {
-            listOf(Source.SourceType.HOME, Source.SourceType.MENTION, Source.SourceType.RETWEET, Source.SourceType.USER).forEach { sourceType ->
+            Source.SourceType.values().filter { it.standard }.forEach { sourceType ->
                 val current = currentSources.firstOrNull { Source.SourceType.valueOf(it.type) == sourceType }
                 if (current == null) {
                     sources.add(Source(account, sourceType))

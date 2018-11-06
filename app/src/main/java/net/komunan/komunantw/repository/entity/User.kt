@@ -5,18 +5,14 @@ import net.komunan.komunantw.repository.database.TWCacheDatabase
 import twitter4j.User as TwitterUser
 
 @Entity(tableName = "user")
-data class User(
-        @PrimaryKey
-        var id: Long,
-        @ColumnInfo(name = "image_url")
-        var imageUrl: String,
-        @ColumnInfo(name = "name")
-        var name: String,
-        @ColumnInfo(name = "screen_name")
-        var screenName: String,
-        @ColumnInfo(name = "cache_at")
-        var cacheAt: Long
-) {
+class User() {
+    @PrimaryKey
+    @ColumnInfo(name = "id")          var id        : Long = 0L
+    @ColumnInfo(name = "image_url")   var imageUrl  : String = ""
+    @ColumnInfo(name = "name")        var name      : String = ""
+    @ColumnInfo(name = "screen_name") var screenName: String = ""
+    @ColumnInfo(name = "cache_at")    var cacheAt   : Long = 0L
+
     companion object {
         private val dao = TWCacheDatabase.instance.userDao()
 
@@ -25,11 +21,20 @@ data class User(
     }
 
     @Ignore
-    constructor(user: TwitterUser): this(
-            id = user.id,
-            imageUrl = user.profileImageURLHttps,
-            name = user.name,
-            screenName = user.screenName,
-            cacheAt = System.currentTimeMillis()
-    )
+    constructor(user: TwitterUser): this() {
+        this.id = user.id
+        this.imageUrl = user.profileImageURLHttps
+        this.name = user.name
+        this.screenName = user.screenName
+        this.cacheAt = System.currentTimeMillis()
+    }
+
+    override fun toString(): String {
+        return "${User::class.simpleName}{ " +
+                "id=$id, " +
+                "imageUrl=$imageUrl, " +
+                "name=$name, " +
+                "screenName=$screenName," +
+                "cacheAt=$cacheAt }"
+    }
 }

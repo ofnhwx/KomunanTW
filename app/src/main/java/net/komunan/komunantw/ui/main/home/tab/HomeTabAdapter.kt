@@ -1,10 +1,10 @@
 package net.komunan.komunantw.ui.main.home.tab
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.graphics.Color
 import android.net.Uri
 import android.text.Html
-import android.text.Spanned
 import android.text.method.LinkMovementMethod
 import android.view.LayoutInflater
 import android.view.View
@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.mikepenz.google_material_typeface_library.GoogleMaterial
 import com.mikepenz.iconics.IconicsDrawable
+import com.mikepenz.iconics.typeface.IIcon
 import kotlinx.android.synthetic.main.item_tweet.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -23,6 +24,7 @@ import kotlinx.coroutines.withContext
 import net.komunan.komunantw.R
 import net.komunan.komunantw.repository.entity.TweetDetail
 import net.komunan.komunantw.repository.entity.User
+import net.komunan.komunantw.service.TwitterService
 import net.komunan.komunantw.string
 import java.text.SimpleDateFormat
 import java.util.*
@@ -30,13 +32,8 @@ import java.util.*
 class HomeTabAdapter: PagedListAdapter<TweetDetail, HomeTabAdapter.TweetViewHolder>(DIFF_CALLBACK) {
     companion object {
         val DIFF_CALLBACK: DiffUtil.ItemCallback<TweetDetail> = object: DiffUtil.ItemCallback<TweetDetail>() {
-            override fun areItemsTheSame(oldItem: TweetDetail, newItem: TweetDetail): Boolean {
-                return oldItem.id == newItem.id
-            }
-
-            override fun areContentsTheSame(oldItem: TweetDetail, newItem: TweetDetail): Boolean {
-                return oldItem.id == newItem.id
-            }
+            override fun areItemsTheSame(oldItem: TweetDetail, newItem: TweetDetail): Boolean = oldItem.isTheSame(newItem)
+            override fun areContentsTheSame(oldItem: TweetDetail, newItem: TweetDetail): Boolean = oldItem.isContentsTheSame(newItem)
         }
 
         var current: Calendar = Calendar.getInstance(Locale.getDefault())
@@ -74,6 +71,7 @@ class HomeTabAdapter: PagedListAdapter<TweetDetail, HomeTabAdapter.TweetViewHold
                 return
             }
             GlobalScope.launch(Dispatchers.Main) {
+                // ユーザ情報
                 val user = withContext(Dispatchers.Default) { User.find(tweet.userId) }
                 if (user == null) {
                     // TODO: 取得を試みてダメならダミー画像とかを設定
@@ -81,19 +79,44 @@ class HomeTabAdapter: PagedListAdapter<TweetDetail, HomeTabAdapter.TweetViewHold
                     itemView.tweet_user_name.text = R.string.dummy.string()
                     itemView.tweet_user_screen_name.text = R.string.dummy.string()
                 } else {
-                    itemView.tweet_user_icon.setImageURI(Uri.parse(user.imageUrl))
+                    itemView.tweet_user_icon.run {
+                        setImageURI(Uri.parse(user.imageUrl))
+                        setOnClickListener { TwitterService.doOfficialProfile(user.id) }
+                    }
                     itemView.tweet_user_name.text = user.name
                     itemView.tweet_user_screen_name.text = R.string.format_screen_name.string(user.screenName)
                 }
+
+                // テキストおよび日時, クライント
                 itemView.tweet_text.text = tweet.text
                 itemView.tweet_date_time.run {
-                    text = makePermLink(formatTime(tweet.timestamp), user?.screenName, tweet.id)
+                    text = TwitterService.makeStatusPermalink(formatTime(tweet.timestamp), user?.screenName, tweet.id)
                     movementMethod = LinkMovementMethod.getInstance()
                 }
                 itemView.tweet_via.run {
                     text = Html.fromHtml(R.string.format_via.string(tweet.via))
                     movementMethod = LinkMovementMethod.getInstance()
                 }
+
+                // ボタン
+                itemView.tweet_action_reply.run {
+                    setImageDrawable(makeIcon(itemView.context, GoogleMaterial.Icon.gmd_chat_bubble_outline).color(Color.GRAY).sizeDp(24))
+                    setOnClickListener { TwitterService.doOfficialTweet(tweet.id) }
+                }
+                itemView.tweet_action_retweet.run {
+                    val color = if (tweet.retweeted) Color.GREEN else Color.GRAY
+                    setCompoundDrawables(makeIcon(itemView.context, GoogleMaterial.Icon.gmd_repeat).color(color).sizeDp(24), null, null, null)
+                    text = tweet.retweetCount.toString()
+                    setOnClickListener { TwitterService.doOfficialRetweet(tweet.id) }
+                }
+                itemView.tweet_action_like.run {
+                    val color = if (tweet.liked) Color.RED else Color.GRAY
+                    setCompoundDrawables(makeIcon(itemView.context, GoogleMaterial.Icon.gmd_favorite_border).color(color).sizeDp(24), null, null, null)
+                    text = tweet.likeCount.toString()
+                    setOnClickListener { TwitterService.doOfficialLike(tweet.id) }
+                }
+
+                // リツイート
                 if (tweet.isRetweet) {
                     val retweetedBy = withContext(Dispatchers.Default) { User.find(tweet.retweetedBy) }
                     if (retweetedBy == null) {
@@ -103,18 +126,15 @@ class HomeTabAdapter: PagedListAdapter<TweetDetail, HomeTabAdapter.TweetViewHold
                         itemView.retweet_by.text = R.string.format_retweeted_by.string(retweetedBy.name)
                     }
                     itemView.retweet_by.visibility = View.VISIBLE
-                    itemView.retweet_by.setCompoundDrawables(IconicsDrawable(itemView.context).icon(GoogleMaterial.Icon.gmd_repeat).color(Color.GREEN).sizeDp(12), null, null, null)
+                    itemView.retweet_by.setCompoundDrawables(makeIcon(itemView.context, GoogleMaterial.Icon.gmd_repeat).color(Color.GREEN).sizeDp(12), null, null, null)
                 } else {
                     itemView.retweet_by.visibility = View.GONE
                 }
             }
         }
 
-        private fun makePermLink(text: String?, screenName: String?, tweetId: Long?): Spanned? {
-            if (text == null || screenName == null || tweetId == null) {
-                return null
-            }
-            return Html.fromHtml(R.string.format_twitter_permalink.string(screenName, tweetId.toString(), text))
+        private fun makeIcon(context: Context, icon: IIcon): IconicsDrawable {
+            return IconicsDrawable(context).icon(icon)
         }
 
         private fun formatTime(timestamp: Long?): String? {

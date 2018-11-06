@@ -20,9 +20,6 @@ open class TWBaseViewModel: ViewModel() {
     val context: Context
         get() = ReleaseApplication.context
 
-    val application: ReleaseApplication
-        get() = ReleaseApplication.instance
-
     protected suspend fun <R> process(body: suspend () -> R): R {
         try {
             _isProcessing.postValue(true)

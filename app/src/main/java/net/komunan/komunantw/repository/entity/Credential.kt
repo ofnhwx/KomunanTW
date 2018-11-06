@@ -18,22 +18,15 @@ import twitter4j.auth.AccessToken
             )
         ]
 )
-data class Credential(
-        @ColumnInfo(name = "account_id")
-        var accountId: Long,
-        @ColumnInfo(name = "consumer_key")
-        var consumerKey: String,
-        @ColumnInfo(name = "consumer_secret")
-        var consumerSecret: String,
-        @ColumnInfo(name = "token")
-        var token: String,
-        @ColumnInfo(name = "token_secret")
-        var tokenSecret: String,
-        @ColumnInfo(name = "create_at")
-        var createAt: Long,
-        @ColumnInfo(name = "update_at")
-        var updateAt: Long
-) {
+class Credential() {
+    @ColumnInfo(name = "account_id")      var accountId     : Long = 0L
+    @ColumnInfo(name = "consumer_key")    var consumerKey   : String = ""
+    @ColumnInfo(name = "consumer_secret") var consumerSecret: String = ""
+    @ColumnInfo(name = "token")           var token         : String = ""
+    @ColumnInfo(name = "token_secret")    var tokenSecret   : String = ""
+    @ColumnInfo(name = "create_at")       var createAt      : Long = 0L
+    @ColumnInfo(name = "update_at")       var updateAt      : Long = 0L
+
     companion object {
         private val dao = TWDatabase.instance.credentialDao()
 
@@ -41,16 +34,25 @@ data class Credential(
     }
 
     @Ignore
-    constructor(account: Account, consumerKeySecret: ConsumerKeySecret, accessToken: AccessToken): this(
-            accountId = account.id,
-            consumerKey = consumerKeySecret.consumerKey,
-            consumerSecret = consumerKeySecret.consumerSecret,
-            token = accessToken.token,
-            tokenSecret = accessToken.tokenSecret,
-            createAt = 0,
-            updateAt = 0
-    )
+    constructor(account: Account, consumerKeySecret: ConsumerKeySecret, accessToken: AccessToken): this() {
+        this.accountId = account.id
+        this.consumerKey = consumerKeySecret.consumerKey
+        this.consumerSecret = consumerKeySecret.consumerSecret
+        this.token = accessToken.token
+        this.tokenSecret = accessToken.tokenSecret
+    }
 
     fun save(): Credential = dao.save(this)
     fun delete() = dao.delete(this)
+
+    override fun toString(): String {
+        return "${Credential::class.simpleName}{ " +
+                "accountId=$accountId, " +
+                "consumerKey=$consumerKey, " +
+                "consumerSecret=$consumerSecret, " +
+                "token=$token, " +
+                "tokenSecret=$tokenSecret, " +
+                "createAt=$createAt, " +
+                "updateAt=$updateAt }"
+    }
 }

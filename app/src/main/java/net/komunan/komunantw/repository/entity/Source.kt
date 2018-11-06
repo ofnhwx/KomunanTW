@@ -37,13 +37,13 @@ open class Source(): Diffable {
     @ColumnInfo(name = "create_at")  var createAt : Long = 0
     @ColumnInfo(name = "update_at")  var updateAt : Long = 0
 
-    enum class SourceType {
-        HOME(),
-        MENTION(),
-        RETWEET(),
-        USER(),
-        LIST(),
-        SEARCH(),
+    enum class SourceType(val standard: Boolean, val customize: Boolean) {
+        HOME(true, false),
+        MENTION(true, false),
+        USER(true, false),
+        LIKE(true, false),
+        LIST(false, false),
+        SEARCH(false, true),
     }
 
     companion object {
@@ -125,7 +125,9 @@ class SourceForSelect: Source() {
         }
 
     override fun toString(): String {
-        return "${SourceForSelect::class.simpleName}{ base=${super.toString()}, isActive=$isActive }"
+        return "${SourceForSelect::class.simpleName}{ " +
+                "base=${super.toString()}," +
+                " isActive=$isActive }"
     }
 
     override fun isContentsTheSame(other: Diffable): Boolean {

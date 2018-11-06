@@ -6,21 +6,15 @@ import net.komunan.komunantw.repository.database.TWDatabase
 import twitter4j.User
 
 @Entity(tableName = "account")
-class Account(
-        @PrimaryKey()
-        @ColumnInfo(name = "id")
-        var id: Long,
-        @ColumnInfo(name = "image_url")
-        var imageUrl: String,
-        @ColumnInfo(name = "name")
-        var name: String,
-        @ColumnInfo(name = "screen_name")
-        var screenName: String,
-        @ColumnInfo(name = "create_at")
-        var createAt: Long,
-        @ColumnInfo(name = "update_at")
-        var updateAt: Long
-): Diffable {
+class Account(): Diffable {
+    @PrimaryKey
+    @ColumnInfo(name = "id")          var id        : Long = 0L
+    @ColumnInfo(name = "image_url")   var imageUrl  : String = ""
+    @ColumnInfo(name = "name")        var name      : String = ""
+    @ColumnInfo(name = "screen_name") var screenName: String = ""
+    @ColumnInfo(name = "create_at")   var createAt  : Long = 0L
+    @ColumnInfo(name = "update_at")   var updateAt  : Long = 0L
+
     companion object {
         private val dao = TWDatabase.instance.accountDao()
 
@@ -30,19 +24,27 @@ class Account(
     }
 
     @Ignore
-    constructor(user: User): this(
-            id = user.id,
-            imageUrl = user.profileImageURLHttps,
-            name = user.name,
-            screenName = user.screenName,
-            createAt = 0,
-            updateAt = 0
-    )
+    constructor(user: User): this() {
+        this.id = user.id
+        this.imageUrl = user.profileImageURLHttps
+        this.name = user.name
+        this.screenName = user.screenName
+    }
 
     fun save() = dao.save(this)
     fun delete() = dao.delete(this)
     fun credential() = Credential.findByAccount(this).first()
     fun sources() = Source.findByAccount(this)
+
+    override fun toString(): String {
+        return "${Account::class.simpleName}{ " +
+                "id=$id, " +
+                "imageUrl=$imageUrl, " +
+                "name=$name, " +
+                "screenName=$screenName, " +
+                "createAt=$createAt, " +
+                "updateAt=$updateAt }"
+    }
 
     override fun isTheSame(other: Diffable): Boolean {
         return other is Account

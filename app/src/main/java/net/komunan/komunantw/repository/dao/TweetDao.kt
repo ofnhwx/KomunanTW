@@ -21,6 +21,10 @@ abstract class TweetDao {
     ifnull(t.user_id, 0) AS user_id,
     ifnull(t.text, '') AS text,
     ifnull(t.via, '') AS via,
+    ifnull(t.retweeted, 0) AS retweeted,
+    ifnull(t.retweet_count, 0) AS retweet_count,
+    ifnull(t.liked, 0) AS liked,
+    ifnull(t.like_count, 0) AS like_count,
     ifnull(t.timestamp, 0) AS timestamp,
     ifnull(t.retweeted_by, 0) AS retweeted_by,
     ifnull(t.retweeted_id, 0) AS retweeted_id,
@@ -42,7 +46,7 @@ abstract class TweetSourceDao {
     fun prevIdBySource(source: Source, tweetId: Long) = __prevIdBySourceId(source.id, tweetId)
     fun save(tweetSource: TweetSource) = __save(tweetSource)
     fun save(tweetSources: List<TweetSource>) = __save(tweetSources)
-    fun addMissingMark(source: Source, missTweetId: Long) = __save(TweetSource(source.id, missTweetId, _isMissing = 1))
+    fun addMissingMark(source: Source, missTweetId: Long) = __save(TweetSource(source, missTweetId, true))
     fun removeMissingMark(source: Source, missTweetId: Long) = __removeMissingMark(source.id, missTweetId)
 
     /* ==================== SQL Definitions. ==================== */

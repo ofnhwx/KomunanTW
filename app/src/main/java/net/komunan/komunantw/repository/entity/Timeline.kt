@@ -5,19 +5,14 @@ import net.komunan.komunantw.common.Diffable
 import net.komunan.komunantw.repository.database.TWDatabase
 
 @Entity(tableName = "timeline")
-data class Timeline(
-        @PrimaryKey(autoGenerate = true)
-        @ColumnInfo(name = "id")
-        var id: Long,
-        @ColumnInfo(name = "name")
-        var name: String,
-        @ColumnInfo(name = "position")
-        var position: Int,
-        @ColumnInfo(name = "create_at")
-        var createAt: Long,
-        @ColumnInfo(name = "update_at")
-        var updateAt: Long
-): Diffable {
+class Timeline(): Diffable {
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "id")        var id      : Long = 0L
+    @ColumnInfo(name = "name")      var name    : String = ""
+    @ColumnInfo(name = "position")  var position: Int = 0
+    @ColumnInfo(name = "create_at") var createAt: Long = 0L
+    @ColumnInfo(name = "update_at") var updateAt: Long = 0L
+
     companion object {
         private val dao = TWDatabase.instance.timelineDao()
         private val sourceDao = TWDatabase.instance.timelineSourceDao()
@@ -30,13 +25,9 @@ data class Timeline(
     }
 
     @Ignore
-    constructor(name: String): this(
-            id = 0,
-            name = name,
-            position = 0,
-            createAt = 0,
-            updateAt = 0
-    )
+    constructor(name: String): this() {
+        this.name = name
+    }
 
     fun save() = dao.save(this)
     fun delete() = dao.delete(this)
@@ -45,6 +36,15 @@ data class Timeline(
     fun removeSource(source: Source) = sourceDao.remove(this, source)
     fun sources() = Source.findByTimeline(this)
     fun sourceCount() = Source.countByTimeline(this)
+
+    override fun toString(): String {
+        return "${Timeline::class.simpleName}{ " +
+                "id=$id," +
+                "name=$name, " +
+                "position=$position, " +
+                "createAt=$createAt, " +
+                "updateAt=$updateAt }"
+    }
 
     override fun isTheSame(other: Diffable): Boolean {
         return other is Timeline
@@ -79,11 +79,16 @@ data class Timeline(
                     onUpdate = ForeignKey.CASCADE,
                     deferred = true
             )
-        ]
+        ],
+        indices = [ Index("source_id") ]
 )
-data class TimelineSource(
-        @ColumnInfo(name = "timeline_id")
-        var timelineId: Long,
-        @ColumnInfo(name = "source_id", index = true)
-        var sourceId: Long
-)
+class TimelineSource() {
+    @ColumnInfo(name = "timeline_id") var timelineId: Long = 0L
+    @ColumnInfo(name = "source_id")   var sourceId  : Long = 0L
+
+    @Ignore
+    constructor(timeline: Timeline, source: Source): this() {
+        this.timelineId = timeline.id
+        this.sourceId = source.id
+    }
+}

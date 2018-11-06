@@ -9,7 +9,6 @@ import net.komunan.komunantw.repository.entity.ConsumerKeySecret
 @Dao
 abstract class ConsumerKeySecretDao {
     fun findAllAsync() = __findAllAsync()
-    fun findAll() = __findAll()
     fun findDefault() = __findDefault()
     fun count() = __count()
     fun save(consumerKeySecret: ConsumerKeySecret) = __save__(consumerKeySecret)

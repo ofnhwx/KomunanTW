@@ -38,8 +38,8 @@ class SourcesAdapter: TWListAdapter<Source, SourcesAdapter.ViewHolder>() {
                 itemView.source_name.text = when (Source.SourceType.valueOf(source.type)) {
                     Source.SourceType.HOME -> R.string.home.string()
                     Source.SourceType.MENTION -> R.string.mention.string()
-                    Source.SourceType.RETWEET -> R.string.retweet.string()
                     Source.SourceType.USER -> R.string.user.string()
+                    Source.SourceType.LIKE -> R.string.favorite.string()
                     Source.SourceType.LIST -> R.string.format_list_label.string(source.label)
                     Source.SourceType.SEARCH -> R.string.format_search_label.string(source.label)
                 }

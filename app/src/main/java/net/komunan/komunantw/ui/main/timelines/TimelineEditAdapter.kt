@@ -5,8 +5,6 @@ import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.mikepenz.google_material_typeface_library.GoogleMaterial
 import com.mikepenz.iconics.IconicsDrawable
@@ -23,18 +21,6 @@ import net.komunan.komunantw.repository.entity.Timeline
 import net.komunan.komunantw.string
 
 class TimelineEditAdapter(private val timelineId: Long): TWListAdapter<SourceForSelect, TimelineEditAdapter.ViewHolder>() {
-    companion object {
-        val ITEM_CALLBACK = object: DiffUtil.ItemCallback<SourceForSelect>() {
-            override fun areItemsTheSame(oldItem: SourceForSelect, newItem: SourceForSelect): Boolean {
-                return oldItem.id == newItem.id
-            }
-
-            override fun areContentsTheSame(oldItem: SourceForSelect, newItem: SourceForSelect): Boolean {
-                return oldItem.isActive == newItem.isActive
-            }
-        }
-    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         return ViewHolder(timelineId, inflater.inflate(R.layout.item_source, parent, false))
@@ -57,8 +43,8 @@ class TimelineEditAdapter(private val timelineId: Long): TWListAdapter<SourceFor
                 itemView.source_name.text = when (Source.SourceType.valueOf(source.type)) {
                     Source.SourceType.HOME -> R.string.home.string()
                     Source.SourceType.MENTION -> R.string.mention.string()
-                    Source.SourceType.RETWEET -> R.string.retweet.string()
                     Source.SourceType.USER -> R.string.user.string()
+                    Source.SourceType.LIKE -> R.string.favorite.string()
                     Source.SourceType.LIST -> R.string.format_list_label.string(source.label)
                     Source.SourceType.SEARCH -> R.string.format_search_label.string(source.label)
                 }

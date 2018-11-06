@@ -98,8 +98,8 @@ abstract class TimelineDao {
 @Dao
 abstract class TimelineSourceDao {
     fun count() = __count()
-    fun add(timeline: Timeline, source: Source) = __save(TimelineSource(timeline.id, source.id))
-    fun remove(timeline: Timeline, source: Source) = __delete(TimelineSource(timeline.id, source.id))
+    fun add(timeline: Timeline, source: Source) = __save(TimelineSource(timeline, source))
+    fun remove(timeline: Timeline, source: Source) = __delete(TimelineSource(timeline, source))
 
     /* ==================== SQL Definitions. ==================== */
 
