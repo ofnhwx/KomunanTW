@@ -6,6 +6,8 @@ import android.content.Context
 import com.facebook.drawee.backends.pipeline.Fresco
 import com.github.ajalt.timberkt.Timber
 import com.marcinmoskala.kotlinpreferences.PreferenceHolder
+import com.mikepenz.google_material_typeface_library.GoogleMaterial
+import com.mikepenz.iconics.Iconics
 
 @SuppressLint("Registered")
 open class ReleaseApplication: Application() {
@@ -22,6 +24,7 @@ open class ReleaseApplication: Application() {
     override fun onCreate() {
         super.onCreate()
         instance = this
+        Iconics.registerFont(GoogleMaterial())
         Fresco.initialize(context)
         PreferenceHolder.setContext(context)
         Timber.plant(timberTree())

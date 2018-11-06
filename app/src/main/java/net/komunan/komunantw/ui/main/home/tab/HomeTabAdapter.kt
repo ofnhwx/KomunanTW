@@ -86,6 +86,7 @@ class HomeTabAdapter: PagedListAdapter<TweetDetail, HomeTabAdapter.TweetViewHold
                     itemView.tweet_user_name.text = user.name
                     itemView.tweet_user_screen_name.text = R.string.format_screen_name.string(user.screenName)
                 }
+                itemView.tweet_user_screen_name.setTextColor(Color.GRAY)
 
                 // テキストおよび日時, クライント
                 itemView.tweet_text.text = tweet.text
@@ -100,19 +101,18 @@ class HomeTabAdapter: PagedListAdapter<TweetDetail, HomeTabAdapter.TweetViewHold
 
                 // ボタン
                 itemView.tweet_action_reply.run {
-                    setImageDrawable(makeIcon(itemView.context, GoogleMaterial.Icon.gmd_chat_bubble_outline).color(Color.GRAY).sizeDp(24))
+                    text = R.string.gmd_chat_bubble_outline.string()
+                    setTextColor(Color.GRAY)
                     setOnClickListener { TwitterService.doOfficialTweet(tweet.id) }
                 }
                 itemView.tweet_action_retweet.run {
-                    val color = if (tweet.retweeted) Color.GREEN else Color.GRAY
-                    setCompoundDrawables(makeIcon(itemView.context, GoogleMaterial.Icon.gmd_repeat).color(color).sizeDp(24), null, null, null)
-                    text = tweet.retweetCount.toString()
+                    text = R.string.format_gmd_repeat.string(tweet.retweetCount.toString())
+                    setTextColor(if (tweet.retweeted) Color.GREEN else Color.GRAY)
                     setOnClickListener { TwitterService.doOfficialRetweet(tweet.id) }
                 }
                 itemView.tweet_action_like.run {
-                    val color = if (tweet.liked) Color.RED else Color.GRAY
-                    setCompoundDrawables(makeIcon(itemView.context, GoogleMaterial.Icon.gmd_favorite_border).color(color).sizeDp(24), null, null, null)
-                    text = tweet.likeCount.toString()
+                    text = R.string.format_gmd_favorite_border.string(tweet.likeCount.toString())
+                    setTextColor(if (tweet.liked) Color.RED else Color.GRAY)
                     setOnClickListener { TwitterService.doOfficialLike(tweet.id) }
                 }
 

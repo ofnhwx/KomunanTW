@@ -105,23 +105,34 @@
                 app:layout_constraintStart_toEndOf="@id/tweet_user_icon"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:orientation="horizontal"
-                android:layout_marginTop="4dp"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:layout_marginTop="8dp"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content">
-            <ImageButton
+                android:layout_height="24dp">
+            <com.mikepenz.iconics.view.IconicsButton
                     android:id="@+id/tweet_action_reply"
+                    android:text="@string/dummy"
+                    android:gravity="center"
+                    android:background="@drawable/tw_action_button"
                     android:layout_weight="1"
                     android:layout_width="0dp"
                     android:layout_height="match_parent" />
-            <Button
+            <com.mikepenz.iconics.view.IconicsButton
+                    style="@style/Widget.AppCompat.Button.Borderless"
                     android:id="@+id/tweet_action_retweet"
                     android:text="@string/dummy"
+                    android:gravity="center"
+                    android:background="@drawable/tw_action_button"
                     android:layout_weight="1"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"/>
-            <Button
+            <com.mikepenz.iconics.view.IconicsButton
+                    style="@style/Widget.AppCompat.Button.Borderless"
                     android:id="@+id/tweet_action_like"
                     android:text="@string/dummy"
+                    android:gravity="center"
+                    android:background="@drawable/tw_action_button"
                     android:layout_weight="1"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"/>
