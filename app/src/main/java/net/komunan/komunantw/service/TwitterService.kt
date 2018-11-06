@@ -38,7 +38,7 @@ object TwitterService {
         if (tweetId == null) {
             doOfficialAction(buildTwitterUri { it.path("intent/tweet") })
         } else {
-            doOfficialAction(buildTwitterUri { it.path("intent/tweet").appendQueryParameter("tweet_id", tweetId.toString()) })
+            doOfficialAction(buildTwitterUri { it.path("intent/tweet").appendQueryParameter("in_reply_to", tweetId.toString()) })
         }
     }
 
