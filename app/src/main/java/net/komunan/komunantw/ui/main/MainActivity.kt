@@ -56,6 +56,14 @@ class MainActivity: TWBaseActivity() {
         EventBus.getDefault().unregister(this)
     }
 
+    override fun onBackPressed() {
+        when {
+            supportFragmentManager.backStackEntryCount > 0 -> super.onBackPressed()
+            supportFragmentManager.findFragmentById(container.id) is HomeFragment -> super.onBackPressed()
+            else -> setContent(HomeFragment.create())
+        }
+    }
+
     @Suppress("unused")
     @Subscribe
     fun onTransition(transition: Transition) {

@@ -124,12 +124,12 @@ class HomeTabAdapter: PagedListAdapter<TweetDetail, HomeTabAdapter.TweetViewHold
                 itemView.retweeted_by.setTextColor(AppColor.GRAY)
                 itemView.tweet_user_screen_name.setTextColor(AppColor.GRAY)
                 itemView.tweet_action_reply.setTextColor(AppColor.GRAY)
-                itemView.tweet_action_retweet.setTextColor(AppColor.RETWEETED(tweet.retweeted))
-                itemView.tweet_action_like.setTextColor(AppColor.LIKED(tweet.liked))
                 itemView.tweet_date_time.setLinkTextColor(AppColor.LINK)
                 itemView.tweet_via.setTextColor(AppColor.GRAY)
                 itemView.tweet_via.setLinkTextColor(AppColor.LINK)
             }
+            itemView.tweet_action_retweet.setTextColor(AppColor.RETWEETED(tweet.retweeted))
+            itemView.tweet_action_like.setTextColor(AppColor.LIKED(tweet.liked))
         }
 
         private fun bindEvents(tweet: TweetDetail) {
