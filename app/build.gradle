@@ -17,8 +17,8 @@ android {
         applicationId "net.komunan.komunan_tw"
         minSdkVersion 23
         targetSdkVersion 28
-        versionCode 22
-        versionName "0.11.3"
+        versionCode 23
+        versionName "0.11.4"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         buildConfigField "String", "DEFAULT_CONSUMER_KEY", "\"" + buildProperties.secrets['consumer_key'].string + "\""
         buildConfigField "String", "DEFAULT_CONSUMER_SECRET", "\"" + buildProperties.secrets['consumer_secret'].string + "\""
@@ -72,6 +72,7 @@ dependencies {
     implementation 'com.facebook.fresco:fresco:1.11.0'
     implementation 'com.github.ajalt:timberkt:1.5.1'
     implementation 'com.google.code.gson:gson:2.8.5'
+    implementation 'com.klinkerapps:link_builder:2.0.5'
     implementation 'com.marcinmoskala.PreferenceHolder:preferenceholder:1.51'
     implementation 'com.mikepenz:materialdrawer:6.1.1'
     implementation 'org.greenrobot:eventbus:3.1.1'

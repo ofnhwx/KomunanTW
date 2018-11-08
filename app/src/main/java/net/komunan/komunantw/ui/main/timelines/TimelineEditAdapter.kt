@@ -1,20 +1,20 @@
 package net.komunan.komunantw.ui.main.timelines
 
-import android.graphics.Color
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.mikepenz.google_material_typeface_library.GoogleMaterial
-import com.mikepenz.iconics.IconicsDrawable
 import kotlinx.android.synthetic.main.item_source.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.komunan.komunantw.R
+import net.komunan.komunantw.common.AppColor
 import net.komunan.komunantw.common.TWListAdapter
+import net.komunan.komunantw.make
 import net.komunan.komunantw.repository.entity.Source
 import net.komunan.komunantw.repository.entity.SourceForSelect
 import net.komunan.komunantw.repository.entity.Timeline
@@ -51,12 +51,12 @@ class TimelineEditAdapter(private val timelineId: Long): TWListAdapter<SourceFor
                 itemView.source_selected.run {
                     visibility = View.VISIBLE
                     if (source.isActive) {
-                        setImageDrawable(IconicsDrawable(context).icon(GoogleMaterial.Icon.gmd_check).color(Color.GREEN))
+                        setImageDrawable(GoogleMaterial.Icon.gmd_check.make(context).color(AppColor.GREEN))
                         setOnClickListener {
                             GlobalScope.launch { Timeline.find(timelineId)?.removeSource(source) }
                         }
                     } else {
-                        setImageDrawable(IconicsDrawable(context).icon(GoogleMaterial.Icon.gmd_check).color(Color.GRAY))
+                        setImageDrawable(GoogleMaterial.Icon.gmd_check.make(context).color(AppColor.GRAY))
                         setOnClickListener {
                             GlobalScope.launch { Timeline.find(timelineId)?.addSource(source) }
                         }

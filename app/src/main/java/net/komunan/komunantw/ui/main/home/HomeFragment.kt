@@ -1,6 +1,5 @@
 package net.komunan.komunantw.ui.main.home
 
-import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,12 +7,13 @@ import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProviders
 import androidx.viewpager.widget.ViewPager
 import com.mikepenz.google_material_typeface_library.GoogleMaterial
-import com.mikepenz.iconics.IconicsDrawable
 import kotlinx.android.synthetic.main.fragment_home.*
 import net.komunan.komunantw.Preference
 import net.komunan.komunantw.R
-import net.komunan.komunantw.observeOnNotNull
+import net.komunan.komunantw.common.AppColor
 import net.komunan.komunantw.common.TWBaseFragment
+import net.komunan.komunantw.make
+import net.komunan.komunantw.observeOnNotNull
 import net.komunan.komunantw.service.TwitterService
 
 class HomeFragment: TWBaseFragment() {
@@ -50,7 +50,7 @@ class HomeFragment: TWBaseFragment() {
             }
         })
         action_tweet.run {
-            setImageDrawable(IconicsDrawable(context).icon(GoogleMaterial.Icon.gmd_edit).color(Color.GRAY))
+            setImageDrawable(GoogleMaterial.Icon.gmd_edit.make(context).color(AppColor.GRAY))
             setOnClickListener { TwitterService.doOfficialTweet() }
         }
     }

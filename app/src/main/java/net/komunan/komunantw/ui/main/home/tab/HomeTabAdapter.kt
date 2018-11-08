@@ -1,8 +1,7 @@
 package net.komunan.komunantw.ui.main.home.tab
 
 import android.annotation.SuppressLint
-import android.content.Context
-import android.graphics.Color
+import android.content.Intent
 import android.net.Uri
 import android.text.Html
 import android.text.method.LinkMovementMethod
@@ -13,21 +12,24 @@ import androidx.paging.PagedList
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.mikepenz.google_material_typeface_library.GoogleMaterial
-import com.mikepenz.iconics.IconicsDrawable
-import com.mikepenz.iconics.typeface.IIcon
+import com.klinker.android.link_builder.Link
+import com.klinker.android.link_builder.TouchableMovementMethod
+import com.klinker.android.link_builder.applyLinks
 import kotlinx.android.synthetic.main.item_tweet.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.komunan.komunantw.R
+import net.komunan.komunantw.ReleaseApplication
+import net.komunan.komunantw.common.AppColor
 import net.komunan.komunantw.repository.entity.TweetDetail
 import net.komunan.komunantw.repository.entity.User
 import net.komunan.komunantw.service.TwitterService
 import net.komunan.komunantw.string
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.regex.Pattern
 
 class HomeTabAdapter: PagedListAdapter<TweetDetail, HomeTabAdapter.TweetViewHolder>(DIFF_CALLBACK) {
     companion object {
@@ -58,83 +60,114 @@ class HomeTabAdapter: PagedListAdapter<TweetDetail, HomeTabAdapter.TweetViewHold
     class TweetViewHolder(view: View): RecyclerView.ViewHolder(view) {
         companion object {
             private val UTC = TimeZone.getTimeZone("UTC")
-            @SuppressLint("ConstantLocale")
-            private val format1 = SimpleDateFormat("HH:mm", Locale.getDefault())
-            @SuppressLint("ConstantLocale")
-            private val format2 = SimpleDateFormat("MM/dd HH:mm", Locale.getDefault())
-            @SuppressLint("ConstantLocale")
-            private val format3 = SimpleDateFormat("yyyy/MM/dd HH:mm", Locale.getDefault())
+
+            @SuppressLint("ConstantLocale") private val format1 = SimpleDateFormat("HH:mm", Locale.getDefault())
+            @SuppressLint("ConstantLocale") private val format2 = SimpleDateFormat("MM/dd HH:mm", Locale.getDefault())
+            @SuppressLint("ConstantLocale") private val format3 = SimpleDateFormat("yyyy/MM/dd HH:mm", Locale.getDefault())
+
+            private val LINK_USERNAME = Link(Pattern.compile("@[^\\s]+"))
+                    .setTextColor(AppColor.LINK)
+                    .setTextColorOfHighlightedLink(AppColor.LINK_PRESSED)
+            private val LINK_HASH_TAG = Link(Pattern.compile("#[^\\s]+"))
+                    .setTextColor(AppColor.LINK)
+                    .setTextColorOfHighlightedLink(AppColor.LINK_PRESSED)
+            private val LINK_URL = Link(Pattern.compile("https?://[^\\s]+"))
+                    .setTextColor(AppColor.LINK)
+                    .setTextColorOfHighlightedLink(AppColor.LINK_PRESSED)
         }
+
+        private var firstSetup: Boolean = true
 
         fun bind(tweet: TweetDetail?) {
             if (tweet == null) {
                 return
             }
             GlobalScope.launch(Dispatchers.Main) {
-                // ユーザ情報
-                val user = withContext(Dispatchers.Default) { User.find(tweet.userId) }
-                if (user == null) {
-                    // TODO: 取得を試みてダメならダミー画像とかを設定
-                    itemView.tweet_user_icon.setImageResource(R.mipmap.ic_launcher_round)
-                    itemView.tweet_user_name.text = R.string.dummy.string()
-                    itemView.tweet_user_screen_name.text = R.string.dummy.string()
-                } else {
-                    itemView.tweet_user_icon.run {
-                        setImageURI(Uri.parse(user.imageUrl))
-                        setOnClickListener { TwitterService.doOfficialProfile(user.id) }
-                    }
-                    itemView.tweet_user_name.text = user.name
-                    itemView.tweet_user_screen_name.text = R.string.format_screen_name.string(user.screenName)
-                }
-                itemView.tweet_user_screen_name.setTextColor(Color.GRAY)
-
-                // テキストおよび日時, クライント
-                itemView.tweet_text.text = tweet.text
-                itemView.tweet_date_time.run {
-                    text = TwitterService.makeStatusPermalink(formatTime(tweet.timestamp), user?.screenName, tweet.id)
-                    movementMethod = LinkMovementMethod.getInstance()
-                }
-                itemView.tweet_via.run {
-                    text = Html.fromHtml(R.string.format_via.string(tweet.via))
-                    movementMethod = LinkMovementMethod.getInstance()
-                }
-
-                // ボタン
-                itemView.tweet_action_reply.run {
-                    text = R.string.gmd_chat_bubble_outline.string()
-                    setTextColor(Color.GRAY)
-                    setOnClickListener { TwitterService.doOfficialTweet(tweet.id) }
-                }
-                itemView.tweet_action_retweet.run {
-                    text = R.string.format_gmd_repeat.string(tweet.retweetCount.toString())
-                    setTextColor(if (tweet.retweeted) Color.GREEN else Color.GRAY)
-                    setOnClickListener { TwitterService.doOfficialRetweet(tweet.id) }
-                }
-                itemView.tweet_action_like.run {
-                    text = R.string.format_gmd_favorite_border.string(tweet.likeCount.toString())
-                    setTextColor(if (tweet.liked) Color.RED else Color.GRAY)
-                    setOnClickListener { TwitterService.doOfficialLike(tweet.id) }
-                }
-
-                // リツイート
-                if (tweet.isRetweet) {
-                    val retweetedBy = withContext(Dispatchers.Default) { User.find(tweet.retweetedBy) }
-                    if (retweetedBy == null) {
-                        // TODO: 取得を試みてダメならダミーとかを設定
-                        itemView.retweet_by.text = R.string.format_retweeted_by.string(R.string.dummy.string())
-                    } else {
-                        itemView.retweet_by.text = R.string.format_retweeted_by.string(retweetedBy.name)
-                    }
-                    itemView.retweet_by.visibility = View.VISIBLE
-                    itemView.retweet_by.setCompoundDrawables(makeIcon(itemView.context, GoogleMaterial.Icon.gmd_repeat).color(Color.GREEN).sizeDp(12), null, null, null)
-                } else {
-                    itemView.retweet_by.visibility = View.GONE
-                }
+                bindValue(tweet)
+                bindAppearance(tweet)
+                bindEvents(tweet)
+                bindRetweetedBy(tweet)
+                firstSetup = false
             }
         }
 
-        private fun makeIcon(context: Context, icon: IIcon): IconicsDrawable {
-            return IconicsDrawable(context).icon(icon)
+        private suspend fun bindValue(tweet: TweetDetail) {
+            val user = withContext(Dispatchers.Default) { User.find(tweet.userId) ?: User.dummy() }
+            itemView.tweet_user_icon.setImageURI(Uri.parse(user.imageUrl))
+            itemView.tweet_user_name.text = user.name
+            itemView.tweet_user_screen_name.text = R.string.format_screen_name.string(user.screenName)
+            itemView.tweet_text.text = tweet.text
+            itemView.tweet_date_time.text = TwitterService.makeStatusPermalink(formatTime(tweet.timestamp), user.screenName, tweet.id)
+            itemView.tweet_via.text = Html.fromHtml(R.string.format_via.string(tweet.via))
+            if (firstSetup) {
+                itemView.tweet_action_reply.text = R.string.gmd_chat_bubble_outline.string()
+            }
+            itemView.tweet_action_retweet.text = R.string.format_gmd_repeat.string(tweet.retweetCount.toString())
+            itemView.tweet_action_like.text = R.string.format_gmd_favorite_border.string(tweet.likeCount.toString())
+        }
+
+        private fun bindAppearance(tweet: TweetDetail) {
+            if (firstSetup) {
+                itemView.retweeted_by_mark.setTextColor(AppColor.GREEN)
+                itemView.retweeted_by.setTextColor(AppColor.GRAY)
+                itemView.tweet_user_screen_name.setTextColor(AppColor.GRAY)
+                itemView.tweet_action_reply.setTextColor(AppColor.GRAY)
+                itemView.tweet_action_retweet.setTextColor(AppColor.RETWEETED(tweet.retweeted))
+                itemView.tweet_action_like.setTextColor(AppColor.LIKED(tweet.liked))
+                itemView.tweet_date_time.setLinkTextColor(AppColor.LINK)
+                itemView.tweet_via.setTextColor(AppColor.GRAY)
+                itemView.tweet_via.setLinkTextColor(AppColor.LINK)
+            }
+        }
+
+        private fun bindEvents(tweet: TweetDetail) {
+            // テキスト(@〜, #〜, https://〜)
+            tweet.urls.forEach { url ->
+                val link = Link(url.display)
+                        .setTextColor(AppColor.LINK)
+                        .setTextColorOfHighlightedLink(AppColor.LINK_PRESSED)
+                        .setOnClickListener {
+                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url.expanded))
+                            ReleaseApplication.context.startActivity(intent)
+                        }
+                itemView.tweet_text.applyLinks(link)
+            }
+            itemView.tweet_text.applyLinks(LINK_USERNAME, LINK_HASH_TAG, LINK_URL)
+            // プロフィール画像 -> ユーザープロフィール
+            itemView.tweet_user_icon.setOnClickListener {
+                TwitterService.doOfficialProfile(tweet.userId)
+            }
+            // 返信
+            itemView.tweet_action_reply.setOnClickListener {
+                TwitterService.doOfficialTweet(tweet.id)
+            }
+            // リツイート
+            itemView.tweet_action_retweet.setOnClickListener {
+                TwitterService.doOfficialRetweet(tweet.id)
+            }
+            // お気に入り
+            itemView.tweet_action_like.setOnClickListener {
+                TwitterService.doOfficialLike(tweet.id)
+            }
+            // 各種リンクをタッチ可能に設定
+            if (firstSetup) {
+                itemView.tweet_text.movementMethod = TouchableMovementMethod.instance
+                itemView.tweet_date_time.movementMethod = LinkMovementMethod.getInstance()
+                itemView.tweet_via.movementMethod = LinkMovementMethod.getInstance()
+            }
+        }
+
+        private suspend fun bindRetweetedBy(tweet: TweetDetail) {
+            if (firstSetup) {
+                itemView.retweeted_by_mark.text = R.string.gmd_repeat.string()
+            }
+            if (tweet.isRetweet) {
+                val retweetedBy = withContext(Dispatchers.Default) { User.find(tweet.retweetedBy)?: User.dummy() }
+                itemView.retweeted_by.text = R.string.format_retweeted_by.string(retweetedBy.name)
+                itemView.retweeted_by_container.visibility = View.VISIBLE
+            } else {
+                itemView.retweeted_by_container.visibility = View.GONE
+            }
         }
 
         private fun formatTime(timestamp: Long?): String? {

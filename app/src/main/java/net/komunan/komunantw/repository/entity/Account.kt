@@ -26,7 +26,7 @@ class Account(): Diffable {
     @Ignore
     constructor(user: User): this() {
         this.id = user.id
-        this.imageUrl = user.profileImageURLHttps
+        this.imageUrl = user.biggerProfileImageURLHttps
         this.name = user.name
         this.screenName = user.screenName
     }

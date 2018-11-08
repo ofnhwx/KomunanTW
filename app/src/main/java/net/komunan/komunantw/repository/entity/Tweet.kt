@@ -1,14 +1,15 @@
 package net.komunan.komunantw.repository.entity
 
-import androidx.room.*
 import androidx.paging.LivePagedListBuilder
+import androidx.room.*
 import net.komunan.komunantw.common.Diffable
-import net.komunan.komunantw.toBoolean
-import net.komunan.komunantw.toInt
 import net.komunan.komunantw.repository.database.TWCacheDatabase
 import net.komunan.komunantw.repository.database.TransactionTarget
 import net.komunan.komunantw.repository.database.transaction
+import net.komunan.komunantw.toBoolean
+import net.komunan.komunantw.toInt
 import twitter4j.Status
+import twitter4j.URLEntity
 
 @Suppress("PropertyName")
 @Entity(tableName = "tweet")
@@ -17,6 +18,7 @@ open class Tweet(): Diffable {
     @ColumnInfo(name = "id")            var id          : Long = 0L
     @ColumnInfo(name = "user_id")       var userId      : Long = 0L
     @ColumnInfo(name = "text")          var text        : String = ""
+    @ColumnInfo(name = "urls")          var urls        : List<TweetUrl> = emptyList()
     @ColumnInfo(name = "via")           var via         : String = ""
     @ColumnInfo(name = "retweeted")     var _retweeted  : Int = 0
     @ColumnInfo(name = "retweet_count") var retweetCount: Int = 0
@@ -54,6 +56,7 @@ open class Tweet(): Diffable {
             val retweeted = status.retweetedStatus
             this.userId = retweeted.user.id
             this.text = retweeted.text
+            this.urls = TweetUrl.fromUrlEntities(retweeted.urlEntities)
             this.via = retweeted.source
             this.retweeted = retweeted.isRetweeted
             this.retweetCount = retweeted.retweetCount
@@ -65,6 +68,7 @@ open class Tweet(): Diffable {
         } else {
             this.userId = status.user.id
             this.text = status.text
+            this.urls = TweetUrl.fromUrlEntities(status.urlEntities)
             this.via = status.source
             this.retweeted = status.isRetweeted
             this.retweetCount = status.retweetCount
@@ -72,6 +76,7 @@ open class Tweet(): Diffable {
             this.likeCount = status.favoriteCount
             this.timestamp = status.createdAt.time
         }
+        this.urls.forEach { url -> this.text = this.text.replace(url.shorten, url.display) }
     }
 
     var retweeted: Boolean
@@ -94,6 +99,7 @@ open class Tweet(): Diffable {
                 "id=$id, " +
                 "userId=$userId, " +
                 "text=$text, " +
+                "urls=$urls, " +
                 "via=$via, " +
                 "timestamp=$timestamp, " +
                 "retweeted=$retweeted, " +
@@ -139,6 +145,26 @@ class TweetSource() {
                 "sourceId=$sourceId, " +
                 "tweetId=$tweetId, " +
                 "isMissing=$_isMissing }"
+    }
+}
+
+class TweetUrl() {
+    var shorten : String = ""
+    var display : String = ""
+    var expanded: String = ""
+
+    companion object {
+        @JvmStatic
+        fun fromUrlEntities(urlEntities: Array<URLEntity>): List<TweetUrl> {
+            return urlEntities.filter { it.url != null && it.displayURL != null && it.expandedURL != null }
+                    .map { TweetUrl(it) }
+        }
+    }
+
+    constructor(urlEntity: URLEntity): this() {
+        this.shorten = urlEntity.url
+        this.display = urlEntity.displayURL
+        this.expanded = urlEntity.expandedURL
     }
 }
 

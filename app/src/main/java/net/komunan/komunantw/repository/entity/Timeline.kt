@@ -55,7 +55,7 @@ class Timeline(): Diffable {
         return other is Timeline
                 && this.id == other.id
                 && this.name == other.name
-                && this.position == other.position
+                //&& this.position == other.position
     }
 }
 

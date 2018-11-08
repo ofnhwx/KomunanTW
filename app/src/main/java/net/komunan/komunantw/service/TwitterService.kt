@@ -54,7 +54,7 @@ object TwitterService {
         doOfficialAction(buildTwitterUri { it.path("intent/user").appendQueryParameter("user_id", userId.toString()) })
     }
 
-    fun buildTwitterUri(body: (Uri.Builder) -> Uri.Builder): Uri {
+    private fun buildTwitterUri(body: (Uri.Builder) -> Uri.Builder): Uri {
         val builder = Uri.Builder().scheme("https").authority("twitter.com")
         return body.invoke(builder).build()
     }

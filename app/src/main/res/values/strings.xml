@@ -18,17 +18,19 @@
     <string name="user">ユーザ</string>
     <!-- Action -->
     <string name="do_authentication">認証</string>
-    <string name="gmd_chat_bubble_outline">{gmd-chat-bubble-outline}</string>
     <string name="open_browser">ブラウザを開く</string>
     <!-- Confirm -->
     <string name="confirm_delete_timeline">タイムラインを削除しますか？</string>
     <string name="do_delete">削除する</string>
     <string name="do_not_delete">削除しない</string>
     <!-- Format -->
-    <string name="format_gmd_repeat">{gmd_repeat} %s</string>
-    <string name="format_gmd_favorite_border">{gmd_favorite_border} %s</string>
     <string name="format_list_label">リスト: %s</string>
     <string name="format_retweeted_by">Retweeted by %s</string>
+    <!-- Google Material Design -->
+    <string name="format_gmd_favorite_border">{gmd_favorite_border} %s</string>
+    <string name="format_gmd_repeat">{gmd_repeat} %s</string>
+    <string name="gmd_chat_bubble_outline">{gmd-chat-bubble-outline}</string>
+    <string name="gmd_repeat">{gmd_repeat}</string>
     <!--suppress AndroidDomInspection -->
     <string name="format_screen_name">@%s</string>
     <string name="format_search_label">検索: %s</string>

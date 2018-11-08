@@ -4,10 +4,7 @@ package net.komunan.komunantw.repository.dao
 
 import androidx.paging.DataSource
 import androidx.room.*
-import net.komunan.komunantw.repository.entity.Source
-import net.komunan.komunantw.repository.entity.Tweet
-import net.komunan.komunantw.repository.entity.TweetDetail
-import net.komunan.komunantw.repository.entity.TweetSource
+import net.komunan.komunantw.repository.entity.*
 
 @Dao
 abstract class TweetDao {
@@ -20,6 +17,7 @@ abstract class TweetDao {
     ts.tweet_id AS id,
     ifnull(t.user_id, 0) AS user_id,
     ifnull(t.text, '') AS text,
+    ifnull(t.urls, '') AS urls,
     ifnull(t.via, '') AS via,
     ifnull(t.retweeted, 0) AS retweeted,
     ifnull(t.retweet_count, 0) AS retweet_count,

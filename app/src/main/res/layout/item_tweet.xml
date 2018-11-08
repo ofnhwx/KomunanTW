@@ -13,18 +13,30 @@
             android:padding="8dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-        <TextView
-                android:id="@+id/retweet_by"
+        <LinearLayout
+                android:id="@+id/retweeted_by_container"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:drawablePadding="4dp"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content">
+            <com.mikepenz.iconics.view.IconicsTextView
+                    android:id="@+id/retweeted_by_mark"
+                    android:text="@string/dummy"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            <TextView
+                    android:id="@+id/retweeted_by"
+                    android:text="@string/dummy"
+                    android:layout_marginStart="4dp"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content" />
+        </LinearLayout>
         <com.facebook.drawee.view.SimpleDraweeView
                 android:id="@+id/tweet_user_icon"
                 app:roundAsCircle="true"
-                app:layout_constraintTop_toBottomOf="@id/retweet_by"
+                app:layout_constraintTop_toBottomOf="@id/retweeted_by_container"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_goneMarginTop="0dp"
                 android:layout_marginTop="4dp"
@@ -32,7 +44,7 @@
                 android:layout_height="48dp" />
         <LinearLayout
                 android:id="@+id/top_container"
-                app:layout_constraintTop_toBottomOf="@id/retweet_by"
+                app:layout_constraintTop_toBottomOf="@id/retweeted_by_container"
                 app:layout_constraintStart_toEndOf="@id/tweet_user_icon"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_goneMarginTop="0dp"

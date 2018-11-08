@@ -2,6 +2,9 @@ package net.komunan.komunantw.repository.entity
 
 import androidx.room.*
 import net.komunan.komunantw.repository.database.TWCacheDatabase
+import net.komunan.komunantw.string
+import net.komunan.komunantw.R
+import net.komunan.komunantw.uri
 import twitter4j.User as TwitterUser
 
 @Entity(tableName = "user")
@@ -13,17 +16,26 @@ class User() {
     @ColumnInfo(name = "screen_name") var screenName: String = ""
     @ColumnInfo(name = "cache_at")    var cacheAt   : Long = 0L
 
+    @Ignore
+    var dummy = false
+
     companion object {
         private val dao = TWCacheDatabase.instance.userDao()
 
         @JvmStatic fun find(id: Long) = dao.find(id)
-        @JvmStatic fun save(users: List<User>) = dao.save(users)
+        @JvmStatic fun save(users: List<User>) = dao.save(users.filter { !it.dummy })
+        @JvmStatic fun dummy(): User = User().apply {
+            imageUrl = R.mipmap.ic_launcher.uri().toString()
+            name = R.string.dummy.string()
+            screenName = R.string.dummy.string()
+            dummy = true
+        }
     }
 
     @Ignore
     constructor(user: TwitterUser): this() {
         this.id = user.id
-        this.imageUrl = user.profileImageURLHttps
+        this.imageUrl = user.biggerProfileImageURLHttps
         this.name = user.name
         this.screenName = user.screenName
         this.cacheAt = System.currentTimeMillis()

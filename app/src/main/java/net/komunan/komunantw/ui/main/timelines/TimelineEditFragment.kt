@@ -1,6 +1,5 @@
 package net.komunan.komunantw.ui.main.timelines
 
-import android.graphics.Color
 import android.os.Bundle
 import android.view.*
 import androidx.lifecycle.ViewModelProviders
@@ -10,12 +9,17 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.mikepenz.google_material_typeface_library.GoogleMaterial
 import com.mikepenz.iconics.IconicsDrawable
 import kotlinx.android.synthetic.main.edit_timeline.*
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import net.komunan.komunantw.R
+import net.komunan.komunantw.common.AppColor
+import net.komunan.komunantw.common.TWBaseFragment
 import net.komunan.komunantw.event.Transition
+import net.komunan.komunantw.make
 import net.komunan.komunantw.observeOnNotNull
 import net.komunan.komunantw.repository.entity.Timeline
-import net.komunan.komunantw.common.TWBaseFragment
 import net.komunan.komunantw.string
 
 class TimelineEditFragment: TWBaseFragment() {
@@ -65,7 +69,7 @@ class TimelineEditFragment: TWBaseFragment() {
             }
         }
         timeline_name_edit_save.run {
-            setImageDrawable(IconicsDrawable(context).icon(GoogleMaterial.Icon.gmd_check).color(Color.GREEN))
+            setImageDrawable(GoogleMaterial.Icon.gmd_check.make(context).color(AppColor.GREEN))
             setOnClickListener {
                 GlobalScope.launch {
                     Timeline.find(timelineId)?.apply { name = timeline_name_edit.text.toString() }?.save()
@@ -74,7 +78,7 @@ class TimelineEditFragment: TWBaseFragment() {
             }
         }
         timeline_name_edit_cancel.run {
-            setImageDrawable(IconicsDrawable(context).icon(GoogleMaterial.Icon.gmd_cancel).color(Color.RED))
+            setImageDrawable(GoogleMaterial.Icon.gmd_cancel.make(context).color(AppColor.RED))
             setOnClickListener {
                 viewModel.editMode.postValue(false)
             }
