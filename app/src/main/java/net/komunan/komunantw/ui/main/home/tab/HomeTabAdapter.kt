@@ -65,15 +65,27 @@ class HomeTabAdapter: PagedListAdapter<TweetDetail, HomeTabAdapter.TweetViewHold
             @SuppressLint("ConstantLocale") private val format2 = SimpleDateFormat("MM/dd HH:mm", Locale.getDefault())
             @SuppressLint("ConstantLocale") private val format3 = SimpleDateFormat("yyyy/MM/dd HH:mm", Locale.getDefault())
 
-            private val LINK_USERNAME = Link(Pattern.compile("@[^\\s]+"))
+            private val LINK_USERNAME = Link(Pattern.compile("@[a-zA-Z0-9_]+"))
                     .setTextColor(AppColor.LINK)
                     .setTextColorOfHighlightedLink(AppColor.LINK_PRESSED)
+                    .setOnClickListener {
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://twitter.com/${it.substring(1)}"))
+                        ReleaseApplication.context.startActivity(intent)
+                    }
             private val LINK_HASH_TAG = Link(Pattern.compile("#[^\\s]+"))
                     .setTextColor(AppColor.LINK)
                     .setTextColorOfHighlightedLink(AppColor.LINK_PRESSED)
+                    .setOnClickListener {
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://twitter.com/hashtag/${it.substring(1)}"))
+                        ReleaseApplication.context.startActivity(intent)
+                    }
             private val LINK_URL = Link(Pattern.compile("https?://[^\\s]+"))
                     .setTextColor(AppColor.LINK)
                     .setTextColorOfHighlightedLink(AppColor.LINK_PRESSED)
+                    .setOnClickListener {
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(it))
+                        ReleaseApplication.context.startActivity(intent)
+                    }
         }
 
         private var firstSetup: Boolean = true
