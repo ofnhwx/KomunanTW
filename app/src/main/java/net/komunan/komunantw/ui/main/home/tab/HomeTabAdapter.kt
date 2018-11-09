@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.klinker.android.link_builder.Link
 import com.klinker.android.link_builder.TouchableMovementMethod
 import com.klinker.android.link_builder.applyLinks
+import com.stfalcon.frescoimageviewer.ImageViewer
 import kotlinx.android.synthetic.main.item_tweet.view.*
 import kotlinx.android.synthetic.main.item_tweet_missing.view.*
 import kotlinx.coroutines.Dispatchers
@@ -188,11 +189,20 @@ class HomeTabAdapter: PagedListAdapter<TweetDetail, HomeTabAdapter.TweetBaseView
                 val media = tweet.medias.elementAtOrNull(i)
                 if (media != null) {
                     mediaViews[i].setOnClickListener {
+                        ImageViewer.Builder(itemView.context, tweet.medias)
+                                .setFormatter { media ->
+                                    media.url
+                                }
+                                .setStartPosition(i)
+                                .show()
+                    }
+                    mediaViews[i].setOnLongClickListener {
                         if (media.isVideo) {
                             media.videoVariants.first().url.intentActionView()
                         } else {
                             media.url.intentActionView()
                         }
+                        return@setOnLongClickListener true
                     }
                 }
             }
