@@ -28,7 +28,6 @@ class HomeTabFragment: TWBaseFragment() {
     }
 
     private val viewModel: HomeTabViewModel by lazy { makeViewModel(arguments!!.getLong(PARAMETER_TIMELINE_ID)) }
-    private val layoutManager by lazy { LinearLayoutManager(context, RecyclerView.VERTICAL, false) }
     private val adapter = HomeTabAdapter()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -37,6 +36,7 @@ class HomeTabFragment: TWBaseFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        val layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
         container.layoutManager = layoutManager
         container.adapter = adapter
         viewModel.tweets.observeOnNotNull(this) { tweets ->
