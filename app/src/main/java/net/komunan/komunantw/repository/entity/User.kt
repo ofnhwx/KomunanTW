@@ -2,9 +2,9 @@ package net.komunan.komunantw.repository.entity
 
 import androidx.room.*
 import net.komunan.komunantw.repository.database.TWCacheDatabase
-import net.komunan.komunantw.string
 import net.komunan.komunantw.R
-import net.komunan.komunantw.uri
+import net.komunan.komunantw.extension.string
+import net.komunan.komunantw.extension.uri
 import twitter4j.User as TwitterUser
 
 @Entity(tableName = "user")
@@ -25,9 +25,9 @@ class User() {
         @JvmStatic fun find(id: Long) = dao.find(id)
         @JvmStatic fun save(users: List<User>) = dao.save(users.filter { !it.dummy })
         @JvmStatic fun dummy(): User = User().apply {
-            imageUrl = R.mipmap.ic_launcher.uri().toString()
-            name = R.string.dummy.string()
-            screenName = R.string.dummy.string()
+            imageUrl = uri[R.mipmap.ic_launcher].toString()
+            name = string[R.string.dummy]()
+            screenName = string[R.string.dummy]()
             dummy = true
         }
     }

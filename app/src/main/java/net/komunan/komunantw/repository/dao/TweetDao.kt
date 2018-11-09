@@ -17,7 +17,6 @@ abstract class TweetDao {
     ts.tweet_id AS id,
     ifnull(t.user_id, 0) AS user_id,
     ifnull(t.text, '') AS text,
-    ifnull(t.urls, '') AS urls,
     ifnull(t.via, '') AS via,
     ifnull(t.retweeted, 0) AS retweeted,
     ifnull(t.retweet_count, 0) AS retweet_count,
@@ -26,11 +25,13 @@ abstract class TweetDao {
     ifnull(t.timestamp, 0) AS timestamp,
     ifnull(t.retweeted_by, 0) AS retweeted_by,
     ifnull(t.retweeted_id, 0) AS retweeted_id,
+    ifnull(t.urls, '[]') AS urls,
+    ifnull(t.medias, '[]') AS medias,
     ts.is_missing,
     ts.source_ids
 FROM (SELECT tweet_id, sum(is_missing) AS is_missing, group_concat(source_id) AS source_ids FROM tweet_source WHERE source_id in (:sourceIds) GROUP BY tweet_id) AS ts
 LEFT OUTER JOIN tweet AS t ON t.id = ts.tweet_id
-ORDER BY t.id DESC""")
+ORDER BY ts.tweet_id DESC""")
     protected abstract fun __findBySourceIdsAsync(sourceIds: List<Long>): DataSource.Factory<Int, TweetDetail>
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     protected abstract fun __save(tweets: List<Tweet>)
@@ -49,17 +50,17 @@ abstract class TweetSourceDao {
 
     /* ==================== SQL Definitions. ==================== */
 
-    @Query("SELECT COUNT(*) FROM tweet_source WHERE source_id = :sourceId")
+    @Query("SELECT COUNT(*) FROM tweet_source WHERE source_id = :sourceId AND is_missing = 0")
     abstract fun __countBySourceId(sourceId: Long): Long
-    @Query("SELECT MAX(tweet_id) FROM tweet_source WHERE source_id = :sourceId")
+    @Query("SELECT ifnull(MAX(tweet_id), -1) FROM tweet_source WHERE source_id = :sourceId AND is_missing = 0")
     abstract fun __maxIdBySourceId(sourceId: Long): Long
-    @Query("SELECT MIN(tweet_id) FROM tweet_source WHERE source_id = :sourceId")
+    @Query("SELECT ifnull(MIN(tweet_id), -1) FROM tweet_source WHERE source_id = :sourceId AND is_missing = 0")
     abstract fun __minIdBySourceId(sourceId: Long): Long
-    @Query("SELECT MAX(tweet_id) FROM tweet_source WHERE source_id = :sourceId AND tweet_id < :tweetId")
+    @Query("SELECT ifnull(MAX(tweet_id), -1) FROM tweet_source WHERE source_id = :sourceId AND tweet_id < :tweetId AND is_missing = 0")
     abstract fun __prevIdBySourceId(sourceId: Long, tweetId: Long): Long
-    @Query("DELETE FROM tweet_source WHERE source_id = :sourceId AND tweet_id = :missTweetId AND is_missing = 0")
+    @Query("DELETE FROM tweet_source WHERE source_id = :sourceId AND tweet_id = :missTweetId AND is_missing > 0")
     abstract fun __removeMissingMark(sourceId: Long, missTweetId: Long)
-    @Insert(onConflict = OnConflictStrategy.ABORT)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract fun __save(tweetSource: TweetSource)
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract fun __save(tweetSources: List<TweetSource>)

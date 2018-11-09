@@ -17,10 +17,10 @@ import net.komunan.komunantw.R
 import net.komunan.komunantw.common.AppColor
 import net.komunan.komunantw.common.TWBaseFragment
 import net.komunan.komunantw.event.Transition
-import net.komunan.komunantw.make
-import net.komunan.komunantw.observeOnNotNull
+import net.komunan.komunantw.extension.make
+import net.komunan.komunantw.extension.observeOnNotNull
+import net.komunan.komunantw.extension.string
 import net.komunan.komunantw.repository.entity.Timeline
-import net.komunan.komunantw.string
 
 class TimelineEditFragment: TWBaseFragment() {
     companion object {
@@ -114,7 +114,7 @@ class TimelineEditFragment: TWBaseFragment() {
     }
 
     override fun fragmentName(): String? {
-        return R.string.timeline_edit.string()
+        return string[R.string.timeline_edit]()
     }
 
     private fun makeViewModel(timelineId: Long): TimelineEditViewModel {

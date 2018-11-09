@@ -1,7 +1,7 @@
-package net.komunan.komunantw
+package net.komunan.komunantw.extension
 
-import android.content.ContentResolver
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
@@ -9,35 +9,23 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Observer
 import com.mikepenz.iconics.IconicsDrawable
 import com.mikepenz.iconics.typeface.IIcon
-
-// @DrawableRes
-fun Int.uri(): Uri {
-    return Uri.Builder().also { builder ->
-        builder.scheme(ContentResolver.SCHEME_ANDROID_RESOURCE)
-        ReleaseApplication.context.resources.also { resources ->
-            builder.authority(resources.getResourcePackageName(this))
-            builder.path("${resources.getResourceTypeName(this)}/${resources.getResourceEntryName(this)}")
-        }
-    }.build()
-}
-
-// @StringRes
-fun Int.string(): String = ReleaseApplication.context.getString(this)
-fun Int.string(arg: String?): String = ReleaseApplication.context.getString(this, arg)
-fun Int.string(arg1: String?, arg2: String?): String = ReleaseApplication.context.getString(this, arg1, arg2)
-fun Int.string(arg1: String?, arg2: String?, arg3: String?): String = ReleaseApplication.context.getString(this, arg1, arg2, arg3)
+import net.komunan.komunantw.TWContext
 
 // Int
 fun Int.toBoolean(): Boolean = this != 0
 fun Int.dp(): Float {
-    return ReleaseApplication.context.resources.displayMetrics.density * this
+    return TWContext.resources.displayMetrics.density * this
 }
 fun Int.sp(): Float {
-    return ReleaseApplication.context.resources.displayMetrics.scaledDensity * this
+    return TWContext.resources.displayMetrics.scaledDensity * this
 }
 
 // Boolean
 fun Boolean.toInt(): Int = if (this) 1 else 0
+
+// String
+fun String.uri(): Uri = Uri.parse(this)
+fun String.intentActionView() = TWContext.startActivity(Intent(Intent.ACTION_VIEW, this.uri()))
 
 // IIcon
 fun IIcon.make(context: Context): IconicsDrawable {

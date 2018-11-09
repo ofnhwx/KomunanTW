@@ -6,8 +6,9 @@ import net.komunan.komunantw.common.Diffable
 import net.komunan.komunantw.repository.database.TWCacheDatabase
 import net.komunan.komunantw.repository.database.TransactionTarget
 import net.komunan.komunantw.repository.database.transaction
-import net.komunan.komunantw.toBoolean
-import net.komunan.komunantw.toInt
+import net.komunan.komunantw.extension.toBoolean
+import net.komunan.komunantw.extension.toInt
+import twitter4j.MediaEntity
 import twitter4j.Status
 import twitter4j.URLEntity
 
@@ -18,7 +19,6 @@ open class Tweet(): Diffable {
     @ColumnInfo(name = "id")            var id          : Long = 0L
     @ColumnInfo(name = "user_id")       var userId      : Long = 0L
     @ColumnInfo(name = "text")          var text        : String = ""
-    @ColumnInfo(name = "urls")          var urls        : List<TweetUrl> = emptyList()
     @ColumnInfo(name = "via")           var via         : String = ""
     @ColumnInfo(name = "retweeted")     var _retweeted  : Int = 0
     @ColumnInfo(name = "retweet_count") var retweetCount: Int = 0
@@ -27,8 +27,13 @@ open class Tweet(): Diffable {
     @ColumnInfo(name = "timestamp")     var timestamp   : Long = 0L
     @ColumnInfo(name = "retweeted_by")  var retweetedBy : Long = 0L
     @ColumnInfo(name = "retweeted_id")  var retweetedId : Long = 0L
+    @ColumnInfo(name = "urls")          var urls        : List<TweetUrl> = emptyList()
+    @ColumnInfo(name = "medias")        var medias      : List<TweetMedia> = emptyList()
 
     companion object {
+        @JvmStatic
+        val INVALID_ID: Long = -1L
+
         private val dao = TWCacheDatabase.instance.tweetDao()
         private val sourceDao = TWCacheDatabase.instance.tweetSourceDao()
 
@@ -56,7 +61,6 @@ open class Tweet(): Diffable {
             val retweeted = status.retweetedStatus
             this.userId = retweeted.user.id
             this.text = retweeted.text
-            this.urls = TweetUrl.fromUrlEntities(retweeted.urlEntities)
             this.via = retweeted.source
             this.retweeted = retweeted.isRetweeted
             this.retweetCount = retweeted.retweetCount
@@ -65,18 +69,20 @@ open class Tweet(): Diffable {
             this.timestamp = retweeted.createdAt.time
             this.retweetedBy = status.user.id
             this.retweetedId = retweeted.id
+            this.urls = TweetUrl.fromUrlEntities(retweeted.urlEntities)
+            this.medias = TweetMedia.fromMediaEntities(retweeted.mediaEntities)
         } else {
             this.userId = status.user.id
             this.text = status.text
-            this.urls = TweetUrl.fromUrlEntities(status.urlEntities)
             this.via = status.source
             this.retweeted = status.isRetweeted
             this.retweetCount = status.retweetCount
             this.liked = status.isFavorited
             this.likeCount = status.favoriteCount
             this.timestamp = status.createdAt.time
+            this.urls = TweetUrl.fromUrlEntities(status.urlEntities)
+            this.medias = TweetMedia.fromMediaEntities(status.mediaEntities)
         }
-        this.urls.forEach { url -> this.text = this.text.replace(url.shorten, url.display) }
     }
 
     var retweeted: Boolean
@@ -99,7 +105,6 @@ open class Tweet(): Diffable {
                 "id=$id, " +
                 "userId=$userId, " +
                 "text=$text, " +
-                "urls=$urls, " +
                 "via=$via, " +
                 "timestamp=$timestamp, " +
                 "retweeted=$retweeted, " +
@@ -107,7 +112,9 @@ open class Tweet(): Diffable {
                 "retweetCount=$retweetCount, " +
                 "likeCount=$likeCount, " +
                 "retweetedBy=$retweetedBy, " +
-                "retweetedId=$retweetedId }"
+                "retweetedId=$retweetedId" +
+                "urls=$urls" +
+                "medias=$medias }"
     }
 
     override fun isTheSame(other: Diffable): Boolean {
@@ -168,21 +175,84 @@ class TweetUrl() {
     }
 }
 
+class TweetMedia() {
+    var shorten : String = ""
+    var display : String = ""
+    var expanded: String = ""
+    var url: String = ""
+    var type: String = ""
+    var videoAspectRatioHeight: Int = 0
+    var videoAspectRatioWidth: Int = 0
+    var videoDurationMillis: Long = 0
+    var videoVariants: List<Video> = emptyList()
+
+    companion object {
+        @JvmStatic
+        fun fromMediaEntities(mediaEntities: Array<MediaEntity>): List<TweetMedia> {
+            return mediaEntities
+                    .map { TweetMedia(it) }
+        }
+    }
+
+    constructor(mediaEntity: MediaEntity): this() {
+        this.shorten = mediaEntity.url
+        this.display = mediaEntity.displayURL
+        this.expanded = mediaEntity.expandedURL
+        this.url = mediaEntity.mediaURLHttps ?: mediaEntity.mediaURL
+        this.type = mediaEntity.type
+        if (this.isVideo) {
+            this.videoAspectRatioHeight = mediaEntity.videoAspectRatioHeight
+            this.videoAspectRatioWidth = mediaEntity.videoAspectRatioWidth
+            this.videoDurationMillis = mediaEntity.videoDurationMillis
+            this.videoVariants = mediaEntity.videoVariants.map { Video(it) }
+        }
+    }
+
+    val isPhoto: Boolean
+        get() = type == "photo"
+
+    val isVideo: Boolean
+        get() = type == "video"
+
+    val isAnimatedGif: Boolean
+        get() = type == "animated_gif"
+
+    class Video() {
+        var bitrate: Int = 0
+        var contentType: String = ""
+        var url: String = ""
+
+        constructor(videoVariant: MediaEntity.Variant): this() {
+            this.bitrate = videoVariant.bitrate
+            this.contentType = videoVariant.contentType
+            this.url = videoVariant.url
+        }
+    }
+}
+
 @Suppress("PropertyName")
 class TweetDetail: Tweet() {
     @ColumnInfo(name = "is_missing") var _isMissing: Int = 0
-    @ColumnInfo(name = "source_ids") var sourceIds : String = ""
+    @ColumnInfo(name = "source_ids") var _sourceIds: String = ""
 
-    var isMissing: Boolean
-        get() = _isMissing.toBoolean()
-        set(value) {
-            _isMissing = value.toInt()
+    val displayText: String
+        get() {
+            var result = text
+            urls.forEach { result = result.replace(it.shorten, it.display) }
+            medias.forEach { result = result.replace(it.shorten, "") }
+            return result
         }
+
+    val isMissing: Boolean
+        get() = _isMissing.toBoolean()
+
+    val sourceIds: List<Long>
+        get() = _sourceIds.split(',').map { it.toLong() }
 
     override fun toString(): String {
         return "${TweetDetail::class.simpleName}{ " +
                 "base=${super.toString()}, " +
                 "isMissing=$isMissing, " +
-                "sourceIds=[$sourceIds] }"
+                "sourceIds=[$_sourceIds] }"
     }
 }

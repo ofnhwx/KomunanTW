@@ -8,9 +8,9 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.simple_recycler_view.*
 import net.komunan.komunantw.R
 import net.komunan.komunantw.event.Transition
-import net.komunan.komunantw.observeOnNotNull
+import net.komunan.komunantw.extension.observeOnNotNull
 import net.komunan.komunantw.common.TWBaseFragment
-import net.komunan.komunantw.string
+import net.komunan.komunantw.extension.string
 
 class AccountsFragment: TWBaseFragment() {
     companion object {
@@ -59,6 +59,6 @@ class AccountsFragment: TWBaseFragment() {
     }
 
     override fun fragmentName(): String? {
-        return R.string.account_list.string()
+        return string[R.string.account_list]()
     }
 }

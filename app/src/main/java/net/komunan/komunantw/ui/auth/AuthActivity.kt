@@ -8,12 +8,15 @@ import android.text.TextWatcher
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.activity_auth.*
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import net.komunan.komunantw.R
-import net.komunan.komunantw.ReleaseApplication
-import net.komunan.komunantw.observeOnNotNull
-import net.komunan.komunantw.repository.entity.ConsumerKeySecret
+import net.komunan.komunantw.TWContext
 import net.komunan.komunantw.common.TWBaseActivity
+import net.komunan.komunantw.extension.observeOnNotNull
+import net.komunan.komunantw.repository.entity.ConsumerKeySecret
 import net.komunan.komunantw.ui.main.MainActivity
 
 class AuthActivity: TWBaseActivity() {
@@ -22,7 +25,7 @@ class AuthActivity: TWBaseActivity() {
 
         @JvmStatic
         fun newIntent(firstRun: Boolean = false): Intent {
-            val componentName = ComponentName(ReleaseApplication.context, AuthActivity::class.java)
+            val componentName = ComponentName(TWContext, AuthActivity::class.java)
             val intent = if (firstRun) Intent.makeRestartActivityTask(componentName) else Intent.makeMainActivity(componentName)
             return intent.apply {
                 putExtra(PARAMETER_FIRST_RUN, firstRun)

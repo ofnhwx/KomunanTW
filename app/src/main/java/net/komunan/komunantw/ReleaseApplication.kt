@@ -25,10 +25,16 @@ open class ReleaseApplication: Application() {
         super.onCreate()
         instance = this
         Iconics.registerFont(GoogleMaterial())
-        Fresco.initialize(context)
-        PreferenceHolder.setContext(context)
+        Fresco.initialize(TWContext)
+        PreferenceHolder.setContext(TWContext)
         Timber.plant(timberTree())
     }
 
     protected open fun timberTree() = Timber.DebugTree()
 }
+
+val TWApplication: ReleaseApplication
+    get() = ReleaseApplication.instance
+
+val TWContext: Context
+    get() = ReleaseApplication.context

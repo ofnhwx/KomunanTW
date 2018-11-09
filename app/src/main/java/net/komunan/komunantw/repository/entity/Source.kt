@@ -4,8 +4,8 @@ import androidx.room.*
 import net.komunan.komunantw.Preference
 import net.komunan.komunantw.common.Diffable
 import net.komunan.komunantw.repository.database.TWDatabase
-import net.komunan.komunantw.toBoolean
-import net.komunan.komunantw.toInt
+import net.komunan.komunantw.extension.toBoolean
+import net.komunan.komunantw.extension.toInt
 
 @Entity(
         tableName = "source",

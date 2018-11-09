@@ -6,7 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.github.ajalt.timberkt.d
 import net.komunan.komunantw.R
-import net.komunan.komunantw.string
+import net.komunan.komunantw.extension.string
 import net.komunan.komunantw.repository.database.transaction
 import net.komunan.komunantw.repository.entity.Account
 import net.komunan.komunantw.repository.entity.Source
@@ -89,7 +89,7 @@ abstract class TimelineDao {
             if (Timeline.count() > 0) {
                 return@transaction
             }
-            val timeline = __save__(Timeline(R.string.default_label.string()))
+            val timeline = __save__(Timeline(string[R.string.default_label]()))
             val homeSource = Source.findByAccount(account).first { Source.SourceType.valueOf(it.type) == Source.SourceType.HOME }
             timeline.addSource(homeSource)
         }

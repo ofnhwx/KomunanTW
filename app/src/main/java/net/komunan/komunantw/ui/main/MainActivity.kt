@@ -15,11 +15,11 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import net.komunan.komunantw.R
-import net.komunan.komunantw.ReleaseApplication
+import net.komunan.komunantw.TWContext
+import net.komunan.komunantw.common.TWBaseActivity
 import net.komunan.komunantw.event.Transition
 import net.komunan.komunantw.repository.entity.Account
 import net.komunan.komunantw.ui.auth.AuthActivity
-import net.komunan.komunantw.common.TWBaseActivity
 import net.komunan.komunantw.ui.main.accounts.AccountsFragment
 import net.komunan.komunantw.ui.main.home.HomeFragment
 import net.komunan.komunantw.ui.main.sources.SourcesFragment
@@ -31,7 +31,7 @@ import org.greenrobot.eventbus.Subscribe
 class MainActivity: TWBaseActivity() {
     companion object {
         @JvmStatic
-        fun newIntent(): Intent = Intent.makeRestartActivityTask(ComponentName(ReleaseApplication.context, MainActivity::class.java))
+        fun newIntent(): Intent = Intent.makeRestartActivityTask(ComponentName(TWContext, MainActivity::class.java))
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -2,25 +2,26 @@ package net.komunan.komunantw.common
 
 import android.graphics.Color
 
+@Suppress("unused", "SpellCheckingInspection", "MemberVisibilityCanBePrivate")
 object AppColor {
-    val RED = Color.RED
-    val GREEN = Color.GREEN
-    val BLUE = Color.BLUE
-    val CYAN = Color.CYAN
-    val MAGENTA = Color.MAGENTA
-    val YELLOW = Color.YELLOW
-    val WHITE = Color.WHITE
-    val BLACK = Color.BLACK
-    val GRAY = Color.GRAY
-    val DKGRAY = Color.DKGRAY
-    val LTGRAY = Color.LTGRAY
-    val TRANSPARENT = Color.TRANSPARENT
+    const val RED = Color.RED
+    const val GREEN = Color.GREEN
+    const val BLUE = Color.BLUE
+    const val CYAN = Color.CYAN
+    const val MAGENTA = Color.MAGENTA
+    const val YELLOW = Color.YELLOW
+    const val WHITE = Color.WHITE
+    const val BLACK = Color.BLACK
+    const val GRAY = Color.GRAY
+    const val DKGRAY = Color.DKGRAY
+    const val LTGRAY = Color.LTGRAY
+    const val TRANSPARENT = Color.TRANSPARENT
 
     val HOLO_BLUE = Color.parseColor("#33b5e5")
 
     val LINK by lazy { HOLO_BLUE }
     val LINK_PRESSED by lazy { HOLO_BLUE }
 
-    fun RETWEETED(retweeted: Boolean) = if (retweeted) GREEN else GRAY
-    fun LIKED(liked: Boolean) = if (liked) RED else GRAY
+    @Suppress("FunctionName") fun RETWEETED(retweeted: Boolean) = if (retweeted) GREEN else GRAY
+    @Suppress("FunctionName") fun LIKED(liked: Boolean) = if (liked) RED else GRAY
 }

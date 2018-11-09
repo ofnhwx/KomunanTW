@@ -3,9 +3,9 @@ package net.komunan.komunantw.repository.entity
 import androidx.room.*
 import net.komunan.komunantw.BuildConfig
 import net.komunan.komunantw.R
-import net.komunan.komunantw.string
-import net.komunan.komunantw.toBoolean
-import net.komunan.komunantw.toInt
+import net.komunan.komunantw.extension.string
+import net.komunan.komunantw.extension.toBoolean
+import net.komunan.komunantw.extension.toInt
 import net.komunan.komunantw.repository.database.TWDatabase
 
 @Suppress("PropertyName")
@@ -30,7 +30,7 @@ class ConsumerKeySecret () {
 
     var name: String
         @Ignore
-        get() = if (default) R.string.default_label.string() else _name
+        get() = if (default) string[R.string.default_label]() else _name
         @Ignore
         set(value) {
             if (!default) {

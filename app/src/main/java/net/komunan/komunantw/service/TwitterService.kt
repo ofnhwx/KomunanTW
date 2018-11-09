@@ -5,10 +5,8 @@ import android.net.Uri
 import android.text.Html
 import android.text.Spanned
 import androidx.work.WorkManager
-import net.komunan.komunantw.ReleaseApplication
-import net.komunan.komunantw.repository.entity.ConsumerKeySecret
-import net.komunan.komunantw.repository.entity.Credential
-import net.komunan.komunantw.repository.entity.Source
+import net.komunan.komunantw.TWContext
+import net.komunan.komunantw.repository.entity.*
 import net.komunan.komunantw.worker.FetchTweetsWorker
 import twitter4j.Twitter
 import twitter4j.TwitterFactory
@@ -27,40 +25,18 @@ object TwitterService {
         oAuthAccessToken = AccessToken(credential.token, credential.tokenSecret)
     }
 
-    fun fetchTweets() {
-        val requests = Source.findEnabled().map { FetchTweetsWorker.request(it.id, FetchTweetsWorker.FetchType.NEW) }
+    fun fetchTweets(isInteractive: Boolean = false) {
+        val requests = Source.findEnabled().map { FetchTweetsWorker.request(it.id, Tweet.INVALID_ID, isInteractive) }
         if (requests.any()) {
             WorkManager.getInstance().enqueue(requests)
         }
     }
 
-    fun doOfficialTweet(tweetId: Long? = null) {
-        if (tweetId == null) {
-            doOfficialAction(buildTwitterUri { it.path("intent/tweet") })
-        } else {
-            doOfficialAction(buildTwitterUri { it.path("intent/tweet").appendQueryParameter("in_reply_to", tweetId.toString()) })
+    fun fetchTweets(mark: TweetDetail, isInteractive: Boolean = false) {
+        val requests = mark.sourceIds.map { FetchTweetsWorker.request(it, mark.id, isInteractive) }
+        if (requests.any()) {
+            WorkManager.getInstance().enqueue(requests)
         }
-    }
-
-    fun doOfficialRetweet(tweetId: Long) {
-        doOfficialAction(buildTwitterUri { it.path("intent/retweet").appendQueryParameter("tweet_id", tweetId.toString()) })
-    }
-
-    fun doOfficialLike(tweetId: Long) {
-        doOfficialAction(buildTwitterUri { it.path("intent/like").appendQueryParameter("tweet_id", tweetId.toString()) })
-    }
-
-    fun doOfficialProfile(userId: Long) {
-        doOfficialAction(buildTwitterUri { it.path("intent/user").appendQueryParameter("user_id", userId.toString()) })
-    }
-
-    private fun buildTwitterUri(body: (Uri.Builder) -> Uri.Builder): Uri {
-        val builder = Uri.Builder().scheme("https").authority("twitter.com")
-        return body.invoke(builder).build()
-    }
-
-    private fun doOfficialAction(uri: Uri) {
-        ReleaseApplication.context.startActivity(Intent(Intent.ACTION_VIEW, uri))
     }
 
     @Suppress("DEPRECATION")
@@ -69,5 +45,55 @@ object TwitterService {
             return null
         }
         return Html.fromHtml("""<a href="https://twitter.com/%s/status/%s">%s</a>""".format(screenName, tweetId, text))
+    }
+
+    object Official {
+        private const val SCHEME = "https"
+        private const val AUTHORITY = "twitter.com"
+
+        private const val INTENT_TWEET   = "intent/tweet"
+        private const val INTENT_RETWEET = "intent/retweet"
+        private const val INTENT_LIKE    = "intent/like"
+        private const val INTENT_USER    = "intent/user"
+
+        private const val PATH_HASH_TAG = "hashtag/%s"
+
+        private const val PARAM_IN_REPLY_TO = "in_reply_to"
+        private const val PARAM_TWEET_ID    = "tweet_id"
+        private const val PARAM_USER_ID     = "user_id"
+        private const val PARAM_SCREEN_NAME = "screen_name"
+
+        fun doTweet(tweetId: Long? = null) {
+            if (tweetId == null) {
+                action { it.path(INTENT_TWEET) }
+            } else {
+                action { it.path(INTENT_TWEET).appendQueryParameter(PARAM_IN_REPLY_TO, tweetId.toString()) }
+            }
+        }
+
+        fun doRetweet(tweetId: Long) {
+            action { it.path(INTENT_RETWEET).appendQueryParameter(PARAM_TWEET_ID, tweetId.toString()) }
+        }
+
+        fun doLike(tweetId: Long) {
+            action { it.path(INTENT_LIKE).appendQueryParameter(PARAM_TWEET_ID, tweetId.toString()) }
+        }
+
+        fun showProfile(userId: Long) {
+            action { it.path(INTENT_USER).appendQueryParameter(PARAM_USER_ID, userId.toString()) }
+        }
+
+        fun showProfile(screenName: String) {
+            action { it.path(INTENT_USER).appendQueryParameter(PARAM_SCREEN_NAME, screenName.trim('@')) }
+        }
+
+        fun showHashTag(hashTag: String) {
+            action { it.path(PATH_HASH_TAG.format(hashTag.trim('#'))) }
+        }
+
+        private fun action(body: (Uri.Builder) -> Uri.Builder) {
+            val builder = Uri.Builder().scheme(SCHEME).authority(AUTHORITY)
+            TWContext.startActivity(Intent(Intent.ACTION_VIEW, body.invoke(builder).build()))
+        }
     }
 }

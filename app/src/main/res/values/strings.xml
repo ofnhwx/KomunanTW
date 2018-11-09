@@ -18,6 +18,7 @@
     <string name="user">ユーザ</string>
     <!-- Action -->
     <string name="do_authentication">認証</string>
+    <string name="fetch_missing_tweets">未取得のツイートを取得する</string>
     <string name="open_browser">ブラウザを開く</string>
     <!-- Confirm -->
     <string name="confirm_delete_timeline">タイムラインを削除しますか？</string>

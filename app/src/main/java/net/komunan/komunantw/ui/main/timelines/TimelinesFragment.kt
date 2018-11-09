@@ -14,9 +14,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.komunan.komunantw.R
 import net.komunan.komunantw.common.TWBaseFragment
-import net.komunan.komunantw.observeOnNotNull
+import net.komunan.komunantw.extension.observeOnNotNull
+import net.komunan.komunantw.extension.string
 import net.komunan.komunantw.repository.entity.Timeline
-import net.komunan.komunantw.string
 
 class TimelinesFragment: TWBaseFragment() {
     companion object {
@@ -99,6 +99,6 @@ class TimelinesFragment: TWBaseFragment() {
     }
 
     override fun fragmentName(): String? {
-        return R.string.timeline_list.string()
+        return string[R.string.timeline_list]()
     }
 }

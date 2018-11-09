@@ -14,11 +14,11 @@ import kotlinx.coroutines.withContext
 import net.komunan.komunantw.R
 import net.komunan.komunantw.common.AppColor
 import net.komunan.komunantw.common.TWListAdapter
-import net.komunan.komunantw.make
+import net.komunan.komunantw.extension.make
+import net.komunan.komunantw.extension.string
 import net.komunan.komunantw.repository.entity.Source
 import net.komunan.komunantw.repository.entity.SourceForSelect
 import net.komunan.komunantw.repository.entity.Timeline
-import net.komunan.komunantw.string
 
 class TimelineEditAdapter(private val timelineId: Long): TWListAdapter<SourceForSelect, TimelineEditAdapter.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -41,12 +41,12 @@ class TimelineEditAdapter(private val timelineId: Long): TWListAdapter<SourceFor
                     itemView.source_account_name.text = account.name
                 }
                 itemView.source_name.text = when (Source.SourceType.valueOf(source.type)) {
-                    Source.SourceType.HOME -> R.string.home.string()
-                    Source.SourceType.MENTION -> R.string.mention.string()
-                    Source.SourceType.USER -> R.string.user.string()
-                    Source.SourceType.LIKE -> R.string.favorite.string()
-                    Source.SourceType.LIST -> R.string.format_list_label.string(source.label)
-                    Source.SourceType.SEARCH -> R.string.format_search_label.string(source.label)
+                    Source.SourceType.HOME -> string[R.string.home]()
+                    Source.SourceType.MENTION -> string[R.string.mention]()
+                    Source.SourceType.USER -> string[R.string.user]()
+                    Source.SourceType.LIKE -> string[R.string.favorite]()
+                    Source.SourceType.LIST -> string[R.string.format_list_label](source.label)
+                    Source.SourceType.SEARCH -> string[R.string.format_search_label](source.label)
                 }
                 itemView.source_selected.run {
                     visibility = View.VISIBLE

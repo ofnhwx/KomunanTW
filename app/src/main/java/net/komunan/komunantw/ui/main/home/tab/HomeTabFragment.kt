@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.simple_recycler_view.*
 import net.komunan.komunantw.R
-import net.komunan.komunantw.observeOnNotNull
+import net.komunan.komunantw.extension.observeOnNotNull
 import net.komunan.komunantw.repository.entity.Timeline
 import net.komunan.komunantw.common.TWBaseFragment
 
@@ -28,6 +28,7 @@ class HomeTabFragment: TWBaseFragment() {
     }
 
     private val viewModel: HomeTabViewModel by lazy { makeViewModel(arguments!!.getLong(PARAMETER_TIMELINE_ID)) }
+    private val layoutManager by lazy { LinearLayoutManager(context, RecyclerView.VERTICAL, false) }
     private val adapter = HomeTabAdapter()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -36,10 +37,14 @@ class HomeTabFragment: TWBaseFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        container.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+        container.layoutManager = layoutManager
         container.adapter = adapter
         viewModel.tweets.observeOnNotNull(this) { tweets ->
-            adapter.submitList(tweets)
+            val positionIndex = layoutManager.findFirstVisibleItemPosition()
+            val positionOffset = container.getChildAt(0)?.let { it.top - container.paddingTop } ?: 0
+            adapter.submitList(tweets) {
+                layoutManager.scrollToPositionWithOffset(positionIndex, positionOffset)
+            }
         }
     }
 
