@@ -76,12 +76,18 @@ class FetchTweetsWorker(context: Context, params: WorkerParameters): Worker(cont
             }
         }
 
-        val (tweets, users) = fetchTweets()
-        if (tweets.isEmpty()) {
+        val statuses = fetchTweets()
+        if (statuses.isEmpty()) {
             d { "fetch(${source.id}): count=0"}
         } else {
-            d { "fetch(${source.id}): count=${tweets.count()}, id={ ${tweets.first().id} - ${tweets.last().id} }"}
+            d { "fetch(${source.id}): count=${statuses.count()}, id={ ${statuses.first().id} ～ ${statuses.last().id} }"}
         }
+
+//        val tweets = result.map { Tweet(it) }
+//        val users = mutableListOf<User>()
+//        users.addAll(result.map { User(it.user) }.distinctBy { it.id })
+//        users.addAll(result.mapNotNull { it.retweetedStatus }.map { User(it.user) }.distinctBy { it.id })
+//        return Pair(tweets, users)
 
         transaction {
             // 未取得のマークを削除
@@ -90,23 +96,23 @@ class FetchTweetsWorker(context: Context, params: WorkerParameters): Worker(cont
             }
 
             // 各種データを保存
-            Tweet.save(source, tweets)
-            User.save(users)
+            Tweet.createCache(source, statuses)
+            User.createCache(statuses)
             source.updateFetchAt()
 
             // 未取得のマークを設定
-            tweets.lastOrNull()?.let { tweet ->
+            statuses.lastOrNull()?.let { status ->
                 when (fetchType) {
-                    FetchType.FIRST -> Tweet.addMissingMark(source, tweet.id - 1)
+                    FetchType.FIRST -> Tweet.addMissingMark(source, status.id - 1)
                     FetchType.NEW -> {
-                        if (tweet.id > (maxTweetId + 1)) {
-                            Tweet.addMissingMark(source, tweet.id - 1)
+                        if (status.id > (maxTweetId + 1)) {
+                            Tweet.addMissingMark(source, status.id - 1)
                         }
                     }
-                    FetchType.OLD -> Tweet.addMissingMark(source, tweet.id - 1)
+                    FetchType.OLD -> Tweet.addMissingMark(source, status.id - 1)
                     FetchType.MISS -> {
-                        if (tweet.id > (prevTweetId + 1)) {
-                            Tweet.addMissingMark(source, tweet.id - 1)
+                        if (status.id > (prevTweetId + 1)) {
+                            Tweet.addMissingMark(source, status.id - 1)
                         }
                     }
                 }
@@ -116,9 +122,9 @@ class FetchTweetsWorker(context: Context, params: WorkerParameters): Worker(cont
         return Result.SUCCESS
     }
 
-    private fun fetchTweets(): Pair<List<Tweet>, List<User>> {
+    private fun fetchTweets(): List<Status> {
         val twitter = TwitterService.twitter(source.account()!!.credential())
-        val result = when (Source.SourceType.valueOf(source.type)) {
+        return when (Source.SourceType.valueOf(source.type)) {
             Source.SourceType.HOME -> {
                 checkResult(twitter.getHomeTimeline(makePaging()))
             }
@@ -138,12 +144,6 @@ class FetchTweetsWorker(context: Context, params: WorkerParameters): Worker(cont
                 checkResult(twitter.search(makeQuery()))
             }
         }
-
-        val tweets = result.map { Tweet(it) }
-        val users = mutableListOf<User>()
-        users.addAll(result.map { User(it.user) }.distinctBy { it.id })
-        users.addAll(result.mapNotNull { it.retweetedStatus }.map { User(it.user) }.distinctBy { it.id })
-        return Pair(tweets, users)
     }
 
     private fun checkResult(result: ResponseList<Status>): List<Status> {

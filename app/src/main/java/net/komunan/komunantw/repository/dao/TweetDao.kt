@@ -17,19 +17,22 @@ abstract class TweetDao {
     ts.tweet_id AS id,
     ifnull(t.user_id, 0) AS user_id,
     ifnull(t.text, '') AS text,
-    ifnull(t.via, '') AS via,
-    ifnull(t.retweeted, 0) AS retweeted,
     ifnull(t.retweet_count, 0) AS retweet_count,
-    ifnull(t.liked, 0) AS liked,
     ifnull(t.like_count, 0) AS like_count,
     ifnull(t.timestamp, 0) AS timestamp,
-    ifnull(t.retweeted_by, 0) AS retweeted_by,
-    ifnull(t.retweeted_id, 0) AS retweeted_id,
-    ifnull(t.urls, '[]') AS urls,
-    ifnull(t.medias, '[]') AS medias,
+    ifnull(t.via, '') AS via,
+    ifnull(t.reply_id, 0) AS reply_id,
+    ifnull(t.reply_user_id, 0) AS reply_user_id,
+    ifnull(t.rt_id, 0) AS rt_id,
+    ifnull(t.rt_user_id, 0) AS rt_user_id,
+    ifnull(t.qt_id, 0) AS qt_id,
+    ifnull(t.qt_user_id, 0) AS qt_user_id,
+    ifnull(t.ext, '') AS ext,
+    ts.retweeted,
+    ts.liked,
     ts.is_missing,
     ts.source_ids
-FROM (SELECT tweet_id, sum(is_missing) AS is_missing, group_concat(source_id) AS source_ids FROM tweet_source WHERE source_id in (:sourceIds) GROUP BY tweet_id) AS ts
+FROM (SELECT tweet_id, sum(retweeted) retweeted,  sum(liked) as liked, sum(is_missing) AS is_missing, group_concat(source_id) AS source_ids FROM tweet_source WHERE source_id in (:sourceIds) GROUP BY tweet_id) AS ts
 LEFT OUTER JOIN tweet AS t ON t.id = ts.tweet_id
 ORDER BY ts.tweet_id DESC""")
     protected abstract fun __findBySourceIdsAsync(sourceIds: List<Long>): DataSource.Factory<Int, TweetDetail>

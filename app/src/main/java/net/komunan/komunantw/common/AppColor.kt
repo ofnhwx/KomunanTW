@@ -17,7 +17,8 @@ object AppColor {
     const val LTGRAY = Color.LTGRAY
     const val TRANSPARENT = Color.TRANSPARENT
 
-    val HOLO_BLUE = Color.parseColor("#33b5e5")
+    val ORANGE = Color.parseColor("#FFA500")
+    val HOLO_BLUE = Color.parseColor("#33B5E5")
 
     val LINK by lazy { HOLO_BLUE }
     val LINK_PRESSED by lazy { HOLO_BLUE }

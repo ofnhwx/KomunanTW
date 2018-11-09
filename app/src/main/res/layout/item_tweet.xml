@@ -2,6 +2,7 @@
 <androidx.cardview.widget.CardView
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:og="http://schemas.android.com/tools"
         app:cardCornerRadius="8dp"
         android:layout_marginTop="4dp"
         android:layout_marginStart="8dp"
@@ -28,6 +29,8 @@
             <TextView
                     android:id="@+id/retweeted_by"
                     android:text="@string/dummy"
+                    android:singleLine="true"
+                    android:ellipsize="end"
                     android:layout_marginStart="4dp"
                     android:layout_weight="1"
                     android:layout_width="0dp"
@@ -94,25 +97,25 @@
                     android:layout_height="wrap_content">
                 <com.facebook.drawee.view.SimpleDraweeView
                         android:id="@+id/tweet_media_1"
-                        android:background="#848484"
+                        android:background="@color/border"
                         android:padding="1dp"
                         android:layout_width="64dp"
                         android:layout_height="64dp" />
                 <com.facebook.drawee.view.SimpleDraweeView
                         android:id="@+id/tweet_media_2"
-                        android:background="#848484"
+                        android:background="@color/border"
                         android:padding="1dp"
                         android:layout_width="64dp"
                         android:layout_height="64dp" />
                 <com.facebook.drawee.view.SimpleDraweeView
                         android:id="@+id/tweet_media_3"
-                        android:background="#848484"
+                        android:background="@color/border"
                         android:padding="1dp"
                         android:layout_width="64dp"
                         android:layout_height="64dp" />
                 <com.facebook.drawee.view.SimpleDraweeView
                         android:id="@+id/tweet_media_4"
-                        android:background="#848484"
+                        android:background="@color/border"
                         android:padding="1dp"
                         android:layout_width="64dp"
                         android:layout_height="64dp" />

@@ -7,6 +7,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Observer
+import com.google.gson.Gson
 import com.mikepenz.iconics.IconicsDrawable
 import com.mikepenz.iconics.typeface.IIcon
 import net.komunan.komunantw.TWContext
@@ -44,3 +45,5 @@ fun <T1, T2, R> combineLatest(source1: LiveData<T1>, source2: LiveData<T2>, func
     result.addSource(source2) { result.value = func.invoke(source1.value, source2.value) }
     return result
 }
+
+val gson = Gson()

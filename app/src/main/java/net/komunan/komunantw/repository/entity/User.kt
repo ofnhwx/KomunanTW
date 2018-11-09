@@ -1,10 +1,14 @@
 package net.komunan.komunantw.repository.entity
 
-import androidx.room.*
-import net.komunan.komunantw.repository.database.TWCacheDatabase
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.Ignore
+import androidx.room.PrimaryKey
 import net.komunan.komunantw.R
 import net.komunan.komunantw.extension.string
 import net.komunan.komunantw.extension.uri
+import net.komunan.komunantw.repository.database.TWCacheDatabase
+import twitter4j.Status
 import twitter4j.User as TwitterUser
 
 @Entity(tableName = "user")
@@ -23,12 +27,18 @@ class User() {
         private val dao = TWCacheDatabase.instance.userDao()
 
         @JvmStatic fun find(id: Long) = dao.find(id)
-        @JvmStatic fun save(users: List<User>) = dao.save(users.filter { !it.dummy })
         @JvmStatic fun dummy(): User = User().apply {
             imageUrl = uri[R.mipmap.ic_launcher].toString()
             name = string[R.string.dummy]()
             screenName = string[R.string.dummy]()
             dummy = true
+        }
+
+        @JvmStatic
+        fun createCache(statuses: List<Status>) {
+            val users1 = statuses.map { User(it.user) }
+            val users2 = statuses.mapNotNull { it.retweetedStatus }.map { User(it.user) }
+            dao.save(users1.plus(users2).distinctBy { it.id }.filterNot { it.dummy })
         }
     }
 

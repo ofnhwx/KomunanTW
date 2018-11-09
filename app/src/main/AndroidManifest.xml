@@ -1,12 +1,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          xmlns:tools="http://schemas.android.com/tools"
           package="net.komunan.komunantw">
     <uses-permission android:name="android.permission.INTERNET" />
     <application android:name=".ReleaseApplication"
-                 android:allowBackup="false"
                  android:icon="@mipmap/ic_launcher"
                  android:label="@string/app_name"
                  android:roundIcon="@mipmap/ic_launcher_round"
-                 android:theme="@style/AppTheme">
+                 android:theme="@style/AppTheme"
+                 android:allowBackup="false"
+                 android:supportsRtl="false"
+                 tools:replace="android:allowBackup,android:supportsRtl">
         <activity android:name=".ui.main.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

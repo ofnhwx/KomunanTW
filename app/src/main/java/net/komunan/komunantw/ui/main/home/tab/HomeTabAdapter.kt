@@ -129,18 +129,24 @@ class HomeTabAdapter: PagedListAdapter<TweetDetail, HomeTabAdapter.TweetBaseView
         }
 
         private suspend fun bindValue(tweet: TweetDetail) {
-            val user = withContext(Dispatchers.Default) { User.find(tweet.userId) ?: User.dummy() }
+            val user = withContext(Dispatchers.Default) { User.find(if (tweet.isRetweet) tweet.rtUserId else tweet.userId) ?: User.dummy() }
             itemView.tweet_user_icon.setImageURI(user.imageUrl)
             itemView.tweet_user_name.text = user.name
             itemView.tweet_user_screen_name.text = string[R.string.format_screen_name](user.screenName)
             itemView.tweet_text.text = tweet.displayText
-            for (i in IntRange(0, 3)) {
-                val media = tweet.medias.elementAtOrNull(i)
-                if (media == null) {
-                    mediaViews[i].visibility = View.GONE
-                } else {
-                    mediaViews[i].visibility = View.VISIBLE
-                    mediaViews[i].setImageURI(media.url)
+            when {
+                tweet.ext.medias.any() -> {
+                    for (i in IntRange(0, 3)) {
+                        val media = tweet.ext.medias.elementAtOrNull(i)
+                        if (media == null) {
+                            mediaViews[i].visibility = View.GONE
+                        } else {
+                            mediaViews[i].visibility = View.VISIBLE
+                            mediaViews[i].setImageURI(media.url)
+                        }
+                    }
+                }
+                tweet.ext.urls.count() == 1 -> {
                 }
             }
             itemView.tweet_date_time.text = TwitterService.makeStatusPermalink(formatTime(tweet.timestamp), user.screenName, tweet.id)
@@ -156,16 +162,24 @@ class HomeTabAdapter: PagedListAdapter<TweetDetail, HomeTabAdapter.TweetBaseView
             if (firstSetup) {
                 itemView.retweeted_by_mark.setTextColor(AppColor.GREEN)
                 itemView.retweeted_by.setTextColor(AppColor.GRAY)
+                itemView.tweet_user_name.setTextColor(AppColor.ORANGE)
                 itemView.tweet_user_screen_name.setTextColor(AppColor.GRAY)
+                itemView.tweet_text.setTextColor(AppColor.WHITE)
                 itemView.tweet_action_reply.setTextColor(AppColor.GRAY)
                 itemView.tweet_date_time.setLinkTextColor(AppColor.LINK)
                 itemView.tweet_via.setTextColor(AppColor.GRAY)
                 itemView.tweet_via.setLinkTextColor(AppColor.LINK)
             }
-            if (tweet.medias.isEmpty()) {
-                itemView.media_container.visibility = View.GONE
-            } else {
-                itemView.media_container.visibility = View.VISIBLE
+            when {
+                tweet.ext.medias.any() -> {
+                    itemView.media_container.visibility = View.VISIBLE
+                }
+                tweet.ext.urls.count() == 1 -> {
+                    itemView.media_container.visibility = View.GONE
+                }
+                else -> {
+                    itemView.media_container.visibility = View.GONE
+                }
             }
             itemView.tweet_action_retweet.setTextColor(AppColor.RETWEETED(tweet.retweeted))
             itemView.tweet_action_like.setTextColor(AppColor.LIKED(tweet.liked))
@@ -173,37 +187,43 @@ class HomeTabAdapter: PagedListAdapter<TweetDetail, HomeTabAdapter.TweetBaseView
 
         private fun bindEvents(tweet: TweetDetail) {
             // テキスト(@〜, #〜, https://〜)
-            tweet.urls.forEach { url ->
+            tweet.ext.urls.forEach { url ->
                 itemView.tweet_text.applyLinks(Link(url.display)
                         .setTextColor(AppColor.LINK)
                         .setTextColorOfHighlightedLink(AppColor.LINK_PRESSED)
-                        .setOnClickListener { url.shorten.intentActionView() })
+                        .setOnClickListener { url.expanded.intentActionView() })
             }
             itemView.tweet_text.applyLinks(LINK_USERNAME, LINK_HASH_TAG, LINK_URL)
             // プロフィール画像 -> ユーザープロフィール
             itemView.tweet_user_icon.setOnClickListener {
                 TwitterService.Official.showProfile(tweet.userId)
             }
-            // 画像
-            for (i in IntRange(0, 3)) {
-                val media = tweet.medias.elementAtOrNull(i)
-                if (media != null) {
-                    mediaViews[i].setOnClickListener {
-                        ImageViewer.Builder(itemView.context, tweet.medias)
-                                .setFormatter { media ->
-                                    media.url
+            // 画像・OGP
+            when {
+                tweet.ext.medias.any() -> {
+                    for (i in IntRange(0, 3)) {
+                        val media = tweet.ext.medias.elementAtOrNull(i)
+                        if (media != null) {
+                            mediaViews[i].setOnClickListener {
+                                ImageViewer.Builder(itemView.context, tweet.ext.medias)
+                                        .setFormatter { media ->
+                                            media.url
+                                        }
+                                        .setStartPosition(i)
+                                        .show()
+                            }
+                            mediaViews[i].setOnLongClickListener {
+                                if (media.isVideo) {
+                                    media.videoVariants.first().url.intentActionView()
+                                } else {
+                                    media.url.intentActionView()
                                 }
-                                .setStartPosition(i)
-                                .show()
-                    }
-                    mediaViews[i].setOnLongClickListener {
-                        if (media.isVideo) {
-                            media.videoVariants.first().url.intentActionView()
-                        } else {
-                            media.url.intentActionView()
+                                return@setOnLongClickListener true
+                            }
                         }
-                        return@setOnLongClickListener true
                     }
+                }
+                tweet.ext.urls.count() == 1 -> {
                 }
             }
             // 返信
@@ -231,8 +251,8 @@ class HomeTabAdapter: PagedListAdapter<TweetDetail, HomeTabAdapter.TweetBaseView
                 itemView.retweeted_by_mark.text = string[R.string.gmd_repeat]()
             }
             if (tweet.isRetweet) {
-                val retweetedBy = withContext(Dispatchers.Default) { User.find(tweet.retweetedBy)?: User.dummy() }
-                itemView.retweeted_by.text = string[R.string.format_retweeted_by](retweetedBy.name)
+                val user = withContext(Dispatchers.Default) { User.find(tweet.userId)?: User.dummy() }
+                itemView.retweeted_by.text = string[R.string.format_retweeted_by](user.name)
                 itemView.retweeted_by_container.visibility = View.VISIBLE
             } else {
                 itemView.retweeted_by_container.visibility = View.GONE
