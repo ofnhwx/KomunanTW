@@ -2,6 +2,7 @@ package net.komunan.komunantw.repository.entity
 
 import androidx.room.*
 import net.komunan.komunantw.repository.database.TWDatabase
+import org.apache.commons.lang3.builder.ToStringBuilder
 import twitter4j.auth.AccessToken
 
 @Entity(
@@ -28,16 +29,15 @@ class Credential() {
     @ColumnInfo(name = "update_at")       var updateAt      : Long = 0L
 
     companion object {
-        private val dao = TWDatabase.instance.credentialDao()
-
-        @JvmStatic fun findByAccount(account: Account) = dao.findByAccount(account)
+        @JvmStatic
+        val dao = TWDatabase.instance.credentialDao()
     }
 
     @Ignore
-    constructor(account: Account, consumerKeySecret: ConsumerKeySecret, accessToken: AccessToken): this() {
+    constructor(account: Account, consumer: Consumer, accessToken: AccessToken): this() {
         this.accountId = account.id
-        this.consumerKey = consumerKeySecret.consumerKey
-        this.consumerSecret = consumerKeySecret.consumerSecret
+        this.consumerKey = consumer.key
+        this.consumerSecret = consumer.secret
         this.token = accessToken.token
         this.tokenSecret = accessToken.tokenSecret
     }
@@ -46,13 +46,6 @@ class Credential() {
     fun delete() = dao.delete(this)
 
     override fun toString(): String {
-        return "${Credential::class.simpleName}{ " +
-                "accountId=$accountId, " +
-                "consumerKey=$consumerKey, " +
-                "consumerSecret=$consumerSecret, " +
-                "token=$token, " +
-                "tokenSecret=$tokenSecret, " +
-                "createAt=$createAt, " +
-                "updateAt=$updateAt }"
+        return ToStringBuilder.reflectionToString(this)
     }
 }

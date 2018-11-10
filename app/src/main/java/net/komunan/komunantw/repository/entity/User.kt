@@ -8,6 +8,7 @@ import net.komunan.komunantw.R
 import net.komunan.komunantw.extension.string
 import net.komunan.komunantw.extension.uri
 import net.komunan.komunantw.repository.database.TWCacheDatabase
+import org.apache.commons.lang3.builder.ToStringBuilder
 import twitter4j.Status
 import twitter4j.User as TwitterUser
 
@@ -21,13 +22,14 @@ class User() {
     @ColumnInfo(name = "cache_at")    var cacheAt   : Long = 0L
 
     @Ignore
-    var dummy = false
+    var dummy: Boolean = false
 
     companion object {
-        private val dao = TWCacheDatabase.instance.userDao()
+        @JvmStatic
+        val dao = TWCacheDatabase.instance.userDao()
 
-        @JvmStatic fun find(id: Long) = dao.find(id)
-        @JvmStatic fun dummy(): User = User().apply {
+        @JvmStatic
+        fun dummy(): User = User().apply {
             imageUrl = uri[R.mipmap.ic_launcher].toString()
             name = string[R.string.dummy]()
             screenName = string[R.string.dummy]()
@@ -38,7 +40,7 @@ class User() {
         fun createCache(statuses: List<Status>) {
             val users1 = statuses.map { User(it.user) }
             val users2 = statuses.mapNotNull { it.retweetedStatus }.map { User(it.user) }
-            dao.save(users1.plus(users2).distinctBy { it.id }.filterNot { it.dummy })
+            dao.save(users1.plus(users2).distinctBy { it.id })
         }
     }
 
@@ -52,11 +54,8 @@ class User() {
     }
 
     override fun toString(): String {
-        return "${User::class.simpleName}{ " +
-                "id=$id, " +
-                "imageUrl=$imageUrl, " +
-                "name=$name, " +
-                "screenName=$screenName," +
-                "cacheAt=$cacheAt }"
+        return ToStringBuilder.reflectionToString(this)
     }
+
+    fun save() = dao.save(this)
 }

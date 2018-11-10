@@ -16,7 +16,7 @@ import net.komunan.komunantw.R
 import net.komunan.komunantw.TWContext
 import net.komunan.komunantw.common.TWBaseActivity
 import net.komunan.komunantw.extension.observeOnNotNull
-import net.komunan.komunantw.repository.entity.ConsumerKeySecret
+import net.komunan.komunantw.repository.entity.Consumer
 import net.komunan.komunantw.ui.main.MainActivity
 
 class AuthActivity: TWBaseActivity() {
@@ -52,7 +52,7 @@ class AuthActivity: TWBaseActivity() {
         })
         open_browser.setOnClickListener {
             GlobalScope.launch {
-                viewModel.startOAuth(this@AuthActivity, ConsumerKeySecret.default())
+                viewModel.startOAuth(this@AuthActivity, Consumer.default())
             }
         }
         authentication.setOnClickListener {

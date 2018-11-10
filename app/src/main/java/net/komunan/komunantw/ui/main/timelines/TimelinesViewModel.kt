@@ -8,7 +8,7 @@ import net.komunan.komunantw.extension.string
 
 class TimelinesViewModel: TWBaseViewModel() {
     val timelines: LiveData<List<Timeline>>
-        get() = Timeline.findAllAsync()
+        get() = Timeline.dao.findAllAsync()
 
     fun addTimeline() {
         Timeline(string[R.string.new_timeline]()).save()

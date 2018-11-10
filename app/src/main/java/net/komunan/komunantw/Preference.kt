@@ -2,7 +2,7 @@ package net.komunan.komunantw
 
 import com.marcinmoskala.kotlinpreferences.PreferenceHolder
 import net.komunan.komunantw.extension.gson
-import net.komunan.komunantw.repository.entity.ConsumerKeySecret
+import net.komunan.komunantw.repository.entity.Consumer
 import twitter4j.auth.RequestToken
 
 @Suppress("ObjectPropertyName")
@@ -32,10 +32,10 @@ object Preference: PreferenceHolder() {
             _requestToken = value?.let { gson.toJson(RequestTokenHolder.from(it)).toString() }
         }
 
-    private var _consumerKeySecret: String? by bindToPreferenceFieldNullable()
-    var consumerKeySecret: ConsumerKeySecret?
-        get() = _consumerKeySecret?.let { gson.fromJson(it, ConsumerKeySecret::class.java) }
+    private var _consumer: String? by bindToPreferenceFieldNullable()
+    var consumer: Consumer?
+        get() = _consumer?.let { gson.fromJson(it, Consumer::class.java) }
         set(value) {
-            _consumerKeySecret = value?.let { gson.toJson(value).toString() }
+            _consumer = value?.let { gson.toJson(value).toString() }
         }
 }

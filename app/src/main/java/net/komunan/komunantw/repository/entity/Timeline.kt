@@ -3,6 +3,7 @@ package net.komunan.komunantw.repository.entity
 import androidx.room.*
 import net.komunan.komunantw.common.Diffable
 import net.komunan.komunantw.repository.database.TWDatabase
+import org.apache.commons.lang3.builder.ToStringBuilder
 
 @Entity(tableName = "timeline")
 class Timeline(): Diffable {
@@ -14,14 +15,10 @@ class Timeline(): Diffable {
     @ColumnInfo(name = "update_at") var updateAt: Long = 0L
 
     companion object {
-        private val dao = TWDatabase.instance.timelineDao()
-        private val sourceDao = TWDatabase.instance.timelineSourceDao()
-
-        @JvmStatic fun findAllAsync() = dao.findAllAsync()
-        @JvmStatic fun findAsync(id: Long) = dao.findAsync(id)
-        @JvmStatic fun find(id: Long) = dao.find(id)
-        @JvmStatic fun count() = dao.count()
-        @JvmStatic fun firstSetup(account: Account) = dao.firstSetup(account)
+        @JvmStatic
+        val dao = TWDatabase.instance.timelineDao()
+        @JvmStatic
+        val sourceDao = TWDatabase.instance.timelineSourceDao()
     }
 
     @Ignore
@@ -32,18 +29,12 @@ class Timeline(): Diffable {
     fun save() = dao.save(this)
     fun delete() = dao.delete(this)
     fun moveTo(position: Int) = dao.moveTo(this, position)
-    fun addSource(source: Source) = sourceDao.add(this, source)
-    fun removeSource(source: Source) = sourceDao.remove(this, source)
-    fun sources() = Source.findByTimeline(this)
-    fun sourceCount() = Source.countByTimeline(this)
+
+    fun addSource(source: Source): Unit = TimelineSource(id, source.id).save()
+    fun delSource(source: Source): Unit = TimelineSource(id, source.id).delete()
 
     override fun toString(): String {
-        return "${Timeline::class.simpleName}{ " +
-                "id=$id," +
-                "name=$name, " +
-                "position=$position, " +
-                "createAt=$createAt, " +
-                "updateAt=$updateAt }"
+        return ToStringBuilder.reflectionToString(this)
     }
 
     override fun isTheSame(other: Diffable): Boolean {
@@ -55,40 +46,5 @@ class Timeline(): Diffable {
         return other is Timeline
                 && this.id == other.id
                 && this.name == other.name
-                //&& this.position == other.position
-    }
-}
-
-@Entity(
-        tableName = "timeline_source",
-        primaryKeys = ["timeline_id", "source_id"],
-        foreignKeys = [
-            ForeignKey(
-                    entity = Timeline::class,
-                    parentColumns = ["id"],
-                    childColumns = ["timeline_id"],
-                    onDelete = ForeignKey.CASCADE,
-                    onUpdate = ForeignKey.CASCADE,
-                    deferred = true
-            ),
-            ForeignKey(
-                    entity = Source::class,
-                    parentColumns = ["id"],
-                    childColumns = ["source_id"],
-                    onDelete = ForeignKey.CASCADE,
-                    onUpdate = ForeignKey.CASCADE,
-                    deferred = true
-            )
-        ],
-        indices = [ Index("source_id") ]
-)
-class TimelineSource() {
-    @ColumnInfo(name = "timeline_id") var timelineId: Long = 0L
-    @ColumnInfo(name = "source_id")   var sourceId  : Long = 0L
-
-    @Ignore
-    constructor(timeline: Timeline, source: Source): this() {
-        this.timelineId = timeline.id
-        this.sourceId = source.id
     }
 }

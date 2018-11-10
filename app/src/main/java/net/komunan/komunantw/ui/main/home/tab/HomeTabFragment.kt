@@ -39,7 +39,7 @@ class HomeTabFragment: TWBaseFragment() {
         val layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
         container.layoutManager = layoutManager
         container.adapter = adapter
-        viewModel.tweets.observeOnNotNull(this) { tweets ->
+        viewModel.tweetSources.observeOnNotNull(this) { tweets ->
             val positionIndex = layoutManager.findFirstVisibleItemPosition()
             val positionOffset = container.getChildAt(0)?.let { it.top - container.paddingTop } ?: 0
             adapter.submitList(tweets) {

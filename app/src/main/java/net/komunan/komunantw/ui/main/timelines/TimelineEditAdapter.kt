@@ -16,11 +16,11 @@ import net.komunan.komunantw.common.AppColor
 import net.komunan.komunantw.common.TWListAdapter
 import net.komunan.komunantw.extension.make
 import net.komunan.komunantw.extension.string
+import net.komunan.komunantw.repository.entity.Account
 import net.komunan.komunantw.repository.entity.Source
-import net.komunan.komunantw.repository.entity.SourceForSelect
 import net.komunan.komunantw.repository.entity.Timeline
 
-class TimelineEditAdapter(private val timelineId: Long): TWListAdapter<SourceForSelect, TimelineEditAdapter.ViewHolder>() {
+class TimelineEditAdapter(private val timelineId: Long): TWListAdapter<Source, TimelineEditAdapter.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         return ViewHolder(timelineId, inflater.inflate(R.layout.item_source, parent, false))
@@ -30,35 +30,31 @@ class TimelineEditAdapter(private val timelineId: Long): TWListAdapter<SourceFor
         holder.bind(getItem(position))
     }
 
-    class ViewHolder(val timelineId: Long, itemView: View): RecyclerView.ViewHolder(itemView) {
-        fun bind(source: SourceForSelect) {
+    class ViewHolder(private val timelineId: Long, itemView: View): RecyclerView.ViewHolder(itemView) {
+        fun bind(source: Source) {
             GlobalScope.launch(Dispatchers.Main) {
-                val account = withContext(Dispatchers.Default) { source.account() }
-                if (account == null) {
-                    // TODO: あとで考える
-                } else {
-                    itemView.source_account_icon.setImageURI(Uri.parse(account.imageUrl))
-                    itemView.source_account_name.text = account.name
-                }
-                itemView.source_name.text = when (Source.SourceType.valueOf(source.type)) {
-                    Source.SourceType.HOME -> string[R.string.home]()
-                    Source.SourceType.MENTION -> string[R.string.mention]()
-                    Source.SourceType.USER -> string[R.string.user]()
-                    Source.SourceType.LIKE -> string[R.string.favorite]()
-                    Source.SourceType.LIST -> string[R.string.format_list_label](source.label)
-                    Source.SourceType.SEARCH -> string[R.string.format_search_label](source.label)
+                val account = withContext(Dispatchers.Default) { Account.dao.find(source.accountId)!! }
+                itemView.source_account_icon.setImageURI(Uri.parse(account.imageUrl))
+                itemView.source_account_name.text = account.name
+                itemView.source_name.text = when (Source.Type.valueOf(source.type)) {
+                    Source.Type.HOME -> string[R.string.home]()
+                    Source.Type.MENTION -> string[R.string.mention]()
+                    Source.Type.USER -> string[R.string.user]()
+                    Source.Type.LIKE -> string[R.string.favorite]()
+                    Source.Type.LIST -> string[R.string.format_list_label](source.label)
+                    Source.Type.SEARCH -> string[R.string.format_search_label](source.label)
                 }
                 itemView.source_selected.run {
                     visibility = View.VISIBLE
-                    if (source.isActive) {
-                        setImageDrawable(GoogleMaterial.Icon.gmd_check.make(context).color(AppColor.GREEN))
-                        setOnClickListener {
-                            GlobalScope.launch { Timeline.find(timelineId)?.removeSource(source) }
-                        }
-                    } else {
+                    if (withContext(Dispatchers.Default) { Timeline.sourceDao.find(timelineId, source.id) == null }) {
                         setImageDrawable(GoogleMaterial.Icon.gmd_check.make(context).color(AppColor.GRAY))
                         setOnClickListener {
-                            GlobalScope.launch { Timeline.find(timelineId)?.addSource(source) }
+                            GlobalScope.launch { Timeline.dao.find(timelineId)?.addSource(source) }
+                        }
+                    } else {
+                        setImageDrawable(GoogleMaterial.Icon.gmd_check.make(context).color(AppColor.GREEN))
+                        setOnClickListener {
+                            GlobalScope.launch { Timeline.dao.find(timelineId)?.delSource(source) }
                         }
                     }
                 }

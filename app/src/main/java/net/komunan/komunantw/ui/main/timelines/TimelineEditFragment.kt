@@ -72,7 +72,7 @@ class TimelineEditFragment: TWBaseFragment() {
             setImageDrawable(GoogleMaterial.Icon.gmd_check.make(context).color(AppColor.GREEN))
             setOnClickListener {
                 GlobalScope.launch {
-                    Timeline.find(timelineId)?.apply { name = timeline_name_edit.text.toString() }?.save()
+                    Timeline.dao.find(timelineId)?.apply { name = timeline_name_edit.text.toString() }?.save()
                 }
                 viewModel.editMode.postValue(false)
             }
@@ -99,7 +99,7 @@ class TimelineEditFragment: TWBaseFragment() {
                         .message(R.string.confirm_delete_timeline)
                         .positiveButton(R.string.do_delete) {
                             GlobalScope.launch(Dispatchers.Main) {
-                                withContext(Dispatchers.Default) { Timeline.find(timelineId)?.delete() }
+                                withContext(Dispatchers.Default) { Timeline.dao.find(timelineId)?.delete() }
                                 Transition.execute(Transition.Target.BACK)
                             }
                         }

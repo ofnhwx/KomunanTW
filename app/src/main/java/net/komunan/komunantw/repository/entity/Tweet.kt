@@ -1,23 +1,23 @@
 package net.komunan.komunantw.repository.entity
 
-import androidx.paging.LivePagedListBuilder
-import androidx.room.*
-import net.komunan.komunantw.common.Diffable
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.Ignore
+import androidx.room.TypeConverter
+import net.komunan.komunantw.extension.TransactionTarget
 import net.komunan.komunantw.extension.gson
+import net.komunan.komunantw.extension.transaction
 import net.komunan.komunantw.repository.database.TWCacheDatabase
-import net.komunan.komunantw.repository.database.TransactionTarget
-import net.komunan.komunantw.repository.database.transaction
-import net.komunan.komunantw.extension.toBoolean
-import net.komunan.komunantw.extension.toInt
+import org.apache.commons.lang3.builder.ToStringBuilder
 import twitter4j.MediaEntity
 import twitter4j.Status
 import twitter4j.URLEntity
 
 @Suppress("PropertyName")
-@Entity(tableName = "tweet")
-open class Tweet(): Diffable {
-    @PrimaryKey
+@Entity(tableName = "tweet", primaryKeys = ["id", "is_missing"])
+open class Tweet() {
     @ColumnInfo(name = "id")            var id          : Long = 0L
+    @ColumnInfo(name = "is_missing")    var isMissing   : Boolean = false
     @ColumnInfo(name = "user_id")       var userId      : Long = 0L
     @ColumnInfo(name = "text")          var text        : String = ""
     @ColumnInfo(name = "retweet_count") var retweetCount: Int = 0
@@ -33,24 +33,17 @@ open class Tweet(): Diffable {
     @ColumnInfo(name = "ext")           var ext         : TweetExtension = TweetExtension()
 
     companion object {
-        @JvmStatic
-        val INVALID_ID: Long = -1L
-
-        private val dao = TWCacheDatabase.instance.tweetDao()
-        private val sourceDao = TWCacheDatabase.instance.tweetSourceDao()
-
-        @JvmStatic fun findBySourcesAsync(sources: List<Source>) = LivePagedListBuilder(dao.findBySourcesAsync(sources), 20).build()
-        @JvmStatic fun countBySource(source: Source) = sourceDao.countBySource(source)
-        @JvmStatic fun maxIdBySource(source: Source) = sourceDao.maxIdBySource(source)
-        @JvmStatic fun minIdBySource(source: Source) = sourceDao.minIdBySource(source)
-        @JvmStatic fun prevIdBySource(source: Source, tweetId: Long) = sourceDao.prevIdBySource(source, tweetId)
-        @JvmStatic fun addMissingMark(source: Source, missTweetId: Long) = sourceDao.addMissingMark(source, missTweetId)
-        @JvmStatic fun removeMissingMark(source: Source, missTweetId: Long) = sourceDao.removeMissingMark(source, missTweetId)
+        @JvmStatic val INVALID_ID: Long = -1L
+        @JvmStatic val dao = TWCacheDatabase.instance.tweetDao()
+        @JvmStatic val accountDao = TWCacheDatabase.instance.tweetAccountDao()
+        @JvmStatic val sourceDao = TWCacheDatabase.instance.tweetSourceDao()
 
         @JvmStatic
-        fun createCache(source: Source, statuses: List<Status>) = transaction(TransactionTarget.CACHE_ONLY) {
+        fun createCache(source: Source, statuses: List<Status>) = transaction(TransactionTarget.WITH_CACHE) {
+            val account = Account.dao.find(source.accountId)!!
             dao.save(statuses.map { Tweet(it) })
-            sourceDao.save(statuses.map { TweetSource(source, it) })
+            accountDao.save(statuses.map { TweetAccount(account.id, it) })
+            sourceDao.save(statuses.map { TweetSource(source.id, it.id) })
         }
     }
 
@@ -81,38 +74,22 @@ open class Tweet(): Diffable {
         }
     }
 
+    val displayText: String
+        get() {
+            var result = text
+            ext.urls.forEach { result = result.replace(it.shorten, it.display) }
+            ext.medias.forEach { result = result.replace(it.shorten, "") }
+            return result
+        }
+
     val isRetweet: Boolean
         get() = rtId != 0L
 
     override fun toString(): String {
-        return "${Tweet::class.simpleName}{ " +
-                "id=$id, " +
-                "userId=$userId, " +
-                "text=$text, " +
-                "retweetCount=$retweetCount, " +
-                "likeCount=$likeCount, " +
-                "timestamp=$timestamp, " +
-                "via=$via, " +
-                "replyId=$replyId, " +
-                "replyUserId=$replyUserId, " +
-                "rtId=$rtId, " +
-                "rtUserId=$rtUserId," +
-                "qtId=$qtId," +
-                "qtUserId=$qtUserId, " +
-                "ext=$ext }"
+        return ToStringBuilder.reflectionToString(this)
     }
 
-    override fun isTheSame(other: Diffable): Boolean {
-        return other is Tweet
-                && this.id == other.id
-    }
-
-    override fun isContentsTheSame(other: Diffable): Boolean {
-        return other is Tweet
-                && this.id == other.id
-                && this.retweetCount == other.retweetCount
-                && this.likeCount == other.likeCount
-    }
+    fun save() = dao.save(this)
 }
 
 class TweetExtension() {
@@ -206,82 +183,5 @@ class TweetExtension() {
                 this.url = videoVariant.url
             }
         }
-    }
-}
-
-@Suppress("PropertyName")
-@Entity(tableName = "tweet_source", primaryKeys = ["source_id", "tweet_id"])
-class TweetSource() {
-    @ColumnInfo(name = "source_id")  var sourceId  : Long = 0L
-    @ColumnInfo(name = "tweet_id")   var tweetId   : Long = 0L
-    @ColumnInfo(name = "retweeted")  var _retweeted: Int = 0
-    @ColumnInfo(name = "liked")      var _liked    : Int = 0
-    @ColumnInfo(name = "is_missing") var _isMissing: Int = 0
-
-    @Ignore
-    constructor(source: Source, status: Status): this() {
-        this.sourceId = source.id
-        this.tweetId = status.id
-        this._retweeted = status.isRetweeted.toInt()
-        this._liked = status.isFavorited.toInt()
-    }
-
-    @Ignore
-    constructor(source: Source, tweetId: Long, isMissing: Boolean): this() {
-        this.sourceId = source.id
-        this.tweetId = tweetId
-        this._isMissing = isMissing.toInt()
-    }
-
-    override fun toString(): String {
-        return "${TweetSource::class.simpleName}{ " +
-                "sourceId=$sourceId, " +
-                "tweetId=$tweetId, " +
-                "retweeted=$_retweeted, " +
-                "liked=$_liked, " +
-                "isMissing=$_isMissing }"
-    }
-}
-
-@Suppress("PropertyName")
-class TweetDetail: Tweet() {
-    @ColumnInfo(name = "retweeted")  var _retweeted: Int = 0
-    @ColumnInfo(name = "liked")      var _liked    : Int = 0
-    @ColumnInfo(name = "is_missing") var _isMissing: Int = 0
-    @ColumnInfo(name = "source_ids") var _sourceIds: String = ""
-
-    val displayText: String
-        get() {
-            var result = text
-            ext.urls.forEach { result = result.replace(it.shorten, it.display) }
-            ext.medias.forEach { result = result.replace(it.shorten, "") }
-            return result
-        }
-
-    var retweeted: Boolean
-        get() = _retweeted.toBoolean()
-        set(value) {
-            _retweeted = value.toInt()
-        }
-
-    var liked: Boolean
-        get() = _liked.toBoolean()
-        set(value) {
-            _liked = value.toInt()
-        }
-
-    val isMissing: Boolean
-        get() = _isMissing.toBoolean()
-
-    val sourceIds: List<Long>
-        get() = _sourceIds.split(',').map { it.toLong() }
-
-    override fun toString(): String {
-        return "${TweetDetail::class.simpleName}{ " +
-                "base=${super.toString()}, " +
-                "retweeted=$retweeted, " +
-                "liked=$liked, " +
-                "isMissing=$isMissing, " +
-                "sourceIds=[$_sourceIds] }"
     }
 }

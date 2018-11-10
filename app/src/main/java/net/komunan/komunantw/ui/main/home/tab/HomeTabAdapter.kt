@@ -25,32 +25,33 @@ import net.komunan.komunantw.R
 import net.komunan.komunantw.common.AppColor
 import net.komunan.komunantw.extension.intentActionView
 import net.komunan.komunantw.extension.string
-import net.komunan.komunantw.repository.entity.TweetDetail
+import net.komunan.komunantw.repository.entity.Tweet
+import net.komunan.komunantw.repository.entity.TweetSource
 import net.komunan.komunantw.repository.entity.User
 import net.komunan.komunantw.service.TwitterService
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.regex.Pattern
 
-class HomeTabAdapter: PagedListAdapter<TweetDetail, HomeTabAdapter.TweetBaseViewHolder>(DIFF_CALLBACK) {
+class HomeTabAdapter: PagedListAdapter<TweetSource, HomeTabAdapter.TweetBaseViewHolder>(DIFF_CALLBACK) {
     companion object {
         private const val VIEW_TYPE_TWEET = 1
         private const val VIEW_TYPE_MISSING = 2
 
-        val DIFF_CALLBACK: DiffUtil.ItemCallback<TweetDetail> = object: DiffUtil.ItemCallback<TweetDetail>() {
-            override fun areItemsTheSame(oldItem: TweetDetail, newItem: TweetDetail): Boolean = oldItem.isTheSame(newItem)
-            override fun areContentsTheSame(oldItem: TweetDetail, newItem: TweetDetail): Boolean = oldItem.isContentsTheSame(newItem)
+        val DIFF_CALLBACK: DiffUtil.ItemCallback<TweetSource> = object: DiffUtil.ItemCallback<TweetSource>() {
+            override fun areItemsTheSame(oldItem: TweetSource, newItem: TweetSource): Boolean = oldItem.isTheSame(newItem)
+            override fun areContentsTheSame(oldItem: TweetSource, newItem: TweetSource): Boolean = oldItem.isContentsTheSame(newItem)
         }
 
         var current: Calendar = Calendar.getInstance(Locale.getDefault())
         var calendar: Calendar = Calendar.getInstance(Locale.getDefault())
     }
 
-    override fun submitList(pagedList: PagedList<TweetDetail>?) {
+    override fun submitList(pagedList: PagedList<TweetSource>?) {
         throw RuntimeException()
     }
 
-    override fun submitList(pagedList: PagedList<TweetDetail>?, commitCallback: Runnable?) {
+    override fun submitList(pagedList: PagedList<TweetSource>?, commitCallback: Runnable?) {
         current = Calendar.getInstance(Locale.getDefault())
         calendar = Calendar.getInstance(Locale.getDefault())
         super.submitList(pagedList, commitCallback)
@@ -74,18 +75,18 @@ class HomeTabAdapter: PagedListAdapter<TweetDetail, HomeTabAdapter.TweetBaseView
     }
 
     abstract class TweetBaseViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
-        abstract fun bind(tweet: TweetDetail?)
+        abstract fun bind(tweetSource: TweetSource?)
     }
 
     class TweetMissingViewHolder(itemView: View): TweetBaseViewHolder(itemView) {
-        override fun bind(tweet: TweetDetail?) {
-            if (tweet == null) {
+        override fun bind(tweetSource: TweetSource?) {
+            if (tweetSource == null) {
                 return
             }
             itemView.tweet_missing.run {
                 setTextColor(AppColor.LINK)
                 paintFlags = paintFlags or Paint.UNDERLINE_TEXT_FLAG
-                setOnClickListener { TwitterService.fetchTweets(tweet, true) }
+                // TODO: setOnClickListener { TwitterService.fetchTweets(tweet, true) }
             }
         }
     }
@@ -115,11 +116,12 @@ class HomeTabAdapter: PagedListAdapter<TweetDetail, HomeTabAdapter.TweetBaseView
         private var firstSetup: Boolean = true
         private val mediaViews by lazy { listOf(itemView.tweet_media_1, itemView.tweet_media_2, itemView.tweet_media_3, itemView.tweet_media_4) }
 
-        override fun bind(tweet: TweetDetail?) {
-            if (tweet == null) {
+        override fun bind(tweetSource: TweetSource?) {
+            if (tweetSource == null) {
                 return
             }
             GlobalScope.launch(Dispatchers.Main) {
+                val tweet = withContext(Dispatchers.Default) { Tweet.dao.find(tweetSource.tweetId)!! }
                 bindValue(tweet)
                 bindAppearance(tweet)
                 bindEvents(tweet)
@@ -128,8 +130,8 @@ class HomeTabAdapter: PagedListAdapter<TweetDetail, HomeTabAdapter.TweetBaseView
             }
         }
 
-        private suspend fun bindValue(tweet: TweetDetail) {
-            val user = withContext(Dispatchers.Default) { User.find(if (tweet.isRetweet) tweet.rtUserId else tweet.userId) ?: User.dummy() }
+        private suspend fun bindValue(tweet: Tweet) {
+            val user = withContext(Dispatchers.Default) { User.dao.find(if (tweet.isRetweet) tweet.rtUserId else tweet.userId) ?: User.dummy() }
             itemView.tweet_user_icon.setImageURI(user.imageUrl)
             itemView.tweet_user_name.text = user.name
             itemView.tweet_user_screen_name.text = string[R.string.format_screen_name](user.screenName)
@@ -158,7 +160,7 @@ class HomeTabAdapter: PagedListAdapter<TweetDetail, HomeTabAdapter.TweetBaseView
             itemView.tweet_action_like.text = string[R.string.format_gmd_favorite_border](tweet.likeCount.toString())
         }
 
-        private fun bindAppearance(tweet: TweetDetail) {
+        private fun bindAppearance(tweet: Tweet) {
             if (firstSetup) {
                 itemView.retweeted_by_mark.setTextColor(AppColor.GREEN)
                 itemView.retweeted_by.setTextColor(AppColor.GRAY)
@@ -181,11 +183,12 @@ class HomeTabAdapter: PagedListAdapter<TweetDetail, HomeTabAdapter.TweetBaseView
                     itemView.media_container.visibility = View.GONE
                 }
             }
-            itemView.tweet_action_retweet.setTextColor(AppColor.RETWEETED(tweet.retweeted))
-            itemView.tweet_action_like.setTextColor(AppColor.LIKED(tweet.liked))
+            // TODO:
+//            itemView.tweet_action_retweet.setTextColor(AppColor.RETWEETED(tweet.retweeted))
+//            itemView.tweet_action_like.setTextColor(AppColor.LIKED(tweet.liked))
         }
 
-        private fun bindEvents(tweet: TweetDetail) {
+        private fun bindEvents(tweet: Tweet) {
             // テキスト(@〜, #〜, https://〜)
             tweet.ext.urls.forEach { url ->
                 itemView.tweet_text.applyLinks(Link(url.display)
@@ -246,12 +249,12 @@ class HomeTabAdapter: PagedListAdapter<TweetDetail, HomeTabAdapter.TweetBaseView
             }
         }
 
-        private suspend fun bindRetweetedBy(tweet: TweetDetail) {
+        private suspend fun bindRetweetedBy(tweet: Tweet) {
             if (firstSetup) {
                 itemView.retweeted_by_mark.text = string[R.string.gmd_repeat]()
             }
             if (tweet.isRetweet) {
-                val user = withContext(Dispatchers.Default) { User.find(tweet.userId)?: User.dummy() }
+                val user = withContext(Dispatchers.Default) { User.dao.find(tweet.userId)?: User.dummy() }
                 itemView.retweeted_by.text = string[R.string.format_retweeted_by](user.name)
                 itemView.retweeted_by_container.visibility = View.VISIBLE
             } else {

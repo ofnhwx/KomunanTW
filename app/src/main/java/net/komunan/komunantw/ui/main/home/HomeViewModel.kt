@@ -6,5 +6,5 @@ import net.komunan.komunantw.common.TWBaseViewModel
 
 class HomeViewModel: TWBaseViewModel() {
     val timelines: LiveData<List<Timeline>>
-        get() = Timeline.findAllAsync()
+        get() = Timeline.dao.findAllAsync()
 }

@@ -2,19 +2,12 @@ package net.komunan.komunantw.ui.main.timelines
 
 import androidx.lifecycle.*
 import net.komunan.komunantw.repository.entity.Source
-import net.komunan.komunantw.repository.entity.SourceForSelect
 import net.komunan.komunantw.repository.entity.Timeline
 import net.komunan.komunantw.common.TWBaseViewModel
 
 class TimelineEditViewModel(timelineId: Long): TWBaseViewModel() {
-    val timeline = Timeline.findAsync(timelineId)
-    val sources: LiveData<List<SourceForSelect>> = Transformations.switchMap(timeline) {
-        if (it == null) {
-            MutableLiveData<List<SourceForSelect>>()
-        } else {
-            Source.findForTimelineEditAsync(it)
-        }
-    }
+    val timeline = Timeline.dao.findAsync(timelineId)
+    val sources = Source.dao.findAllAsync()
     val editMode = MutableLiveData<Boolean>()
 
     init {

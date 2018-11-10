@@ -3,6 +3,7 @@ package net.komunan.komunantw.repository.entity
 import androidx.room.*
 import net.komunan.komunantw.common.Diffable
 import net.komunan.komunantw.repository.database.TWDatabase
+import org.apache.commons.lang3.builder.ToStringBuilder
 import twitter4j.User
 
 @Entity(tableName = "account")
@@ -16,11 +17,8 @@ class Account(): Diffable {
     @ColumnInfo(name = "update_at")   var updateAt  : Long = 0L
 
     companion object {
-        private val dao = TWDatabase.instance.accountDao()
-
-        @JvmStatic fun findAllAsync() = dao.findAllAsync()
-        @JvmStatic fun find(id: Long) = dao.find(id)
-        @JvmStatic fun count() = dao.count()
+        @JvmStatic
+        val dao = TWDatabase.instance.accountDao()
     }
 
     @Ignore
@@ -33,17 +31,9 @@ class Account(): Diffable {
 
     fun save() = dao.save(this)
     fun delete() = dao.delete(this)
-    fun credential() = Credential.findByAccount(this).first()
-    fun sources() = Source.findByAccount(this)
 
     override fun toString(): String {
-        return "${Account::class.simpleName}{ " +
-                "id=$id, " +
-                "imageUrl=$imageUrl, " +
-                "name=$name, " +
-                "screenName=$screenName, " +
-                "createAt=$createAt, " +
-                "updateAt=$updateAt }"
+        return ToStringBuilder.reflectionToString(this)
     }
 
     override fun isTheSame(other: Diffable): Boolean {

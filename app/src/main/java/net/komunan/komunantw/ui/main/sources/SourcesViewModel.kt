@@ -6,5 +6,5 @@ import net.komunan.komunantw.common.TWBaseViewModel
 
 class SourcesViewModel: TWBaseViewModel() {
     val sources: LiveData<List<Source>>
-        get() = Source.findAllAsync()
+        get() = Source.dao.findAllAsync()
 }

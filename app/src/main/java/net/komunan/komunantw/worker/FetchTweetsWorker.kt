@@ -4,9 +4,8 @@ import android.content.Context
 import androidx.work.*
 import com.github.ajalt.timberkt.d
 import net.komunan.komunantw.Preference
-import net.komunan.komunantw.repository.database.transaction
-import net.komunan.komunantw.repository.entity.Source
-import net.komunan.komunantw.repository.entity.Tweet
+import net.komunan.komunantw.extension.transaction
+import net.komunan.komunantw.repository.entity.*
 import net.komunan.komunantw.repository.entity.User
 import net.komunan.komunantw.service.TwitterService
 import twitter4j.*
@@ -36,14 +35,14 @@ class FetchTweetsWorker(context: Context, params: WorkerParameters): Worker(cont
         MISS,
     }
 
-    private val source        by lazy { Source.find(inputData.getLong(PARAMETER_SOURCE_ID, 0))!! }
+    private val source        by lazy { Source.dao.find(inputData.getLong(PARAMETER_SOURCE_ID, 0))!! }
     private val isInteractive by lazy { inputData.getBoolean(PARAMETER_IS_INTERACTIVE, false) }
 
-    private val tweetsEmpty by lazy { source.tweetCount() == 0L }
-    private val maxTweetId  by lazy { source.maxTweetId() }
-    private val minTweetId  by lazy { source.minTweetId() }
+    private val tweetsEmpty by lazy { Tweet.sourceDao.countBySourceId(source.id) == 0L }
+    private val maxTweetId  by lazy { Tweet.sourceDao.maxIdBySourceId(source.id) }
+    private val minTweetId  by lazy { Tweet.sourceDao.minIdBySourceId(source.id) }
     private val markTweetId by lazy { inputData.getLong(PARAMETER_TARGET_TWEET_ID, 0) }
-    private val prevTweetId by lazy { source.prevTweetId(markTweetId) }
+    private val prevTweetId by lazy { Tweet.sourceDao.prevIdBySourceId(source.id, markTweetId) }
 
     private lateinit var fetchType: FetchType
 
@@ -83,64 +82,59 @@ class FetchTweetsWorker(context: Context, params: WorkerParameters): Worker(cont
             d { "fetch(${source.id}): count=${statuses.count()}, id={ ${statuses.first().id} ～ ${statuses.last().id} }"}
         }
 
-//        val tweets = result.map { Tweet(it) }
-//        val users = mutableListOf<User>()
-//        users.addAll(result.map { User(it.user) }.distinctBy { it.id })
-//        users.addAll(result.mapNotNull { it.retweetedStatus }.map { User(it.user) }.distinctBy { it.id })
-//        return Pair(tweets, users)
-
         transaction {
             // 未取得のマークを削除
-            if (markTweetId != Tweet.INVALID_ID) {
-                Tweet.removeMissingMark(source, markTweetId)
-            }
+//            if (markTweetId != Tweet.INVALID_ID) {
+//                Tweet.removeMissingMark(source, markTweetId)
+//            }
 
             // 各種データを保存
             Tweet.createCache(source, statuses)
             User.createCache(statuses)
-            source.updateFetchAt()
+            source.apply { fetchAt = System.currentTimeMillis() }.save()
 
             // 未取得のマークを設定
-            statuses.lastOrNull()?.let { status ->
-                when (fetchType) {
-                    FetchType.FIRST -> Tweet.addMissingMark(source, status.id - 1)
-                    FetchType.NEW -> {
-                        if (status.id > (maxTweetId + 1)) {
-                            Tweet.addMissingMark(source, status.id - 1)
-                        }
-                    }
-                    FetchType.OLD -> Tweet.addMissingMark(source, status.id - 1)
-                    FetchType.MISS -> {
-                        if (status.id > (prevTweetId + 1)) {
-                            Tweet.addMissingMark(source, status.id - 1)
-                        }
-                    }
-                }
-            }
+//            statuses.lastOrNull()?.let { status ->
+//                when (fetchType) {
+//                    FetchType.FIRST -> Tweet.addMissingMark(source, status.id - 1)
+//                    FetchType.NEW -> {
+//                        if (status.id > (maxTweetId + 1)) {
+//                            Tweet.addMissingMark(source, status.id - 1)
+//                        }
+//                    }
+//                    FetchType.OLD -> Tweet.addMissingMark(source, status.id - 1)
+//                    FetchType.MISS -> {
+//                        if (status.id > (prevTweetId + 1)) {
+//                            Tweet.addMissingMark(source, status.id - 1)
+//                        }
+//                    }
+//                }
+//            }
         }
 
         return Result.SUCCESS
     }
 
     private fun fetchTweets(): List<Status> {
-        val twitter = TwitterService.twitter(source.account()!!.credential())
-        return when (Source.SourceType.valueOf(source.type)) {
-            Source.SourceType.HOME -> {
+        val credential = Credential.dao.findByAccountId(source.accountId).first()
+        val twitter = TwitterService.twitter(credential)
+        return when (Source.Type.valueOf(source.type)) {
+            Source.Type.HOME -> {
                 checkResult(twitter.getHomeTimeline(makePaging()))
             }
-            Source.SourceType.MENTION -> {
+            Source.Type.MENTION -> {
                 checkResult(twitter.getMentionsTimeline(makePaging()))
             }
-            Source.SourceType.USER -> {
+            Source.Type.USER -> {
                 checkResult(twitter.getUserTimeline(makePaging()))
             }
-            Source.SourceType.LIKE -> {
+            Source.Type.LIKE -> {
                 checkResult(twitter.getFavorites(makePaging()))
             }
-            Source.SourceType.LIST -> {
+            Source.Type.LIST -> {
                 checkResult(twitter.getUserListStatuses(source.listId, makePaging()))
             }
-            Source.SourceType.SEARCH -> {
+            Source.Type.SEARCH -> {
                 checkResult(twitter.search(makeQuery()))
             }
         }

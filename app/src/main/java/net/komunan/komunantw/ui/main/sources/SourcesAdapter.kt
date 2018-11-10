@@ -13,6 +13,7 @@ import kotlinx.coroutines.withContext
 import net.komunan.komunantw.R
 import net.komunan.komunantw.common.TWListAdapter
 import net.komunan.komunantw.extension.string
+import net.komunan.komunantw.repository.entity.Account
 import net.komunan.komunantw.repository.entity.Source
 
 class SourcesAdapter: TWListAdapter<Source, SourcesAdapter.ViewHolder>() {
@@ -28,20 +29,20 @@ class SourcesAdapter: TWListAdapter<Source, SourcesAdapter.ViewHolder>() {
     class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         fun bind(source: Source) {
             GlobalScope.launch(Dispatchers.Main) {
-                val account = withContext(Dispatchers.Default) { source.account() }
+                val account = withContext(Dispatchers.Default) { Account.dao.find(source.accountId) }
                 if (account == null) {
                     // TODO: あとで考える
                 } else {
                     itemView.source_account_icon.setImageURI(Uri.parse(account.imageUrl))
                     itemView.source_account_name.text = account.name
                 }
-                itemView.source_name.text = when (Source.SourceType.valueOf(source.type)) {
-                    Source.SourceType.HOME -> string[R.string.home]()
-                    Source.SourceType.MENTION -> string[R.string.mention]()
-                    Source.SourceType.USER -> string[R.string.user]()
-                    Source.SourceType.LIKE -> string[R.string.favorite]()
-                    Source.SourceType.LIST -> string[R.string.format_list_label](source.label)
-                    Source.SourceType.SEARCH -> string[R.string.format_search_label](source.label)
+                itemView.source_name.text = when (Source.Type.valueOf(source.type)) {
+                    Source.Type.HOME -> string[R.string.home]()
+                    Source.Type.MENTION -> string[R.string.mention]()
+                    Source.Type.USER -> string[R.string.user]()
+                    Source.Type.LIKE -> string[R.string.favorite]()
+                    Source.Type.LIST -> string[R.string.format_list_label](source.label)
+                    Source.Type.SEARCH -> string[R.string.format_search_label](source.label)
                 }
             }
         }

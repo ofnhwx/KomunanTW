@@ -10,11 +10,11 @@ import net.komunan.komunantw.repository.entity.*
 @Database(
         entities = [
             Account::class,
-            Timeline::class,
-            TimelineSource::class,
-            ConsumerKeySecret::class,
+            Consumer::class,
             Credential::class,
-            Source::class
+            Source::class,
+            Timeline::class,
+            TimelineSource::class
         ],
         version = 1,
         exportSchema = false
@@ -32,8 +32,8 @@ abstract class TWDatabase: RoomDatabase() {
                     _instance = TWBaseDatabase.getInstance(TWDatabase::class.java)
                     GlobalScope.launch {
                         // 標準のAPIキーを登録
-                        if (ConsumerKeySecret.count() == 0) {
-                            ConsumerKeySecret.default()
+                        if (Consumer.dao.count() == 0) {
+                            Consumer.default()
                         }
                     }
                 }
@@ -42,7 +42,7 @@ abstract class TWDatabase: RoomDatabase() {
     }
 
     abstract fun accountDao(): AccountDao
-    abstract fun consumerKeySecretDao(): ConsumerKeySecretDao
+    abstract fun consumerKeySecretDao(): ConsumerDao
     abstract fun credentialDao(): CredentialDao
     abstract fun sourceDao(): SourceDao
     abstract fun timelineDao(): TimelineDao

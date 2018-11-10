@@ -11,6 +11,8 @@ import com.google.gson.Gson
 import com.mikepenz.iconics.IconicsDrawable
 import com.mikepenz.iconics.typeface.IIcon
 import net.komunan.komunantw.TWContext
+import net.komunan.komunantw.repository.database.TWCacheDatabase
+import net.komunan.komunantw.repository.database.TWDatabase
 
 // Int
 fun Int.toBoolean(): Boolean = this != 0
@@ -47,3 +49,25 @@ fun <T1, T2, R> combineLatest(source1: LiveData<T1>, source2: LiveData<T2>, func
 }
 
 val gson = Gson()
+
+enum class TransactionTarget {
+    NORMAL,
+    WITH_CACHE,
+    CACHE_ONLY,
+}
+
+fun transaction(target: TransactionTarget = TransactionTarget.NORMAL, body: () -> Unit) {
+    val databases = when (target) {
+        TransactionTarget.NORMAL -> listOf(TWDatabase.instance)
+        TransactionTarget.WITH_CACHE -> listOf(TWDatabase.instance, TWCacheDatabase.instance)
+        TransactionTarget.CACHE_ONLY -> listOf(TWCacheDatabase.instance)
+    }
+    databases.forEach { it.beginTransaction() }
+    try {
+        val result = body()
+        databases.forEach { it.setTransactionSuccessful() }
+        return result
+    } finally {
+        databases.forEach { it.endTransaction() }
+    }
+}

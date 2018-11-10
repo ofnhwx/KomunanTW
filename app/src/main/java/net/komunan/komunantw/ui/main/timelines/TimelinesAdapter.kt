@@ -44,7 +44,7 @@ class TimelinesAdapter: TWListAdapter<Timeline, TimelinesAdapter.ViewHolder>() {
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(timeline: Timeline) {
             GlobalScope.launch(Dispatchers.Main) {
-                val sourceCount = withContext(Dispatchers.Default) { timeline.sourceCount().toString() }
+                val sourceCount = withContext(Dispatchers.Default) { "${Timeline.sourceDao.countByTimelineId(timeline.id)}" }
                 itemView.timeline_name.text = timeline.name
                 itemView.timeline_source_count.text = string[R.string.format_timeline_source_count](sourceCount)
                 itemView.setOnClickListener {

@@ -109,7 +109,7 @@ class MainActivity: TWBaseActivity() {
 
     private fun checkFirstRun() {
         GlobalScope.launch {
-            if (Account.count() == 0) {
+            if (Account.dao.count() == 0) {
                 startActivity(AuthActivity.newIntent(true))
             }
         }

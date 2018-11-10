@@ -3,17 +3,16 @@ package net.komunan.komunantw.repository.database
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import net.komunan.komunantw.repository.dao.TweetAccountDao
 import net.komunan.komunantw.repository.dao.TweetDao
 import net.komunan.komunantw.repository.dao.TweetSourceDao
 import net.komunan.komunantw.repository.dao.UserDao
-import net.komunan.komunantw.repository.entity.Tweet
-import net.komunan.komunantw.repository.entity.TweetExtension
-import net.komunan.komunantw.repository.entity.TweetSource
-import net.komunan.komunantw.repository.entity.User
+import net.komunan.komunantw.repository.entity.*
 
 @Database(
         entities = [
             Tweet::class,
+            TweetAccount::class,
             TweetSource::class,
             User::class
         ],
@@ -38,6 +37,7 @@ abstract class TWCacheDatabase: RoomDatabase() {
     }
 
     abstract fun tweetDao(): TweetDao
+    abstract fun tweetAccountDao(): TweetAccountDao
     abstract fun tweetSourceDao(): TweetSourceDao
     abstract fun userDao(): UserDao
 }

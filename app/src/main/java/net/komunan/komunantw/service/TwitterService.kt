@@ -8,6 +8,7 @@ import androidx.work.WorkManager
 import net.komunan.komunantw.TWContext
 import net.komunan.komunantw.repository.entity.*
 import net.komunan.komunantw.worker.FetchTweetsWorker
+import net.komunan.komunantw.worker.UpdateSourcesWorker
 import twitter4j.Twitter
 import twitter4j.TwitterFactory
 import twitter4j.auth.AccessToken
@@ -16,8 +17,8 @@ import twitter4j.conf.ConfigurationBuilder
 object TwitterService {
     private val factory by lazy { TwitterFactory(ConfigurationBuilder().apply { setTweetModeExtended(true) }.build()) }
 
-    fun twitter(consumerKeySecret: ConsumerKeySecret): Twitter = factory.instance.apply {
-        setOAuthConsumer(consumerKeySecret.consumerKey, consumerKeySecret.consumerSecret)
+    fun twitter(consumer: Consumer): Twitter = factory.instance.apply {
+        setOAuthConsumer(consumer.key, consumer.secret)
     }
 
     fun twitter(credential: Credential): Twitter = factory.instance.apply {
@@ -26,17 +27,24 @@ object TwitterService {
     }
 
     fun fetchTweets(isInteractive: Boolean = false) {
-        val requests = Source.findEnabled().map { FetchTweetsWorker.request(it.id, Tweet.INVALID_ID, isInteractive) }
+        val sourceIds = Timeline.sourceDao.findAll().map { it.sourceId }.distinct()
+        val requests = sourceIds.map { FetchTweetsWorker.request(it, Tweet.INVALID_ID, isInteractive) }
         if (requests.any()) {
             WorkManager.getInstance().enqueue(requests)
         }
     }
 
-    fun fetchTweets(mark: TweetDetail, isInteractive: Boolean = false) {
-        val requests = mark.sourceIds.map { FetchTweetsWorker.request(it, mark.id, isInteractive) }
-        if (requests.any()) {
-            WorkManager.getInstance().enqueue(requests)
-        }
+    //TODO: xxx
+//    fun fetchTweets(mark: TweetDetail, isInteractive: Boolean = false) {
+//        val requests = mark.sourceIds.map { FetchTweetsWorker.request(it, mark.id, isInteractive) }
+//        if (requests.any()) {
+//            WorkManager.getInstance().enqueue(requests)
+//        }
+//    }
+
+    fun updateSourceList(accountId: Long) {
+        val request = UpdateSourcesWorker.request(accountId)
+        WorkManager.getInstance().enqueue(request)
     }
 
     @Suppress("DEPRECATION")

@@ -19,25 +19,3 @@ abstract class TWBaseDatabase: RoomDatabase() {
         }
     }
 }
-
-enum class TransactionTarget {
-    NORMAL,
-    WITH_CACHE,
-    CACHE_ONLY,
-}
-
-fun transaction(target: TransactionTarget = TransactionTarget.NORMAL, body: () -> Unit) {
-    val databases = when (target) {
-        TransactionTarget.NORMAL -> listOf(TWDatabase.instance)
-        TransactionTarget.WITH_CACHE -> listOf(TWDatabase.instance, TWCacheDatabase.instance)
-        TransactionTarget.CACHE_ONLY -> listOf(TWCacheDatabase.instance)
-    }
-    databases.forEach { it.beginTransaction() }
-    try {
-        val result = body()
-        databases.forEach { it.setTransactionSuccessful() }
-        return result
-    } finally {
-        databases.forEach { it.endTransaction() }
-    }
-}

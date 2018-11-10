@@ -35,25 +35,21 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 
     // Android Support Library
-    implementation 'androidx.appcompat:appcompat:1.0.0'
+    implementation 'androidx.appcompat:appcompat:1.0.2'
     implementation 'androidx.annotation:annotation:1.0.0'
     implementation 'com.google.android.material:material:1.1.0-alpha01'
 
     // Android Architecture Components
-    def lifecycle_version = "2.0.0"
-    implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
-    kapt "androidx.lifecycle:lifecycle-compiler:$lifecycle_version"
-    def room_version = "2.1.0-alpha02"
-    implementation "androidx.room:room-runtime:$room_version"
-    kapt "androidx.room:room-compiler:$room_version"
-    def paging_version = "2.1.0-beta01"
-    implementation "androidx.paging:paging-runtime-ktx:$paging_version"
-    def work_version = "1.0.0-alpha10"
-    implementation "android.arch.work:work-runtime-ktx:$work_version"
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
+    kapt 'androidx.lifecycle:lifecycle-compiler:2.0.0'
+    implementation 'androidx.room:room-runtime:2.1.0-alpha02'
+    kapt 'androidx.room:room-compiler:2.1.0-alpha02'
+    implementation 'androidx.paging:paging-runtime-ktx:2.1.0-beta01'
+    implementation 'android.arch.work:work-runtime-ktx:1.0.0-alpha11'
 
     // Firebase
     implementation 'com.google.firebase:firebase-core:16.0.5'
-    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.5'
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.6'
 
     // Kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
@@ -76,6 +72,7 @@ dependencies {
     implementation 'com.klinkerapps:link_builder:2.0.5'
     implementation 'com.marcinmoskala.PreferenceHolder:preferenceholder:1.51'
     implementation 'com.mikepenz:materialdrawer:6.1.1'
+    implementation 'org.apache.commons:commons-lang3:3.8.1'
     implementation 'org.greenrobot:eventbus:3.1.1'
     implementation 'org.twitter4j:twitter4j-core:4.0.7'
 

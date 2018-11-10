@@ -66,7 +66,7 @@ class TimelinesFragment: TWBaseFragment() {
                 if (dragFrom != -1 && dragTo != -1 && dragFrom != dragTo) {
                     GlobalScope.launch(Dispatchers.Main) {
                         withContext(Dispatchers.Default) {
-                            Timeline.find(timelineId)?.run { moveTo(dragTo + 1) }
+                            Timeline.dao.find(timelineId)?.run { moveTo(dragTo + 1) }
                         }
                         dragFrom = -1
                         dragTo = -1
