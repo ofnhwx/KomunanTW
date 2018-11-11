@@ -44,32 +44,33 @@ class TimelinesFragment: TWBaseFragment() {
             adapter.submitList(timelines.toMutableList())
         }
         ItemTouchHelper(object: ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0) {
-            var dragFrom: Int = -1
-            var dragTo: Int = -1
+            private val INVALID_POSITION = -1
+            var dragFrom: Int = INVALID_POSITION
+            var dragTo  : Int = INVALID_POSITION
             var timelineId: Long = 0
 
             override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
                 val fromPosition = viewHolder.adapterPosition
-                val toPosition = target.adapterPosition
-                if (dragFrom == -1) {
+                val toPosition   = target.adapterPosition
+                if (dragFrom == INVALID_POSITION) {
                     dragFrom = fromPosition
                     timelineId = container.adapter!!.getItemId(dragFrom)
                 }
                 dragTo = toPosition
-                d { "Timeline moving. id=$timelineId position={ from=${dragFrom + 1}, to=${toPosition + 1} }" }
+                d { "Timeline moving. id=$timelineId position={ from=$dragFrom, to=$toPosition }" }
                 adapter.onItemMoved(fromPosition, toPosition)
                 return true
             }
 
             override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
                 super.clearView(recyclerView, viewHolder)
-                if (dragFrom != -1 && dragTo != -1 && dragFrom != dragTo) {
+                if (dragFrom != INVALID_POSITION && dragTo != INVALID_POSITION && dragFrom != dragTo) {
                     GlobalScope.launch(Dispatchers.Main) {
                         withContext(Dispatchers.Default) {
-                            Timeline.dao.find(timelineId)?.run { moveTo(dragTo + 1) }
+                            Timeline.dao.find(timelineId)?.run { moveTo(dragTo) }
                         }
-                        dragFrom = -1
-                        dragTo = -1
+                        dragFrom = INVALID_POSITION
+                        dragTo   = INVALID_POSITION
                     }
                 }
             }
