@@ -1,7 +1,9 @@
 package net.komunan.komunantw.repository.entity
 
-import androidx.room.*
-import net.komunan.komunantw.common.Diffable
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.ForeignKey
+import androidx.room.Ignore
 import org.apache.commons.lang3.builder.ToStringBuilder
 
 @Entity(
@@ -10,16 +12,15 @@ import org.apache.commons.lang3.builder.ToStringBuilder
         foreignKeys = [
             ForeignKey(
                     entity = Tweet::class,
-                    parentColumns = ["id", "is_missing"],
-                    childColumns = ["tweet_id", "is_missing"],
+                    parentColumns = ["id"],
+                    childColumns = ["tweet_id"],
                     onDelete = ForeignKey.CASCADE,
                     onUpdate = ForeignKey.CASCADE,
                     deferred = true
             )
-        ],
-        indices = [Index("tweet_id", "is_missing")]
+        ]
 )
-class TweetSource(): Diffable {
+open class TweetSource() {
     @ColumnInfo(name = "tweet_id")   var tweetId   : Long = 0L
     @ColumnInfo(name = "source_id")  var sourceId  : Long = 0L
     @ColumnInfo(name = "is_missing") var isMissing : Boolean = false
@@ -39,14 +40,5 @@ class TweetSource(): Diffable {
 
     override fun toString(): String {
         return ToStringBuilder.reflectionToString(this)
-    }
-
-    override fun isTheSame(other: Diffable): Boolean {
-        return other is TweetSource
-                && this.tweetId == other.tweetId
-    }
-
-    override fun isContentsTheSame(other: Diffable): Boolean {
-        return false
     }
 }

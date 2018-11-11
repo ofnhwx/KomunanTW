@@ -16,6 +16,9 @@ import twitter4j.TwitterException
 
 @Dao
 abstract class TweetDao {
+
+    /* ==================== Functions. ==================== */
+
     fun find(id: Long, credential: Credential, forceFetch: Boolean = false): Tweet? {
         return find(id, listOf(credential), forceFetch)
     }

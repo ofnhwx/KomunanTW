@@ -7,7 +7,7 @@ import net.komunan.komunantw.common.TWBaseViewModel
 
 class TimelineEditViewModel(timelineId: Long): TWBaseViewModel() {
     val timeline = Timeline.dao.findAsync(timelineId)
-    val sources = Source.dao.findAllAsync()
+    val sources = Source.dao.findAllWithActiveAsync(timelineId)
     val editMode = MutableLiveData<Boolean>()
 
     init {

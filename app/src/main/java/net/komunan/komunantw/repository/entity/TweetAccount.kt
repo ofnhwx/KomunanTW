@@ -10,19 +10,17 @@ import twitter4j.Status
         foreignKeys = [
             ForeignKey(
                     entity = Tweet::class,
-                    parentColumns = ["id", "is_missing"],
-                    childColumns = ["tweet_id", "is_missing"],
+                    parentColumns = ["id"],
+                    childColumns = ["tweet_id"],
                     onDelete = ForeignKey.CASCADE,
                     onUpdate = ForeignKey.CASCADE,
                     deferred = true
             )
-        ],
-        indices = [Index("tweet_id", "is_missing")]
+        ]
 )
 class TweetAccount() {
     @ColumnInfo(name = "tweet_id")   var tweetId  : Long = 0L
     @ColumnInfo(name = "account_id") var accountId: Long = 0L
-    @ColumnInfo(name = "is_missing") var isMissing   : Boolean = false
     @ColumnInfo(name = "retweeted")  var retweeted: Boolean = false
     @ColumnInfo(name = "liked")      var liked    : Boolean = false
 

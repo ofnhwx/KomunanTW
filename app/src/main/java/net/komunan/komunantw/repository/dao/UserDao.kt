@@ -14,11 +14,11 @@ abstract class UserDao {
 
     /* ==================== Functions. ==================== */
 
-    fun find(id: Long, credential: Credential, forceFetch: Boolean = false): User? {
+    fun find(id: Long, credentials: List<Credential>, forceFetch: Boolean = false): User? {
         return if (forceFetch) {
-            fetchUser(id, credential) ?: find(id)
+            fetchUser(id, credentials) ?: find(id)
         } else {
-            find(id) ?: fetchUser(id, credential)
+            find(id) ?: fetchUser(id, credentials)
         }
     }
 
@@ -29,9 +29,9 @@ abstract class UserDao {
         return user
     }
 
-    private fun fetchUser(id: Long, credential: Credential): User? {
+    private fun fetchUser(id: Long, credentials: List<Credential>): User? {
         return try {
-            User( TwitterService.twitter(credential).showUser(id)).save()
+            User( TwitterService.twitter(credentials.random()).showUser(id)).save()
         } catch (e: TwitterException) {
             w(e); null
         }

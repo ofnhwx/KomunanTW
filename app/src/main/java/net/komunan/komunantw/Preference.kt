@@ -9,6 +9,7 @@ import twitter4j.auth.RequestToken
 object Preference: PreferenceHolder() {
     var useInMemoryDatabase: Boolean by bindToPreferenceField(false)
     var currentPage: Int by bindToPreferenceField(0)
+    var pageSize: Int by bindToPreferenceField(100)
     var fetchCount: Int by bindToPreferenceField(200)
     var fetchInterval: Long by bindToPreferenceField(180)
     var fetchIntervalThreshold: Float by bindToPreferenceField(0.8f)

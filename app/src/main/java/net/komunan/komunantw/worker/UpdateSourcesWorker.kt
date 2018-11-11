@@ -2,11 +2,14 @@ package net.komunan.komunantw.worker
 
 import android.content.Context
 import androidx.work.*
+import net.komunan.komunantw.extension.string
 import net.komunan.komunantw.extension.transaction
 import net.komunan.komunantw.repository.entity.Account
 import net.komunan.komunantw.repository.entity.Credential
 import net.komunan.komunantw.repository.entity.Source
+import net.komunan.komunantw.repository.entity.Timeline
 import net.komunan.komunantw.service.TwitterService
+import net.komunan.komunantw.R
 
 class UpdateSourcesWorker(context: Context, params: WorkerParameters): Worker(context, params) {
     companion object {
@@ -31,6 +34,12 @@ class UpdateSourcesWorker(context: Context, params: WorkerParameters): Worker(co
             updateStandardSources(sources)
             updateListSources(sources)
             updateSearchSources(sources)
+
+            if (Timeline.dao.count() == 0) {
+                val timeline = Timeline(string[R.string.default_label]()).save()
+                val source = Source.dao.findByAccountId(account.id).first { Source.Type.valueOf(it.type) == Source.Type.HOME }
+                timeline.addSource(source)
+            }
         }
         return Result.SUCCESS
     }

@@ -3,8 +3,10 @@ package net.komunan.komunantw.ui.main.home.tab
 import androidx.lifecycle.*
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
+import net.komunan.komunantw.Preference
 import net.komunan.komunantw.common.TWBaseViewModel
 import net.komunan.komunantw.repository.entity.*
+import net.komunan.komunantw.repository.entity.ext.TweetSourceExt
 
 class HomeTabViewModel(private val timelineId: Long): TWBaseViewModel() {
     private val timeline: LiveData<Timeline?>
@@ -20,9 +22,9 @@ class HomeTabViewModel(private val timelineId: Long): TWBaseViewModel() {
     private val sourceIds: LiveData<List<Long>>
         get() = Transformations.map(sources) { it.map(TimelineSource::sourceId) }
 
-    val tweetSources: LiveData<PagedList<TweetSource>>
+    val tweetSources: LiveData<PagedList<TweetSourceExt>>
         get() = Transformations.switchMap(sourceIds) {
-            LivePagedListBuilder(Tweet.sourceDao.findBySourceIdsAsync(it), 20).build()
+            LivePagedListBuilder(Tweet.sourceDao.findBySourceIdsAsync(it), Preference.pageSize).build()
         }
 
     class Factory(private val timelineId: Long): ViewModelProvider.Factory {

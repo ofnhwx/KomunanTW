@@ -79,15 +79,14 @@ open class Source(): Diffable {
     }
 
     override fun isContentsTheSame(other: Diffable): Boolean {
-        return false
-//        return other is Source
-//                && this.id == other.id
-//                && this.accountId == other.accountId
-//                && this.ordinal == other.ordinal
-//                && this.type == other.type
-//                && this.label == other.label
-//                && this.query == other.query
-//                && this.listId == other.listId
-//                && this.listOwner == other.listOwner
+        return other is Source
+                && this.id == other.id
+                && this.accountId == other.accountId
+                && this.ordinal == other.ordinal
+                && this.type == other.type
+                && this.label == other.label
+                && this.query == other.query
+                && this.listId == other.listId
+                && this.listOwner == other.listOwner
     }
 }

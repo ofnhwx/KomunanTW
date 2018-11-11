@@ -7,6 +7,7 @@ import android.text.Spanned
 import androidx.work.WorkManager
 import net.komunan.komunantw.TWContext
 import net.komunan.komunantw.repository.entity.*
+import net.komunan.komunantw.repository.entity.ext.TweetSourceExt
 import net.komunan.komunantw.worker.FetchTweetsWorker
 import net.komunan.komunantw.worker.UpdateSourcesWorker
 import twitter4j.Twitter
@@ -34,13 +35,12 @@ object TwitterService {
         }
     }
 
-    //TODO: xxx
-//    fun fetchTweets(mark: TweetDetail, isInteractive: Boolean = false) {
-//        val requests = mark.sourceIds.map { FetchTweetsWorker.request(it, mark.id, isInteractive) }
-//        if (requests.any()) {
-//            WorkManager.getInstance().enqueue(requests)
-//        }
-//    }
+    fun fetchTweets(mark: TweetSourceExt, isInteractive: Boolean = false) {
+        val requests = mark.sourceIds().map { FetchTweetsWorker.request(it, mark.tweetId, isInteractive) }
+        if (requests.any()) {
+            WorkManager.getInstance().enqueue(requests)
+        }
+    }
 
     fun updateSourceList(accountId: Long) {
         val request = UpdateSourcesWorker.request(accountId)

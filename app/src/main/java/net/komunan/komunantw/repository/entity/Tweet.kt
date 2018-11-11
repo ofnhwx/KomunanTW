@@ -1,9 +1,6 @@
 package net.komunan.komunantw.repository.entity
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.Ignore
-import androidx.room.TypeConverter
+import androidx.room.*
 import net.komunan.komunantw.extension.TransactionTarget
 import net.komunan.komunantw.extension.gson
 import net.komunan.komunantw.extension.transaction
@@ -14,10 +11,9 @@ import twitter4j.Status
 import twitter4j.URLEntity
 
 @Suppress("PropertyName")
-@Entity(tableName = "tweet", primaryKeys = ["id", "is_missing"])
+@Entity(tableName = "tweet", primaryKeys = ["id"])
 open class Tweet() {
     @ColumnInfo(name = "id")            var id          : Long = 0L
-    @ColumnInfo(name = "is_missing")    var isMissing   : Boolean = false
     @ColumnInfo(name = "user_id")       var userId      : Long = 0L
     @ColumnInfo(name = "text")          var text        : String = ""
     @ColumnInfo(name = "retweet_count") var retweetCount: Int = 0

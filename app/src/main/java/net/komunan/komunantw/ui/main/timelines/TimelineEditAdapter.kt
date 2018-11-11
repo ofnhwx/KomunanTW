@@ -19,8 +19,9 @@ import net.komunan.komunantw.extension.string
 import net.komunan.komunantw.repository.entity.Account
 import net.komunan.komunantw.repository.entity.Source
 import net.komunan.komunantw.repository.entity.Timeline
+import net.komunan.komunantw.repository.entity.ext.SourceWithActive
 
-class TimelineEditAdapter(private val timelineId: Long): TWListAdapter<Source, TimelineEditAdapter.ViewHolder>() {
+class TimelineEditAdapter(private val timelineId: Long): TWListAdapter<SourceWithActive, TimelineEditAdapter.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         return ViewHolder(timelineId, inflater.inflate(R.layout.item_source, parent, false))
@@ -31,7 +32,7 @@ class TimelineEditAdapter(private val timelineId: Long): TWListAdapter<Source, T
     }
 
     class ViewHolder(private val timelineId: Long, itemView: View): RecyclerView.ViewHolder(itemView) {
-        fun bind(source: Source) {
+        fun bind(source: SourceWithActive) {
             GlobalScope.launch(Dispatchers.Main) {
                 val account = withContext(Dispatchers.Default) { Account.dao.find(source.accountId)!! }
                 itemView.source_account_icon.setImageURI(Uri.parse(account.imageUrl))
@@ -46,15 +47,16 @@ class TimelineEditAdapter(private val timelineId: Long): TWListAdapter<Source, T
                 }
                 itemView.source_selected.run {
                     visibility = View.VISIBLE
-                    if (withContext(Dispatchers.Default) { Timeline.sourceDao.find(timelineId, source.id) == null }) {
-                        setImageDrawable(GoogleMaterial.Icon.gmd_check.make(context).color(AppColor.GRAY))
-                        setOnClickListener {
-                            GlobalScope.launch { Timeline.dao.find(timelineId)?.addSource(source) }
-                        }
-                    } else {
-                        setImageDrawable(GoogleMaterial.Icon.gmd_check.make(context).color(AppColor.GREEN))
-                        setOnClickListener {
-                            GlobalScope.launch { Timeline.dao.find(timelineId)?.delSource(source) }
+                    setImageDrawable(GoogleMaterial.Icon.gmd_check.make(context).apply {
+                        color(if (source.isActive) AppColor.GREEN else AppColor.GRAY)
+                    })
+                    setOnClickListener {
+                        GlobalScope.launch {
+                            if (source.isActive) {
+                                Timeline.dao.find(timelineId)?.delSource(source)
+                            } else {
+                                Timeline.dao.find(timelineId)?.addSource(source)
+                            }
                         }
                     }
                 }

@@ -61,17 +61,17 @@ class FetchTweetsWorker(context: Context, params: WorkerParameters): Worker(cont
             // 新規ツイートの取得
             markTweetId == Tweet.INVALID_ID -> {
                 fetchType = FetchType.NEW
-                d { "fetch(${source.id}): type=NEW, tweetId={ max=$maxTweetId, *min=$minTweetId }" }
+                d { "fetch(${source.id}): type=NEW, tweetId={ max=$maxTweetId, min=$minTweetId, mark=$markTweetId, prev=$prevTweetId }" }
             }
             // 古いツイートの取得
             prevTweetId == Tweet.INVALID_ID -> {
                 fetchType = FetchType.OLD
-                d { "fetch(${source.id}): type=OLD, tweetId={ max=$maxTweetId, *min=$minTweetId }" }
+                d { "fetch(${source.id}): type=OLD, tweetId={ max=$maxTweetId, min=$minTweetId, mark=$markTweetId, prev=$prevTweetId }" }
             }
             // 取得漏れの取得
             else -> {
                 fetchType = FetchType.MISS
-                d { "fetch(${source.id}): type=MISS, tweetId={ *target=$markTweetId, *prev=$prevTweetId }"}
+                d { "fetch(${source.id}): type=MISS, tweetId={ max=$maxTweetId, min=$minTweetId, mark=$markTweetId, prev=$prevTweetId }"}
             }
         }
 
@@ -84,32 +84,26 @@ class FetchTweetsWorker(context: Context, params: WorkerParameters): Worker(cont
 
         transaction {
             // 未取得のマークを削除
-//            if (markTweetId != Tweet.INVALID_ID) {
-//                Tweet.removeMissingMark(source, markTweetId)
-//            }
+            if (markTweetId != Tweet.INVALID_ID) {
+                Tweet.sourceDao.delMissing(source.id, markTweetId)
+            }
 
             // 各種データを保存
             Tweet.createCache(source, statuses)
             User.createCache(statuses)
-            source.apply { fetchAt = System.currentTimeMillis() }.save()
+            if (fetchType == FetchType.FIRST || fetchType == FetchType.NEW) {
+                source.apply { fetchAt = System.currentTimeMillis() }.save()
+            }
 
             // 未取得のマークを設定
-//            statuses.lastOrNull()?.let { status ->
-//                when (fetchType) {
-//                    FetchType.FIRST -> Tweet.addMissingMark(source, status.id - 1)
-//                    FetchType.NEW -> {
-//                        if (status.id > (maxTweetId + 1)) {
-//                            Tweet.addMissingMark(source, status.id - 1)
-//                        }
-//                    }
-//                    FetchType.OLD -> Tweet.addMissingMark(source, status.id - 1)
-//                    FetchType.MISS -> {
-//                        if (status.id > (prevTweetId + 1)) {
-//                            Tweet.addMissingMark(source, status.id - 1)
-//                        }
-//                    }
-//                }
-//            }
+            statuses.lastOrNull()?.let { status ->
+                when (fetchType) {
+                    FetchType.FIRST -> Tweet.sourceDao.addMissing(source.id, status.id)
+                    FetchType.OLD   -> Tweet.sourceDao.addMissing(source.id, status.id)
+                    FetchType.NEW   -> if (status.id > (maxTweetId  + 1)) Tweet.sourceDao.addMissing(source.id, status.id)
+                    FetchType.MISS  -> if (status.id > (prevTweetId + 1)) Tweet.sourceDao.addMissing(source.id, status.id)
+                }
+            }
         }
 
         return Result.SUCCESS
@@ -150,7 +144,7 @@ class FetchTweetsWorker(context: Context, params: WorkerParameters): Worker(cont
 
     private fun makePaging() = Paging().apply {
         // count  : 取得する件数
-        // maxId  : この値より小さいIDのツィートを取得
+        // maxId  : この値以下のIDのツイートを取得
         // sinceId: この値より大きいIDのツィートを取得
         count = Preference.fetchCount
         when (fetchType) {
@@ -163,12 +157,12 @@ class FetchTweetsWorker(context: Context, params: WorkerParameters): Worker(cont
             }
             FetchType.OLD -> {
                 // maxId  : ${markTweetId}は実際には取得できていないID(取得できているツィートのID-1)となっているため+1して使用する
-                maxId = markTweetId + 1
+                maxId = markTweetId - 1
             }
             FetchType.MISS -> {
                 // maxId  : ${markTweetId}は実際には取得できていないID(取得できているツィートのID-1)となっているため+1して使用する
                 // sinceId: ${prevTweetId - 1}を渡すことで${prevTweetId}のツィートを取得し番兵として使用する
-                maxId = markTweetId + 1
+                maxId = markTweetId - 1
                 sinceId = prevTweetId - 1
             }
         }
@@ -177,8 +171,8 @@ class FetchTweetsWorker(context: Context, params: WorkerParameters): Worker(cont
 
     private fun makeQuery() = Query().apply {
         // count  : 取得する件数
-        // maxId  : この値より小さいIDのツィートを取得
-        // sinceId: この値より大きいIDのツィートを取得
+        // maxId  : この値以下のIDのツイートを取得
+        // sinceId: この値より大きいIDのツイートを取得
         query = source.query
         count = Preference.fetchCount
         when (fetchType) {
@@ -190,13 +184,13 @@ class FetchTweetsWorker(context: Context, params: WorkerParameters): Worker(cont
                 sinceId = maxTweetId - 1
             }
             FetchType.OLD -> {
-                // maxId  : ${markTweetId}は実際には取得できていないID(取得できているツィートのID-1)となっているため+1して使用する
-                maxId = markTweetId + 1
+                // maxId  : ${markTweetId}より小さい値を取得するため-1して使用する
+                maxId = markTweetId - 1
             }
             FetchType.MISS -> {
-                // maxId  : ${markTweetId}は実際には取得できていないID(取得できているツィートのID-1)となっているため+1して使用する
+                // maxId  : ${markTweetId}より小さい値を取得するため-1して使用する
                 // sinceId: ${prevTweetId - 1}を渡すことで${prevTweetId}のツィートを取得し番兵として使用する
-                maxId = markTweetId + 1
+                maxId = markTweetId - 1
                 sinceId = prevTweetId - 1
             }
         }
