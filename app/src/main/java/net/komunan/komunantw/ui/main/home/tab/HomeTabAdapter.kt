@@ -177,7 +177,8 @@ class HomeTabAdapter: PagedListAdapter<TweetSourceExt, HomeTabAdapter.TweetBaseV
             itemView.tweet_text.applyLinks(LINK_USERNAME, LINK_HASH_TAG, LINK_URL)
             // プロフィール画像 -> ユーザープロフィール
             itemView.tweet_user_icon.setOnClickListener {
-                TwitterService.Official.showProfile(tweet.userId)
+                val userId = if (tweet.isRetweet) tweet.rtUserId else tweet.userId
+                TwitterService.Official.showProfile(userId)
             }
             // 返信
             itemView.tweet_action_reply.setOnClickListener {
@@ -207,6 +208,7 @@ class HomeTabAdapter: PagedListAdapter<TweetSourceExt, HomeTabAdapter.TweetBaseV
                     val media = tweet.ext.medias.first()
                     mediaViews.first().apply {
                         visibility = View.VISIBLE
+                        setImageURI(media.url)
                         setOnClickListener {
                             // TODO: 内部での動画再生
                             media.videoVariants.first().url.intentActionView()
