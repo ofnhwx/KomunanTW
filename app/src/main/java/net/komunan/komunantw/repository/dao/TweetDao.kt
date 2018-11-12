@@ -2,10 +2,7 @@
 
 package net.komunan.komunantw.repository.dao
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import com.github.ajalt.timberkt.d
 import com.github.ajalt.timberkt.w
 import net.komunan.komunantw.repository.entity.Credential
@@ -32,8 +29,18 @@ abstract class TweetDao {
     }
 
     fun save(tweet: Tweet): Tweet {
-        pSave(tweet)
-        d { "save: $tweet" }
+        return saveWithoutLog(tweet).apply {
+            d { "save: $tweet" }
+        }
+    }
+
+    fun saveWithoutLog(tweet: Tweet): Tweet {
+        val current = find(tweet.id)
+        if (current == null) {
+            pInsert(tweet)
+        } else {
+            pUpdate(tweet)
+        }
         return tweet
     }
 
@@ -62,11 +69,11 @@ abstract class TweetDao {
     @Query(QUERY_FIND)
     abstract fun find(id: Long): Tweet?
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract fun save(tweets: List<Tweet>)
-
     /* ==================== SQL Definitions. ==================== */
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    protected abstract fun pSave(tweet: Tweet)
+    @Insert(onConflict = OnConflictStrategy.ABORT)
+    protected abstract fun pInsert(tweet: Tweet)
+
+    @Update
+    protected abstract fun pUpdate(tweet: Tweet)
 }
