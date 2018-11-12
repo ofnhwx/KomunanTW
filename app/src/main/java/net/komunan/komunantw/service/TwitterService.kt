@@ -4,7 +4,10 @@ import android.content.Intent
 import android.net.Uri
 import android.text.Html
 import android.text.Spanned
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
+import androidx.work.WorkRequest
 import net.komunan.komunantw.TWContext
 import net.komunan.komunantw.repository.entity.*
 import net.komunan.komunantw.repository.entity.ext.TweetSourceExt
@@ -14,6 +17,7 @@ import twitter4j.Twitter
 import twitter4j.TwitterFactory
 import twitter4j.auth.AccessToken
 import twitter4j.conf.ConfigurationBuilder
+import java.util.*
 
 object TwitterService {
     private val factory by lazy { TwitterFactory(ConfigurationBuilder().apply { setTweetModeExtended(true) }.build()) }
@@ -27,18 +31,27 @@ object TwitterService {
         oAuthAccessToken = AccessToken(credential.token, credential.tokenSecret)
     }
 
-    fun fetchTweets(isInteractive: Boolean = false) {
+    fun fetchTweets(isInteractive: Boolean = false): List<UUID> {
         val sourceIds = Timeline.sourceDao.findAll().map { it.sourceId }.distinct()
         val requests = sourceIds.map { FetchTweetsWorker.request(it, Tweet.INVALID_ID, isInteractive) }
-        if (requests.any()) {
-            WorkManager.getInstance().enqueue(requests)
-        }
+        return fetchTweetsInternal("TwitterService.FETCH_TWEETS_ALL", ExistingWorkPolicy.KEEP, requests)
     }
 
-    fun fetchTweets(mark: TweetSourceExt, isInteractive: Boolean = false) {
+    fun fetchTweets(mark: TweetSourceExt, isInteractive: Boolean = false): List<UUID> {
         val requests = mark.sourceIds().map { FetchTweetsWorker.request(it, mark.tweetId, isInteractive) }
-        if (requests.any()) {
-            WorkManager.getInstance().enqueue(requests)
+        return fetchTweetsInternal("TwitterService.FETCH_TWEETS_MISSING", ExistingWorkPolicy.APPEND, requests)
+    }
+
+    private fun fetchTweetsInternal(name: String, policy: ExistingWorkPolicy, requests: List<OneTimeWorkRequest>): List<UUID> {
+        return if (requests.any()) {
+            var continuous = WorkManager.getInstance().beginUniqueWork(name, policy, requests.first())
+            for (request in requests.drop(1)) {
+                continuous = continuous.then(request)
+            }
+            continuous.enqueue()
+            requests.map(WorkRequest::getId)
+        } else {
+            emptyList()
         }
     }
 

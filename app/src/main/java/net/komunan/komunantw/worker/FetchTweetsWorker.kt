@@ -19,7 +19,9 @@ class FetchTweetsWorker(context: Context, params: WorkerParameters): Worker(cont
         @JvmStatic
         fun request(sourceId: Long, fetchTarget: Long, isInteractive: Boolean): OneTimeWorkRequest {
             return OneTimeWorkRequest.Builder(FetchTweetsWorker::class.java)
-                    .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())
+                    .setConstraints(Constraints.Builder().apply {
+                        setRequiredNetworkType(NetworkType.CONNECTED)
+                    }.build())
                     .setInputData(Data.Builder().apply {
                         putLong(PARAMETER_SOURCE_ID, sourceId)
                         putBoolean(PARAMETER_IS_INTERACTIVE, isInteractive)

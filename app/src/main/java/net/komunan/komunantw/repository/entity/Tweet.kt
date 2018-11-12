@@ -70,6 +70,9 @@ open class Tweet() {
         }
     }
 
+    val mainUserId: Long
+        get() = if (isRetweet) rtUserId else userId
+
     val displayText: String
         get() {
             var result = text
