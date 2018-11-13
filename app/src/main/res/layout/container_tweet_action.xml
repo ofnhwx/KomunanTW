@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools"
+        tools:parentTag="android.widget.LinearLayout"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <com.mikepenz.iconics.view.IconicsButton
+            android:id="@+id/action_reply"
+            android:text="@string/gmd_chat_bubble_outline"
+            android:gravity="center"
+            android:background="@drawable/tw_action_button_l"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent" />
+    <com.mikepenz.iconics.view.IconicsButton
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:id="@+id/action_retweet"
+            android:text="@string/format_gmd_repeat"
+            android:gravity="center"
+            android:background="@drawable/tw_action_button_m"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent" />
+    <com.mikepenz.iconics.view.IconicsButton
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:id="@+id/action_like"
+            android:text="@string/format_gmd_favorite_border"
+            android:gravity="center"
+            android:background="@drawable/tw_action_button_r"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent" />
+</merge>
