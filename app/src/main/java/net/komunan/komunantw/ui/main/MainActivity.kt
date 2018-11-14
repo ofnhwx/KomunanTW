@@ -19,6 +19,7 @@ import net.komunan.komunantw.TWContext
 import net.komunan.komunantw.common.TWBaseActivity
 import net.komunan.komunantw.event.Transition
 import net.komunan.komunantw.repository.entity.Account
+import net.komunan.komunantw.service.TwitterService
 import net.komunan.komunantw.ui.auth.AuthActivity
 import net.komunan.komunantw.ui.main.accounts.AccountsFragment
 import net.komunan.komunantw.ui.main.home.HomeFragment
@@ -59,7 +60,10 @@ class MainActivity: TWBaseActivity() {
     override fun onBackPressed() {
         when {
             supportFragmentManager.backStackEntryCount > 0 -> super.onBackPressed()
-            supportFragmentManager.findFragmentById(container.id) is HomeFragment -> super.onBackPressed()
+            supportFragmentManager.findFragmentById(container.id) is HomeFragment -> {
+                TwitterService.garbageCleaning()
+                super.onBackPressed()
+            }
             else -> setContent(HomeFragment.create())
         }
     }

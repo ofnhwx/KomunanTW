@@ -39,7 +39,8 @@ class User() {
         @JvmStatic
         fun createCache(statuses: List<Status>) {
             val users1 = statuses.map { User(it.user) }
-            val users2 = statuses.mapNotNull { it.retweetedStatus }.map { User(it.user) }
+            val users2 = statuses.mapNotNull(Status::getRetweetedStatus).map { User(it.user) }
+            val users3 = statuses.mapNotNull(Status::getQuotedStatus).map { User(it.user) }
             dao.save(users1.plus(users2).distinctBy { it.id })
         }
     }

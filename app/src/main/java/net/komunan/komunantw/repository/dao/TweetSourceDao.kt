@@ -26,6 +26,10 @@ abstract class TweetSourceDao {
         private const val QUERY_MAX_ID_BY_SOURCE_ID  = "SELECT ifnull(MAX(tweet_id), -1) FROM tweet_source WHERE $PARTS_WHERE_SOURCE_ID"
         private const val QUERY_MIN_ID_BY_SOURCE_ID  = "SELECT ifnull(MIN(tweet_id), -1) FROM tweet_source WHERE $PARTS_WHERE_SOURCE_ID"
         private const val QUERY_PREV_ID_BY_SOURCE_ID = "SELECT ifnull(MAX(tweet_id), -1) FROM tweet_source WHERE $PARTS_WHERE_SOURCE_ID AND tweet_id < :tweetId"
+        private const val QUERY_FIND_SOURCE_IDS      = "SELECT DISTINCT source_id FROM tweet_source ORDER BY source_id ASC"
+        private const val QUERY_DELETE_BY_SOURCE_ID  = "DELETE FROM tweet_source WHERE source_id = :sourceId"
+        private const val QUERY_DELETE_OLD           = "DELETE FROM tweet_source WHERE source_id = :sourceId AND tweet_id <= (SELECT tweet_id FROM tweet_source WHERE source_id = :sourceId ORDER BY tweet_id DESC LIMIT 1 OFFSET :keepCount)"
+        private const val QUERY_REMOVE_MISSING       = "DELETE FROM tweet_source WHERE source_id = :sourceId AND tweet_id = :tweetId AND is_missing > 0"
 
         private const val QUERY_FIND_BY_SOURCE_IDS   = """SELECT
     ts.tweet_id,
@@ -37,7 +41,6 @@ WHERE source_id IN (:sourceIds)
 GROUP BY ts.tweet_id, ts.is_missing
 ORDER BY ts.tweet_id DESC, ts.is_missing ASC"""
 
-        private const val QUERY_REMOVE_MISSING = "DELETE FROM tweet_source WHERE source_id = :sourceId AND tweet_id = :tweetId AND is_missing > 0"
     }
 
     @Query(QUERY_FIND_BY_SOURCE_IDS)
@@ -54,6 +57,15 @@ ORDER BY ts.tweet_id DESC, ts.is_missing ASC"""
 
     @Query(QUERY_PREV_ID_BY_SOURCE_ID)
     abstract fun prevIdBySourceId(sourceId: Long, tweetId: Long): Long
+
+    @Query(QUERY_FIND_SOURCE_IDS)
+    abstract fun findSourceIds(): List<Long>
+
+    @Query(QUERY_DELETE_BY_SOURCE_ID)
+    abstract fun deleteBySourceId(sourceId: Long): Int
+
+    @Query(QUERY_DELETE_OLD)
+    abstract fun deleteOld(sourceId: Long, keepCount: Int): Int
 
     @Query(QUERY_REMOVE_MISSING)
     abstract fun delMissing(sourceId: Long, tweetId: Long)

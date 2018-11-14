@@ -64,10 +64,14 @@ abstract class TweetDao {
 
     companion object {
         private const val QUERY_FIND = "SELECT * FROM tweet WHERE id = :id"
+        private const val QUERY_DELETE_UNNECESSARY = "DELETE FROM tweet WHERE NOT EXISTS (SELECT * FROM tweet_source WHERE tweet.id = tweet_source.tweet_id)"
     }
 
     @Query(QUERY_FIND)
     abstract fun find(id: Long): Tweet?
+
+    @Query(QUERY_DELETE_UNNECESSARY)
+    abstract fun deleteUnnecessary(): Int
 
     /* ==================== SQL Definitions. ==================== */
 

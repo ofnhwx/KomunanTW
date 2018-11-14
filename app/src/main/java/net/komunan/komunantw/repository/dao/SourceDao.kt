@@ -38,6 +38,7 @@ abstract class SourceDao {
         private const val QUERY_FIND_ALL             = "SELECT s.* FROM source AS s $PARTS_JOIN_ACCOUNT $PARTS_DEFAULT_ORDER"
         private const val QUERY_FIND_ALL_WITH_ACTIVE = "SELECT s.*, ifnull(ts.source_id, 0) AS is_active FROM source AS s $PARTS_JOIN_ACCOUNT $PARTS_JOIN_TIMELINE_SOURCE $PARTS_DEFAULT_ORDER"
         private const val QUERY_FIND_BY_ACCOUNT_ID   = "SELECT s.* FROM source AS s WHERE s.account_id = :accountId"
+        private const val QUERY_FIND_SOURCE_IDS      = "SELECT DISTINCT s.id FROM source AS s ORDER BY s.id ASC"
     }
 
     @Query(QUERY_FIND)
@@ -57,6 +58,9 @@ abstract class SourceDao {
 
     @Query(QUERY_FIND_BY_ACCOUNT_ID)
     abstract fun findByAccountId(accountId: Long): List<Source>
+
+    @Query(QUERY_FIND_SOURCE_IDS)
+    abstract fun findSourceIds(): List<Long>
 
     @Delete
     abstract fun delete(source: Source)

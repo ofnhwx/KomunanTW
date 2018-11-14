@@ -12,6 +12,7 @@ import net.komunan.komunantw.TWContext
 import net.komunan.komunantw.repository.entity.*
 import net.komunan.komunantw.repository.entity.ext.TweetSourceExt
 import net.komunan.komunantw.worker.FetchTweetsWorker
+import net.komunan.komunantw.worker.GarbageCleaningWorker
 import net.komunan.komunantw.worker.UpdateSourcesWorker
 import twitter4j.Twitter
 import twitter4j.TwitterFactory
@@ -34,15 +35,20 @@ object TwitterService {
     fun fetchTweets(isInteractive: Boolean = false): List<UUID> {
         val sourceIds = Timeline.sourceDao.findAll().map { it.sourceId }.distinct()
         val requests = sourceIds.map { FetchTweetsWorker.request(it, Tweet.INVALID_ID, isInteractive) }
-        return fetchTweetsInternal("TwitterService.FETCH_TWEETS_ALL", ExistingWorkPolicy.KEEP, requests)
+        return execSequentialRequests("TwitterService.FETCH_TWEETS_ALL", ExistingWorkPolicy.KEEP, requests)
     }
 
     fun fetchTweets(mark: TweetSourceExt, isInteractive: Boolean = false): List<UUID> {
         val requests = mark.sourceIds().map { FetchTweetsWorker.request(it, mark.tweetId, isInteractive) }
-        return fetchTweetsInternal("TwitterService.FETCH_TWEETS_MISSING", ExistingWorkPolicy.APPEND, requests)
+        return execSequentialRequests("TwitterService.FETCH_TWEETS_MISSING", ExistingWorkPolicy.APPEND, requests)
     }
 
-    private fun fetchTweetsInternal(name: String, policy: ExistingWorkPolicy, requests: List<OneTimeWorkRequest>): List<UUID> {
+    fun garbageCleaning() {
+        val request = GarbageCleaningWorker.request()
+        WorkManager.getInstance().enqueueUniqueWork("TwitterService.GARBAGE_CLEANING", ExistingWorkPolicy.KEEP, request)
+    }
+
+    private fun execSequentialRequests(name: String, policy: ExistingWorkPolicy, requests: List<OneTimeWorkRequest>): List<UUID> {
         return if (requests.any()) {
             var continuous = WorkManager.getInstance().beginUniqueWork(name, policy, requests.first())
             for (request in requests.drop(1)) {
