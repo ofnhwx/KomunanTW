@@ -7,11 +7,15 @@ import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.facebook.drawee.view.SimpleDraweeView
+import com.github.ajalt.timberkt.w
+import com.mikepenz.google_material_typeface_library.GoogleMaterial
 import kotlinx.coroutines.*
 import net.komunan.komunantw.R
 import net.komunan.komunantw.common.AppColor
+import net.komunan.komunantw.extension.make
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import java.lang.Exception
 
 class TweetOGPContainer: LinearLayout {
     private val image: SimpleDraweeView
@@ -45,16 +49,20 @@ class TweetOGPContainer: LinearLayout {
 
     fun bind(url: String) {
         GlobalScope.launch(Dispatchers.Main) {
-            val document = withContext(Dispatchers.Default) { Jsoup.connect(url).get() }
-            val imageUrl = getImageUrl(document)
-            if (imageUrl == null) {
-                image.visibility = View.GONE
-            } else {
-                image.visibility = View.VISIBLE
-                image.setImageURI(imageUrl)
+            try {
+                val document = withContext(Dispatchers.Default) { Jsoup.connect(url).get() }
+                val imageUrl = getImageUrl(document)
+                if (imageUrl == null) {
+                    image.visibility = View.GONE
+                } else {
+                    image.visibility = View.VISIBLE
+                    image.setImageURI(imageUrl)
+                }
+                title.text = getTitle(document)
+                description.text = getDescription(document)
+            } catch (e: Exception) {
+                w(e)
             }
-            title.text = getTitle(document)
-            description.text = getDescription(document)
         }
     }
 
