@@ -131,73 +131,67 @@ class HomeTabAdapter: PagedListAdapter<TweetSourceExt, HomeTabAdapter.TweetBaseV
         }
 
         private fun bindValue(dTweet: Deferred<Tweet>, dCredentials: Deferred<List<Credential>>) = GlobalScope.launch(Dispatchers.Main) {
-            itemView.apply {
-                dTweet.await().also { tweet ->
-                    val dUser = async(Dispatchers.Default) { User.dao.find(tweet.mainUserId, dCredentials.await()) ?: User.dummy() }
-                    tweet_text.text = tweet.displayText
-                    tweet_via.text = Html.fromHtml(string[R.string.format_via](tweet.via))
-                    dUser.await().also { user ->
-                        tweet_user_icon.setImageURI(user.imageUrl)
-                        tweet_user_name.text = user.name
-                        tweet_user_screen_name.text = string[R.string.format_screen_name](user.screenName)
-                        if (user.dummy) {
-                            tweet_date_time.text = formatTime(tweet.timestamp)
-                        } else {
-                            tweet_date_time.text = TwitterService.makeStatusPermalink(formatTime(tweet.timestamp), user.screenName, tweet.id)
-                        }
-                    }
-                }
+            val tweet = dTweet.await()
+            val dUser = async(Dispatchers.Default) { User.dao.find(tweet.mainUserId, dCredentials.await()) ?: User.dummy() }
+            itemView.tweet_text.text = tweet.displayText
+            itemView.tweet_via.text = Html.fromHtml(string[R.string.format_via](tweet.via))
+            itemView.action_container.apply {
+                retweetCount = tweet.retweetCount
+                likeCount = tweet.likeCount
+            }
+
+            val user = dUser.await()
+            itemView.tweet_user_icon.setImageURI(user.imageUrl)
+            itemView.tweet_user_name.text = user.name
+            itemView.tweet_user_screen_name.text = string[R.string.format_screen_name](user.screenName)
+            if (user.dummy) {
+                itemView.tweet_date_time.text = formatTime(tweet.timestamp)
+            } else {
+                itemView.tweet_date_time.text = TwitterService.makeStatusPermalink(formatTime(tweet.timestamp), user.screenName, tweet.id)
             }
         }
 
         private fun bindAppearance(dTweet: Deferred<Tweet>) = GlobalScope.launch(Dispatchers.Main) {
-            itemView.apply {
-                if (firstSetup) {
-                    retweeted_by_mark.setTextColor(AppColor.GREEN)
-                    retweeted_by.setTextColor(AppColor.GRAY)
-                    tweet_user_name.setTextColor(AppColor.ORANGE)
-                    tweet_user_screen_name.setTextColor(AppColor.GRAY)
-                    tweet_text.setTextColor(AppColor.WHITE)
-                    tweet_date_time.setLinkTextColor(AppColor.LINK)
-                    tweet_via.setTextColor(AppColor.GRAY)
-                    tweet_via.setLinkTextColor(AppColor.LINK)
-                }
-                val tweet = dTweet.await()
-                val tweetAccounts = withContext(Dispatchers.Default) { Tweet.accountDao.find(tweet.id) }
-                action_container.isRetweeted = tweetAccounts.map(TweetAccount::retweeted).any { it }
-                action_container.isLiked     = tweetAccounts.map(TweetAccount::liked    ).any { it }
+            if (firstSetup) {
+                itemView.retweeted_by_mark.setTextColor(AppColor.GREEN)
+                itemView.retweeted_by.setTextColor(AppColor.GRAY)
+                itemView.tweet_user_name.setTextColor(AppColor.ORANGE)
+                itemView.tweet_user_screen_name.setTextColor(AppColor.GRAY)
+                itemView.tweet_text.setTextColor(AppColor.WHITE)
+                itemView.tweet_date_time.setLinkTextColor(AppColor.LINK)
+                itemView.tweet_via.setTextColor(AppColor.GRAY)
+                itemView.tweet_via.setLinkTextColor(AppColor.LINK)
             }
+            val tweet = dTweet.await()
+            val tweetAccounts = withContext(Dispatchers.Default) { Tweet.accountDao.find(tweet.id) }
+            itemView.action_container.isRetweeted = tweetAccounts.map(TweetAccount::retweeted).any { it }
+            itemView.action_container.isLiked     = tweetAccounts.map(TweetAccount::liked    ).any { it }
         }
 
         private fun bindEvents(dTweet: Deferred<Tweet>) = GlobalScope.launch(Dispatchers.Main) {
-            itemView.apply {
-                // 各種リンクをタッチ可能に設定
-                if (firstSetup) {
-                    tweet_text.movementMethod      = TouchableMovementMethod.instance
-                    tweet_date_time.movementMethod = LinkMovementMethod.getInstance()
-                    tweet_via.movementMethod       = LinkMovementMethod.getInstance()
-                }
-                // イベント設定
-                dTweet.await().also { tweet ->
-                    // テキスト(@〜, #〜, https://〜)
-                    tweet.ext.urls.forEach { url ->
-                        tweet_text.applyLinks(Link(url.display)
-                                .setTextColor(AppColor.LINK)
-                                .setTextColorOfHighlightedLink(AppColor.LINK_PRESSED)
-                                .setOnClickListener { url.expanded.intentActionView() })
-                    }
-                    tweet_text.applyLinks(LINK_USERNAME, LINK_HASH_TAG, LINK_URL)
-                    // プロフィール画像 -> ユーザープロフィール
-                    val userId = tweet.mainUserId
-                    tweet_user_icon.setOnClickListener { TwitterService.Official.showProfile(userId) }
-                    // 返信・リツイート・お気に入り
-                    action_container.setOnClickListener { action ->
-                        when (action) {
-                            TweetActionContainer.Action.REPLY   -> TwitterService.Official.doTweet(tweet.id)
-                            TweetActionContainer.Action.RETWEET -> TwitterService.Official.doRetweet(tweet.id)
-                            TweetActionContainer.Action.LIKE    -> TwitterService.Official.doLike(tweet.id)
-                        }
-                    }
+            // 各種リンクをタッチ可能に設定
+            if (firstSetup) {
+                itemView.tweet_text.movementMethod      = TouchableMovementMethod.instance
+                itemView.tweet_date_time.movementMethod = LinkMovementMethod.getInstance()
+                itemView.tweet_via.movementMethod       = LinkMovementMethod.getInstance()
+            }
+            // テキスト(@〜, #〜, https://〜)
+            val tweet = dTweet.await()
+            tweet.ext.urls.forEach { url ->
+                itemView.tweet_text.applyLinks(Link(url.display)
+                        .setTextColor(AppColor.LINK)
+                        .setTextColorOfHighlightedLink(AppColor.LINK_PRESSED)
+                        .setOnClickListener { url.expanded.intentActionView() })
+            }
+            itemView.tweet_text.applyLinks(LINK_USERNAME, LINK_HASH_TAG, LINK_URL)
+            // プロフィール画像 -> ユーザープロフィール
+            itemView.tweet_user_icon.setOnClickListener { TwitterService.Official.showProfile(tweet.mainUserId) }
+            // 返信・リツイート・お気に入り
+            itemView.action_container.setOnClickListener { action ->
+                when (action) {
+                    TweetActionContainer.Action.REPLY   -> TwitterService.Official.doTweet(tweet.id)
+                    TweetActionContainer.Action.RETWEET -> TwitterService.Official.doRetweet(tweet.id)
+                    TweetActionContainer.Action.LIKE    -> TwitterService.Official.doLike(tweet.id)
                 }
             }
         }
@@ -208,79 +202,75 @@ class HomeTabAdapter: PagedListAdapter<TweetSourceExt, HomeTabAdapter.TweetBaseV
                 tweet.ext.medias.count() == 1 && tweet.ext.medias.first().isVideo -> {
                     // ビデオ表示(最大1枚)
                     itemView.media_container.visibility = View.VISIBLE
+                    itemView.ogp_container.visibility = View.GONE
                     bindVideo(tweet.ext.medias.first())
                 }
                 tweet.ext.medias.any() -> {
                     // 写真表示(最大4枚)
                     itemView.media_container.visibility = View.VISIBLE
+                    itemView.ogp_container.visibility = View.GONE
                     bindPhotos(tweet.ext.medias)
                 }
-                tweet.ext.urls.count() == 1 -> {
+                !tweet.hasQuote && tweet.ext.urls.count() == 1 -> {
                     // OGP表示
                     itemView.media_container.visibility = View.GONE
+                    itemView.ogp_container.visibility = View.VISIBLE
+                    bindOGP(tweet.ext.urls.first())
                 }
                 else -> {
                     // 表示なし
                     itemView.media_container.visibility = View.GONE
+                    itemView.ogp_container.visibility = View.GONE
                 }
             }
         }
 
         private fun bindVideo(media: TweetExtension.TweetMedia) {
-            itemView.media_container.mediaViews.forEachIndexed { index, mediaView ->
-                if (index == 0) {
-                    mediaView.visibility = View.VISIBLE
-                    mediaView.setImageURI(media.url)
-                    mediaView.setOnClickListener {
-                        // TODO: 内部での動画再生
-                        media.videoVariants.first().url.intentActionView()
-                    }
-                    mediaView.setOnLongClickListener {
-                        media.videoVariants.first().url.intentActionView()
-                        return@setOnLongClickListener true
-                    }
-                } else {
-                    mediaView.visibility = View.GONE
+            itemView.media_container.apply {
+                bindVideo(media)
+                setOnClickListener { index, medias ->
+                    medias[index].videoVariants.first().url.intentActionView()
+                }
+                setOnLongClickListener { index, medias ->
+                    medias[index].videoVariants.first().url.intentActionView()
                 }
             }
         }
 
         private fun bindPhotos(medias: List<TweetExtension.TweetMedia>) {
-            itemView.media_container.mediaViews.forEachIndexed { index, mediaView ->
-                val media = medias.elementAtOrNull(index)
-                if (media == null) {
-                    mediaView.visibility = View.GONE
-                } else {
-                    mediaView.visibility = View.VISIBLE
-                    mediaView.setImageURI(media.url)
-                    mediaView.setOnClickListener {
-                        ImageViewer.Builder(itemView.context, medias)
-                                .setFormatter { media -> media.url }
-                                .setStartPosition(index)
-                                .show()
-                    }
-                    mediaView.setOnLongClickListener {
-                        media.url.intentActionView()
-                        return@setOnLongClickListener true
-                    }
+            itemView.media_container.apply {
+                bindPhotos(medias)
+                setOnClickListener { index, medias ->
+                    ImageViewer.Builder(itemView.context, medias)
+                            .setFormatter { media -> media.url }
+                            .setStartPosition(index)
+                            .show()
+                }
+                setOnLongClickListener { index, medias ->
+                    medias[index].url.intentActionView()
                 }
             }
         }
 
+        private fun bindOGP(tweetUrl: TweetExtension.TweetUrl) {
+            itemView.ogp_container.apply {
+                bind(tweetUrl.expanded)
+                setOnClickListener { tweetUrl.expanded.intentActionView() }
+            }
+        }
+
         private fun bindRetweetedBy(dTweet: Deferred<Tweet>, dCredentials: Deferred<List<Credential>>) = GlobalScope.launch(Dispatchers.Main) {
-            itemView.apply {
-                if (firstSetup) {
-                    retweeted_by_mark.text = string[R.string.gmd_repeat]()
-                }
-                dTweet.await().also { tweet ->
-                    if (tweet.isRetweet) {
-                        val credentials = dCredentials.await()
-                        val user = withContext(Dispatchers.Default) { User.dao.find(tweet.userId, credentials) ?: User.dummy() }
-                        itemView.retweeted_by.text = string[R.string.format_retweeted_by](user.name)
-                        itemView.retweeted_by_container.visibility = View.VISIBLE
-                    } else {
-                        itemView.retweeted_by_container.visibility = View.GONE
-                    }
+            if (firstSetup) {
+                itemView.retweeted_by_mark.text = string[R.string.gmd_repeat]()
+            }
+            dTweet.await().also { tweet ->
+                if (tweet.isRetweet) {
+                    val credentials = dCredentials.await()
+                    val user = withContext(Dispatchers.Default) { User.dao.find(tweet.userId, credentials) ?: User.dummy() }
+                    itemView.retweeted_by.text = string[R.string.format_retweeted_by](user.name)
+                    itemView.retweeted_by_container.visibility = View.VISIBLE
+                } else {
+                    itemView.retweeted_by_container.visibility = View.GONE
                 }
             }
         }

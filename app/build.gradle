@@ -17,8 +17,8 @@ android {
         applicationId "net.komunan.komunan_tw"
         minSdkVersion 23
         targetSdkVersion 28
-        versionCode 34
-        versionName "0.13.4"
+        versionCode 35
+        versionName "0.14.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         buildConfigField "String", "DEFAULT_CONSUMER_KEY", "\"" + buildProperties.secrets['consumer_key'].string + "\""
         buildConfigField "String", "DEFAULT_CONSUMER_SECRET", "\"" + buildProperties.secrets['consumer_secret'].string + "\""
@@ -74,6 +74,7 @@ dependencies {
     implementation 'com.mikepenz:materialdrawer:6.1.1'
     implementation 'org.apache.commons:commons-lang3:3.8.1'
     implementation 'org.greenrobot:eventbus:3.1.1'
+    implementation 'org.jsoup:jsoup:1.11.3'
     implementation 'org.twitter4j:twitter4j-core:4.0.7'
 
     // for Debug

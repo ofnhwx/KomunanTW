@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools"
-        tools:parentTag="android.widget.LinearLayout"
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+       xmlns:tools="http://schemas.android.com/tools"
+       tools:parentTag="android.widget.LinearLayout"
+       android:orientation="horizontal"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content">
     <com.mikepenz.iconics.view.IconicsButton
             android:id="@+id/action_reply"
             android:text="@string/gmd_chat_bubble_outline"

@@ -84,6 +84,9 @@ open class Tweet() {
     val isRetweet: Boolean
         get() = rtId != 0L
 
+    val hasQuote: Boolean
+        get() = qtId != 0L
+
     override fun toString(): String {
         return ToStringBuilder.reflectionToString(this)
     }

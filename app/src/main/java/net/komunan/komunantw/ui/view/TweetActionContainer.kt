@@ -25,22 +25,46 @@ class TweetActionContainer: LinearLayout {
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int): super(context, attrs, defStyleAttr) {
         LayoutInflater.from(context).inflate(R.layout.container_tweet_action, this, true)
 
-        actionReply   = findViewById<IconicsButton>(R.id.action_reply).apply {
-            text = string[R.string.gmd_chat_bubble_outline]()
-            setTextColor(AppColor.GRAY)
-        }
+        actionReply   = findViewById(R.id.action_reply)
         actionRetweet = findViewById(R.id.action_retweet)
         actionLike    = findViewById(R.id.action_like)
 
+        actionReply.text = string[R.string.gmd_chat_bubble_outline]()
+
+        textColor      = AppColor.GRAY
+        retweetedColor = AppColor.RETWEETED
+        likedColor     = AppColor.LIKED
         isRetweeted = false
         isLiked     = false
         retweetCount = 0
         likeCount    = 0
     }
 
+    var textColor: Int = AppColor.GRAY
+        set(value) {
+            actionReply.setTextColor(value)
+            field = value
+        }
+
+    var retweetedColor: Int = AppColor.RETWEETED
+        set(value) {
+            if (isRetweeted) {
+                actionRetweet.setTextColor(value)
+            }
+            field = value
+        }
+
+    var likedColor: Int = AppColor.LIKED
+        set(value) {
+            if (isLiked) {
+                actionLike.setTextColor(value)
+            }
+            field = value
+        }
+
     var isRetweeted: Boolean = false
         set(value) {
-            actionRetweet.setTextColor(AppColor.RETWEETED(value))
+            actionRetweet.setTextColor(if (value) retweetedColor else textColor)
             field = value
         }
 
@@ -52,7 +76,7 @@ class TweetActionContainer: LinearLayout {
 
     var isLiked: Boolean = false
         set(value) {
-            actionLike.setTextColor(AppColor.LIKED(value))
+            actionLike.setTextColor(if (value) likedColor else textColor)
             field = value
         }
 
