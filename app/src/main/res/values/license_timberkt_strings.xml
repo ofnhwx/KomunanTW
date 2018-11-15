@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="define_int_timberkt">timberkt</string>
+    <string name="library_timberkt_author">ajalt</string>
+    <string name="library_timberkt_authorWebsite">https://github.com/ajalt</string>
+    <string name="library_timberkt_libraryName">timberkt</string>
+    <string name="library_timberkt_libraryDescription">Jake Wharton\'s Timber library is great.
+It\'s a Java library with an API that works well for Java, but that isn\'t as idiomatic when used in Kotlin.
+
+This library builds on Timber with an API that\'s easier to use from Kotlin. Instead of using formatting parameters,
+you pass a lambda that is only evaluated if the message is logged.</string>
+    <string name="library_timberkt_libraryVersion">1.5.1</string>
+    <string name="library_timberkt_libraryWebsite">https://github.com/ajalt/timberkt</string>
+    <string name="library_timberkt_licenseId">apache_2_0</string>
+    <string name="library_timberkt_isOpenSource">true</string>
+    <string name="library_timberkt_repositoryLink">https://github.com/ajalt/timberkt</string>
+</resources>

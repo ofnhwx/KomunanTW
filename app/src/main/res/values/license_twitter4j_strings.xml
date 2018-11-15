@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="define_int_Twitter4J">Twitter4J</string>
+    <string name="library_Twitter4J_author">Twitter4J</string>
+    <string name="library_Twitter4J_authorWebsite">http://twitter4j.org/</string>
+    <string name="library_Twitter4J_libraryName">Twitter4J</string>
+    <string name="library_Twitter4J_libraryDescription">Twitter4J is an open-sourced, mavenized and
+Google App Engine safe Java library for the Twitter API which is released under the Apache License 2.0.</string>
+    <string name="library_Twitter4J_libraryVersion">4.0.7</string>
+    <string name="library_Twitter4J_libraryWebsite">https://github.com/Twitter4J/Twitter4J</string>
+    <string name="library_Twitter4J_licenseId">apache_2_0</string>
+    <string name="library_Twitter4J_isOpenSource">true</string>
+    <string name="library_Twitter4J_repositoryLink">https://github.com/Twitter4J/Twitter4J</string>
+</resources>

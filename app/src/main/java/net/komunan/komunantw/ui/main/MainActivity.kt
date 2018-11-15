@@ -7,6 +7,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProviders
 import com.github.ajalt.timberkt.d
+import com.mikepenz.aboutlibraries.Libs
+import com.mikepenz.aboutlibraries.LibsBuilder
 import com.mikepenz.materialdrawer.DrawerBuilder
 import com.mikepenz.materialdrawer.model.DividerDrawerItem
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
@@ -18,6 +20,8 @@ import net.komunan.komunantw.R
 import net.komunan.komunantw.TWContext
 import net.komunan.komunantw.common.TWBaseActivity
 import net.komunan.komunantw.event.Transition
+import net.komunan.komunantw.extension.string
+import net.komunan.komunantw.extension.withStringRes
 import net.komunan.komunantw.repository.entity.Account
 import net.komunan.komunantw.service.TwitterService
 import net.komunan.komunantw.ui.auth.AuthActivity
@@ -59,12 +63,17 @@ class MainActivity: TWBaseActivity() {
 
     override fun onBackPressed() {
         when {
-            supportFragmentManager.backStackEntryCount > 0 -> super.onBackPressed()
+            supportFragmentManager.backStackEntryCount > 0 -> {
+                super.onBackPressed()
+            }
             supportFragmentManager.findFragmentById(container.id) is HomeFragment -> {
                 TwitterService.garbageCleaning()
                 super.onBackPressed()
             }
-            else -> setContent(HomeFragment.create())
+            else -> {
+                setContent(HomeFragment.create())
+                drawer.setSelection(R.string.home.toLong())
+            }
         }
     }
 
@@ -79,8 +88,9 @@ class MainActivity: TWBaseActivity() {
             Transition.Target.TIMELINES -> setContent(TimelinesFragment.create())
             Transition.Target.TIMELINE_EDIT -> setContent(TimelineEditFragment.create(transition.id), true)
             Transition.Target.SOURCES -> setContent(SourcesFragment.create())
-            // Auth
+            // Others
             Transition.Target.AUTH -> startActivity(AuthActivity.newIntent(false))
+            Transition.Target.LICENSE -> showLicense()
             // Back
             Transition.Target.BACK -> onBackPressed()
         }
@@ -91,19 +101,21 @@ class MainActivity: TWBaseActivity() {
             withActivity(this@MainActivity)
             withToolbar(toolbar)
             addDrawerItems(
-                    PrimaryDrawerItem().withIdentifier(R.string.home.toLong()).withName(R.string.home),
+                    PrimaryDrawerItem().withStringRes(R.string.home),
                     DividerDrawerItem(),
-                    SecondaryDrawerItem().withIdentifier(R.string.account_list.toLong()).withName(R.string.account_list),
-                    SecondaryDrawerItem().withIdentifier(R.string.timeline_list.toLong()).withName(R.string.timeline_list),
-                    SecondaryDrawerItem().withIdentifier(R.string.source_list.toLong()).withName(R.string.source_list),
-                    DividerDrawerItem()
+                    SecondaryDrawerItem().withStringRes(R.string.account_list),
+                    SecondaryDrawerItem().withStringRes(R.string.timeline_list),
+                    SecondaryDrawerItem().withStringRes(R.string.source_list),
+                    DividerDrawerItem(),
+                    SecondaryDrawerItem().withStringRes(R.string.license)
             )
             withOnDrawerItemClickListener { _, _, drawerItem ->
-                when (drawerItem.identifier) {
-                    R.string.home.toLong() -> Transition.execute(Transition.Target.HOME)
-                    R.string.account_list.toLong() -> Transition.execute(Transition.Target.ACCOUNTS)
-                    R.string.timeline_list.toLong() -> Transition.execute(Transition.Target.TIMELINES)
-                    R.string.source_list.toLong() -> Transition.execute(Transition.Target.SOURCES)
+                when (drawerItem.identifier.toInt()) {
+                    R.string.home -> Transition.execute(Transition.Target.HOME)
+                    R.string.account_list -> Transition.execute(Transition.Target.ACCOUNTS)
+                    R.string.timeline_list -> Transition.execute(Transition.Target.TIMELINES)
+                    R.string.source_list -> Transition.execute(Transition.Target.SOURCES)
+                    R.string.license -> Transition.execute(Transition.Target.LICENSE)
                 }
                 drawer.closeDrawer()
                 return@withOnDrawerItemClickListener true
@@ -133,5 +145,24 @@ class MainActivity: TWBaseActivity() {
                 if (child) { addToBackStack(null) }
             }.commit()
         }
+    }
+
+    @Suppress("SpellCheckingInspection")
+    private fun showLicense() {
+        LibsBuilder()
+                .withLibraries(
+                        "CommonsLang",
+                        "Fresco",
+                        "FrescoImageViewer",
+                        "LinkBuilder",
+                        "PreferenceHolder",
+                        "timberkt",
+                        "Twitter4J",
+                        "TwitterText"
+                )
+                .withFields(R.string::class.java.fields)
+                .withActivityTitle(string[R.string.license]())
+                .withActivityStyle(Libs.ActivityStyle.DARK)
+                .start(this)
     }
 }

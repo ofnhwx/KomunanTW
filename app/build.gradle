@@ -17,8 +17,8 @@ android {
         applicationId "net.komunan.komunan_tw"
         minSdkVersion 23
         targetSdkVersion 28
-        versionCode 38
-        versionName "0.14.3"
+        versionCode 39
+        versionName "0.15.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         buildConfigField "String", "DEFAULT_CONSUMER_KEY", "\"" + buildProperties.secrets['consumer_key'].string + "\""
         buildConfigField "String", "DEFAULT_CONSUMER_SECRET", "\"" + buildProperties.secrets['consumer_secret'].string + "\""
@@ -71,6 +71,7 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'com.klinkerapps:link_builder:2.0.5'
     implementation 'com.marcinmoskala.PreferenceHolder:preferenceholder:1.51'
+    implementation 'com.mikepenz:aboutlibraries:6.2.0'
     implementation 'com.mikepenz:materialdrawer:6.1.1'
     implementation 'com.twitter.twittertext:twitter-text:3.0.1'
     implementation 'org.apache.commons:commons-lang3:3.8.1'

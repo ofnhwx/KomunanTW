@@ -37,7 +37,7 @@ open class Tweet() {
         @JvmStatic
         fun createCache(source: Source, statuses: List<Status>) = transaction(TransactionTarget.WITH_CACHE) {
             val account = Account.dao.find(source.accountId)!!
-            statuses.forEach { dao.save(Tweet(it)) }
+            statuses.forEach { dao.saveWithoutLog(Tweet(it)) }
             accountDao.save(statuses.map { TweetAccount(account.id, it) })
             sourceDao.save(statuses.map { TweetSource(source.id, it.id) })
         }

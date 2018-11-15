@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="define_int_Fresco">Fresco</string>
+    <string name="library_Fresco_author">Facebook</string>
+    <string name="library_Fresco_authorWebsite">https://frescolib.org/</string>
+    <string name="library_Fresco_libraryName">Fresco</string>
+    <string name="library_Fresco_libraryDescription">Fresco is a powerful system for displaying images in Android applications.
+
+Fresco takes care of image loading and display, so you don\'t have to. It will load images from the network,
+local storage, or local resources, and display a placeholder until the image has arrived. It has two
+levels of cache; one in memory and another in internal storage.</string>
+    <string name="library_Fresco_libraryVersion">1.11.0</string>
+    <string name="library_Fresco_libraryWebsite">https://github.com/facebook/fresco</string>
+    <string name="library_Fresco_licenseId">mit</string>
+    <string name="library_Fresco_isOpenSource">true</string>
+    <string name="library_Fresco_repositoryLink">https://github.com/facebook/fresco</string>
+</resources>

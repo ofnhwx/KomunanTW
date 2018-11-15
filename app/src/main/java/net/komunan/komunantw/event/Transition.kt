@@ -17,6 +17,7 @@ class Transition private constructor(val target: Target, val id: Long) {
         TIMELINES,
         TIMELINE_EDIT,
         SOURCES,
+        LICENSE,
         BACK,
     }
 

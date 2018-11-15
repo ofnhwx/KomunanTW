@@ -3,6 +3,7 @@ package net.komunan.komunantw.extension
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import androidx.annotation.StringRes
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
@@ -14,6 +15,8 @@ import androidx.work.WorkRequest
 import com.google.gson.Gson
 import com.mikepenz.iconics.IconicsDrawable
 import com.mikepenz.iconics.typeface.IIcon
+import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
+import com.mikepenz.materialdrawer.model.SecondaryDrawerItem
 import net.komunan.komunantw.TWContext
 import net.komunan.komunantw.repository.database.TWCacheDatabase
 import net.komunan.komunantw.repository.database.TWDatabase
@@ -57,6 +60,14 @@ fun WorkManager.enqueueSequentilly(name: String, policy: ExistingWorkPolicy, req
     } else {
         emptyList()
     }
+}
+
+// [Primary/Secondary]DrawerItem
+fun PrimaryDrawerItem.withStringRes(@StringRes stringRes: Int): PrimaryDrawerItem {
+    return this.withIdentifier(stringRes.toLong()).withName(stringRes)
+}
+fun SecondaryDrawerItem.withStringRes(@StringRes stringRes: Int): SecondaryDrawerItem {
+    return this.withIdentifier(stringRes.toLong()).withName(stringRes)
 }
 
 // Global

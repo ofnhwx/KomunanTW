@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="define_int_LinkBuilder">LinkBuilder</string>
+    <string name="library_LinkBuilder_author">klinker24</string>
+    <string name="library_LinkBuilder_authorWebsite">https://luke.klinker.xyz/</string>
+    <string name="library_LinkBuilder_libraryName">Android TextView-LinkBuilder</string>
+    <string name="library_LinkBuilder_libraryDescription">Insanely easy way to create clickable links within a TextView.
+
+While creating Talon for Twitter, one of the most difficult things I encountered was creating these clickable links
+based on specific text. Luckily, I have made it easy for anyone to apply this type of style to their TextView\'s.</string>
+    <string name="library_LinkBuilder_libraryVersion">2.0.5</string>
+    <string name="library_LinkBuilder_libraryWebsite">https://github.com/klinker24/Android-TextView-LinkBuilder</string>
+    <string name="library_LinkBuilder_licenseId">apache_2_0</string>
+    <string name="library_LinkBuilder_isOpenSource">true</string>
+    <string name="library_LinkBuilder_repositoryLink">https://github.com/klinker24/Android-TextView-LinkBuilder</string>
+</resources>

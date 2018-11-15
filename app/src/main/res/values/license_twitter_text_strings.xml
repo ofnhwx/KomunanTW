@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="define_int_TwitterText">TwitterText</string>
+    <string name="library_TwitterText_author">Twitter, Inc.</string>
+    <string name="library_TwitterText_authorWebsite">https://twitter.github.io/</string>
+    <string name="library_TwitterText_libraryName">twitter-text</string>
+    <string name="library_TwitterText_libraryDescription">This repo is a collection of libraries and conformance
+tests to standardize parsing of Tweet text. It synchronizes development, testing, creating issues,
+and pull requests for twitter-text\'s implementations and specification. These libraries are responsible
+for determining the quantity of characters in a Tweet and identifying and linking any url, @username, #hashtag, or $cashtag.</string>
+    <string name="library_TwitterText_libraryVersion">3.0.1</string>
+    <string name="library_TwitterText_libraryWebsite">https://github.com/twitter/twitter-text</string>
+    <string name="library_TwitterText_licenseId">apache_2_0</string>
+    <string name="library_TwitterText_isOpenSource">true</string>
+    <string name="library_TwitterText_repositoryLink">https://github.com/twitter/twitter-text</string>
+</resources>

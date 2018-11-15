@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="define_int_FrescoImageViewer">FrescoImageViewer</string>
+    <string name="library_FrescoImageViewer_author">Stfalcon LLC</string>
+    <string name="library_FrescoImageViewer_authorWebsite">http://stfalcon.com</string>
+    <string name="library_FrescoImageViewer_libraryName">FrescoImageViewer</string>
+    <string name="library_FrescoImageViewer_libraryDescription">Simple customizable full screen image viewer
+for Fresco library that includes "pinch to zoom" and "swipe to dismiss" gestures. Based on PhotoDraweeView by ongakuer.</string>
+    <string name="library_FrescoImageViewer_libraryVersion">0.5.0</string>
+    <string name="library_FrescoImageViewer_libraryWebsite">https://github.com/stfalcon-studio/FrescoImageViewer</string>
+    <string name="library_FrescoImageViewer_licenseId">apache_2_0</string>
+    <string name="library_FrescoImageViewer_isOpenSource">true</string>
+    <string name="library_FrescoImageViewer_repositoryLink">https://github.com/stfalcon-studio/FrescoImageViewer</string>
+</resources>

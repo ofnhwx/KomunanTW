@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="define_int_PreferenceHolder">PreferenceHolder</string>
+    <string name="library_PreferenceHolder_author">MarcinMoskala</string>
+    <string name="library_PreferenceHolder_authorWebsite">http://marcinmoskala.com/</string>
+    <string name="library_PreferenceHolder_libraryName">PreferenceHolder</string>
+    <string name="library_PreferenceHolder_libraryDescription">Kotlin Android Library, that makes preference usage simple and fun.</string>
+    <string name="library_PreferenceHolder_libraryVersion">1.51</string>
+    <string name="library_PreferenceHolder_libraryWebsite">https://github.com/MarcinMoskala/PreferenceHolder</string>
+    <string name="library_PreferenceHolder_licenseId">apache_2_0</string>
+    <string name="library_PreferenceHolder_isOpenSource">true</string>
+    <string name="library_PreferenceHolder_repositoryLink">https://github.com/MarcinMoskala/PreferenceHolder</string>
+</resources>
