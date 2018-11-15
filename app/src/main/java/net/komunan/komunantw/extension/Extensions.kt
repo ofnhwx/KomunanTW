@@ -7,12 +7,17 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Observer
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequest
+import androidx.work.WorkManager
+import androidx.work.WorkRequest
 import com.google.gson.Gson
 import com.mikepenz.iconics.IconicsDrawable
 import com.mikepenz.iconics.typeface.IIcon
 import net.komunan.komunantw.TWContext
 import net.komunan.komunantw.repository.database.TWCacheDatabase
 import net.komunan.komunantw.repository.database.TWDatabase
+import java.util.*
 
 // Int
 fun Int.toBoolean(): Boolean = this != 0
@@ -38,6 +43,20 @@ fun IIcon.make(context: Context): IconicsDrawable {
 // LiveData<T>
 fun <T> LiveData<T>.observeOnNotNull(owner: LifecycleOwner, body: (data: T) -> Unit) {
     this.observe(owner, Observer { it?.let(body) })
+}
+
+// WorkManager
+fun WorkManager.enqueueSequentilly(name: String, policy: ExistingWorkPolicy, requests: List<OneTimeWorkRequest>): List<UUID> {
+    return if (requests.any()) {
+        var continuous = WorkManager.getInstance().beginUniqueWork(name, policy, requests.first())
+        for (request in requests.drop(1)) {
+            continuous = continuous.then(request)
+        }
+        continuous.enqueue()
+        requests.map(WorkRequest::getId)
+    } else {
+        emptyList()
+    }
 }
 
 // Global

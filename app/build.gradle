@@ -72,6 +72,7 @@ dependencies {
     implementation 'com.klinkerapps:link_builder:2.0.5'
     implementation 'com.marcinmoskala.PreferenceHolder:preferenceholder:1.51'
     implementation 'com.mikepenz:materialdrawer:6.1.1'
+    implementation 'com.twitter.twittertext:twitter-text:3.0.1'
     implementation 'org.apache.commons:commons-lang3:3.8.1'
     implementation 'org.greenrobot:eventbus:3.1.1'
     implementation 'org.jsoup:jsoup:1.11.3'

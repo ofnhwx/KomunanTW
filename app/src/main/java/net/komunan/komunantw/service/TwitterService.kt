@@ -5,19 +5,21 @@ import android.net.Uri
 import android.text.Html
 import android.text.Spanned
 import androidx.work.ExistingWorkPolicy
-import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
-import androidx.work.WorkRequest
 import net.komunan.komunantw.TWContext
-import net.komunan.komunantw.repository.entity.*
+import net.komunan.komunantw.extension.enqueueSequentilly
+import net.komunan.komunantw.repository.entity.Consumer
+import net.komunan.komunantw.repository.entity.Credential
+import net.komunan.komunantw.repository.entity.Timeline
+import net.komunan.komunantw.repository.entity.Tweet
 import net.komunan.komunantw.repository.entity.ext.TweetSourceExt
 import net.komunan.komunantw.worker.FetchTweetsWorker
 import net.komunan.komunantw.worker.GarbageCleaningWorker
 import net.komunan.komunantw.worker.UpdateSourcesWorker
-import twitter4j.Twitter
-import twitter4j.TwitterFactory
+import twitter4j.*
 import twitter4j.auth.AccessToken
 import twitter4j.conf.ConfigurationBuilder
+import java.io.File
 import java.util.*
 
 object TwitterService {
@@ -33,37 +35,30 @@ object TwitterService {
     }
 
     fun fetchTweets(isInteractive: Boolean = false): List<UUID> {
+        val workManager = WorkManager.getInstance()
         val sourceIds = Timeline.sourceDao.findAll().map { it.sourceId }.distinct()
         val requests = sourceIds.map { FetchTweetsWorker.request(it, Tweet.INVALID_ID, isInteractive) }
-        return execSequentialRequests("TwitterService.FETCH_TWEETS_ALL", ExistingWorkPolicy.KEEP, requests)
+        return workManager.enqueueSequentilly("TwitterService.FETCH_TWEETS_ALL", ExistingWorkPolicy.KEEP, requests)
     }
 
     fun fetchTweets(mark: TweetSourceExt, isInteractive: Boolean = false): List<UUID> {
+        val workManager = WorkManager.getInstance()
         val requests = mark.sourceIds().map { FetchTweetsWorker.request(it, mark.tweetId, isInteractive) }
-        return execSequentialRequests("TwitterService.FETCH_TWEETS_MISSING", ExistingWorkPolicy.APPEND, requests)
+        return workManager.enqueueSequentilly("TwitterService.FETCH_TWEETS_MISSING", ExistingWorkPolicy.APPEND, requests)
     }
 
-    fun garbageCleaning() {
+    fun garbageCleaning(): UUID {
+        val workManager = WorkManager.getInstance()
         val request = GarbageCleaningWorker.request()
-        WorkManager.getInstance().enqueueUniqueWork("TwitterService.GARBAGE_CLEANING", ExistingWorkPolicy.KEEP, request)
+        workManager.enqueueUniqueWork("TwitterService.GARBAGE_CLEANING", ExistingWorkPolicy.KEEP, request)
+        return request.id
     }
 
-    private fun execSequentialRequests(name: String, policy: ExistingWorkPolicy, requests: List<OneTimeWorkRequest>): List<UUID> {
-        return if (requests.any()) {
-            var continuous = WorkManager.getInstance().beginUniqueWork(name, policy, requests.first())
-            for (request in requests.drop(1)) {
-                continuous = continuous.then(request)
-            }
-            continuous.enqueue()
-            requests.map(WorkRequest::getId)
-        } else {
-            emptyList()
-        }
-    }
-
-    fun updateSourceList(accountId: Long) {
+    fun updateSourceList(accountId: Long): UUID {
+        val workManager = WorkManager.getInstance()
         val request = UpdateSourcesWorker.request(accountId)
-        WorkManager.getInstance().enqueue(request)
+        workManager.enqueue(request)
+        return request.id
     }
 
     @Suppress("DEPRECATION")
@@ -72,6 +67,70 @@ object TwitterService {
             return null
         }
         return Html.fromHtml("""<a href="https://twitter.com/%s/status/%s">%s</a>""".format(screenName, tweetId, text))
+    }
+
+    object Unofficial {
+        /**
+         * @throws TwitterException
+         */
+        fun doTweet(credential: Credential, text: String, files: List<File> = emptyList()): Status {
+            val twitter = twitter(credential)
+            val update = makeUpdate(twitter, text, files)
+            return twitter.updateStatus(update)
+        }
+
+        /**
+         * @throws TwitterException
+         */
+        fun doReply(credential: Credential, replyTo: Long, text: String, files: List<File> = emptyList()): Status {
+            val twitter = twitter(credential)
+            val reply = makeUpdate(twitter, text, files).inReplyToStatusId(replyTo)
+            return twitter.updateStatus(reply)
+        }
+
+        /**
+         * @throws TwitterException
+         */
+        fun doRetweet(credential: Credential, statusId: Long, cancel: Boolean = false): Status {
+            val twitter = twitter(credential)
+            return if (cancel) {
+                // TODO: リツイート元のツイートからリツイートフラグを削除
+                // TODO: リツイートを削除
+                twitter.unRetweetStatus(statusId)
+            } else {
+                // TODO: リツイート元のツイートにリツイートフラグを追加
+                twitter.retweetStatus(statusId)
+            }
+        }
+
+        /**
+         * @throws TwitterException
+         */
+        fun doLike(credential: Credential, statusId: Long, cancel: Boolean = false): Status {
+            val twitter = twitter(credential)
+            return if (cancel) {
+                // TODO: お気に入り元のツイートからお気に入りフラグを削除
+                // TODO: お気に入りしたツイートをお気に入りのソースから削除
+                twitter.destroyFavorite(statusId)
+            } else {
+                // TODO: お気に入り元のツイートにお気に入りフラグを追加
+                // TODO: お気に入りしたツイートをお気に入りのソースに追加(リロードで登録されるパターンがあるので必要に応じて)
+                twitter.createFavorite(statusId)
+            }
+        }
+
+        /**
+         * @throws TwitterException
+         */
+        private fun makeUpdate(twitter: Twitter, text: String, files: List<File>): StatusUpdate {
+            return StatusUpdate(text).apply {
+                if (files.any()) {
+                    val medias = files.map(twitter::uploadMedia)
+                    val mediaIds = medias.map(UploadedMedia::getMediaId).toLongArray()
+                    setMediaIds(*mediaIds)
+                }
+            }
+        }
     }
 
     object Official {
