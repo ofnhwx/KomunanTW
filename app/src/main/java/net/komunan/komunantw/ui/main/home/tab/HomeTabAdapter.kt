@@ -29,7 +29,6 @@ import net.komunan.komunantw.repository.entity.ext.TweetExtension
 import net.komunan.komunantw.ui.common.view.TweetActionContainer
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.regex.Pattern
 
 class HomeTabAdapter: PagedListAdapter<TweetSourceExt, HomeTabAdapter.TweetBaseViewHolder>(DIFF_CALLBACK) {
     companion object {
@@ -96,19 +95,6 @@ class HomeTabAdapter: PagedListAdapter<TweetSourceExt, HomeTabAdapter.TweetBaseV
             @SuppressLint("ConstantLocale") private val format1 = SimpleDateFormat("HH:mm", Locale.getDefault())
             @SuppressLint("ConstantLocale") private val format2 = SimpleDateFormat("MM/dd HH:mm", Locale.getDefault())
             @SuppressLint("ConstantLocale") private val format3 = SimpleDateFormat("yyyy/MM/dd HH:mm", Locale.getDefault())
-
-            private val LINK_USERNAME = Link(Pattern.compile("@[a-zA-Z0-9_]+"))
-                    .setTextColor(AppColor.LINK)
-                    .setTextColorOfHighlightedLink(AppColor.LINK_PRESSED)
-                    .setOnClickListener { TwitterService.Official.showProfile(it) }
-            private val LINK_HASH_TAG = Link(Pattern.compile("#[^\\s]+"))
-                    .setTextColor(AppColor.LINK)
-                    .setTextColorOfHighlightedLink(AppColor.LINK_PRESSED)
-                    .setOnClickListener { TwitterService.Official.showHashTag(it) }
-            private val LINK_URL = Link(Pattern.compile("https?://[^\\s]+"))
-                    .setTextColor(AppColor.LINK)
-                    .setTextColorOfHighlightedLink(AppColor.LINK_PRESSED)
-                    .setOnClickListener { it.intentActionView() }
         }
 
         private var firstSetup: Boolean = true
@@ -169,6 +155,14 @@ class HomeTabAdapter: PagedListAdapter<TweetSourceExt, HomeTabAdapter.TweetBaseV
             itemView.action_container.isLiked     = tweetAccounts.map(TweetAccount::liked    ).any { it }
         }
 
+        private fun makeLink(text: String, listener: (String) -> Unit): Link {
+            return Link(text).apply {
+                setTextColor(AppColor.LINK)
+                setTextColorOfHighlightedLink(AppColor.LINK_PRESSED)
+                setOnClickListener { listener.invoke(it) }
+            }
+        }
+
         private fun bindEvents(dTweet: Deferred<Tweet>) = GlobalScope.launch(Dispatchers.Main) {
             // 各種リンクをタッチ可能に設定
             if (firstSetup) {
@@ -178,13 +172,22 @@ class HomeTabAdapter: PagedListAdapter<TweetSourceExt, HomeTabAdapter.TweetBaseV
             }
             // テキスト(@〜, #〜, https://〜)
             val tweet = dTweet.await()
-            tweet.ext.urls.forEach { url ->
-                itemView.tweet_text.applyLinks(Link(url.display)
-                        .setTextColor(AppColor.LINK)
-                        .setTextColorOfHighlightedLink(AppColor.LINK_PRESSED)
-                        .setOnClickListener { url.expanded.intentActionView() })
+            val links = tweet.ext.mentions.map { mention ->
+                makeLink(string[R.string.format_screen_name](mention)) {
+                    TwitterService.Official.showProfile(it)
+                }
+            }.plus(tweet.ext.hashtags.map { hashtag ->
+                makeLink(string[R.string.format_hashtag](hashtag)) {
+                    TwitterService.Official.showHashtag(it)
+                }
+            }).plus(tweet.ext.urls.map { url ->
+                makeLink(url.display) {
+                    url.expanded.intentActionView()
+                }
+            })
+            if (links.any()) {
+                itemView.tweet_text.applyLinks(links)
             }
-            itemView.tweet_text.applyLinks(LINK_USERNAME, LINK_HASH_TAG, LINK_URL)
             // プロフィール画像 -> ユーザープロフィール
             itemView.tweet_user_icon.setOnClickListener { TwitterService.Official.showProfile(tweet.mainUserId) }
             // 返信・リツイート・お気に入り

@@ -31,6 +31,7 @@
     <string name="gmd_chat_bubble_outline">{gmd-chat-bubble-outline}</string>
     <string name="gmd_repeat">{gmd_repeat}</string>
     <!-- Format -->
+    <string name="format_hashtag">#%s</string>
     <string name="format_list_label">リスト: %s</string>
     <string name="format_retweeted_by">Retweeted by %s</string>
     <!--suppress AndroidDomInspection-->
