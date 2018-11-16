@@ -1,4 +1,4 @@
-package net.komunan.komunantw.extension
+package net.komunan.komunantw.common.extension
 
 import android.content.ContentResolver
 import android.content.Context

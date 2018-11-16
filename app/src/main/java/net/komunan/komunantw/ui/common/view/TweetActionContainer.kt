@@ -1,4 +1,4 @@
-package net.komunan.komunantw.ui.view
+package net.komunan.komunantw.ui.common.view
 
 import android.content.Context
 import android.util.AttributeSet
@@ -7,7 +7,7 @@ import android.widget.LinearLayout
 import com.mikepenz.iconics.view.IconicsButton
 import net.komunan.komunantw.R
 import net.komunan.komunantw.common.AppColor
-import net.komunan.komunantw.extension.string
+import net.komunan.komunantw.common.extension.string
 
 class TweetActionContainer: LinearLayout {
     enum class Action {

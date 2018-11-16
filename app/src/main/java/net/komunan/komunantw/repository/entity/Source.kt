@@ -1,8 +1,10 @@
 package net.komunan.komunantw.repository.entity
 
 import androidx.room.*
-import net.komunan.komunantw.Preference
-import net.komunan.komunantw.common.Diffable
+import net.komunan.komunantw.R
+import net.komunan.komunantw.common.Preference
+import net.komunan.komunantw.common.extension.string
+import net.komunan.komunantw.ui.common.base.Diffable
 import net.komunan.komunantw.repository.database.TWDatabase
 import org.apache.commons.lang3.builder.ToStringBuilder
 import twitter4j.UserList
@@ -64,6 +66,18 @@ open class Source(): Diffable {
         this.listOwner = account.id
         this.listId = userList.id
     }
+
+    val displayName: String
+        get() {
+            return when (Type.valueOf(type)) {
+                Type.HOME    -> string[R.string.home]()
+                Type.MENTION -> string[R.string.mention]()
+                Type.USER    -> string[R.string.user]()
+                Type.LIKE    -> string[R.string.favorite]()
+                Type.LIST    -> string[R.string.format_list_label](label)
+                Type.SEARCH  -> string[R.string.format_search_label](label)
+            }
+        }
 
     fun save() = dao.save(this)
     fun delete() = dao.delete(this)

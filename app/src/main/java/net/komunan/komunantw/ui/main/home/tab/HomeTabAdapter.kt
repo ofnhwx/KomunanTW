@@ -20,12 +20,13 @@ import kotlinx.android.synthetic.main.item_tweet_missing.view.*
 import kotlinx.coroutines.*
 import net.komunan.komunantw.R
 import net.komunan.komunantw.common.AppColor
-import net.komunan.komunantw.extension.intentActionView
-import net.komunan.komunantw.extension.string
+import net.komunan.komunantw.common.extension.intentActionView
+import net.komunan.komunantw.common.extension.string
 import net.komunan.komunantw.repository.entity.*
 import net.komunan.komunantw.repository.entity.ext.TweetSourceExt
-import net.komunan.komunantw.service.TwitterService
-import net.komunan.komunantw.ui.view.TweetActionContainer
+import net.komunan.komunantw.common.service.TwitterService
+import net.komunan.komunantw.repository.entity.ext.TweetExtension
+import net.komunan.komunantw.ui.common.view.TweetActionContainer
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.regex.Pattern
@@ -225,7 +226,7 @@ class HomeTabAdapter: PagedListAdapter<TweetSourceExt, HomeTabAdapter.TweetBaseV
             }
         }
 
-        private fun bindVideo(media: TweetExtension.TweetMedia) {
+        private fun bindVideo(media: TweetExtension.Media) {
             itemView.media_container.apply {
                 bindVideo(media)
                 setOnClickListener { index, medias ->
@@ -237,7 +238,7 @@ class HomeTabAdapter: PagedListAdapter<TweetSourceExt, HomeTabAdapter.TweetBaseV
             }
         }
 
-        private fun bindPhotos(medias: List<TweetExtension.TweetMedia>) {
+        private fun bindPhotos(medias: List<TweetExtension.Media>) {
             itemView.media_container.apply {
                 bindPhotos(medias)
                 setOnClickListener { index, medias ->
@@ -252,7 +253,7 @@ class HomeTabAdapter: PagedListAdapter<TweetSourceExt, HomeTabAdapter.TweetBaseV
             }
         }
 
-        private fun bindOGP(tweetUrl: TweetExtension.TweetUrl) {
+        private fun bindOGP(tweetUrl: TweetExtension.Url) {
             itemView.ogp_container.apply {
                 bind(tweetUrl.expanded)
                 setOnClickListener { tweetUrl.expanded.intentActionView() }
@@ -263,15 +264,14 @@ class HomeTabAdapter: PagedListAdapter<TweetSourceExt, HomeTabAdapter.TweetBaseV
             if (firstSetup) {
                 itemView.retweeted_by_mark.text = string[R.string.gmd_repeat]()
             }
-            dTweet.await().also { tweet ->
-                if (tweet.isRetweet) {
-                    val credentials = dCredentials.await()
-                    val user = withContext(Dispatchers.Default) { User.dao.find(tweet.userId, credentials) ?: User.dummy() }
-                    itemView.retweeted_by.text = string[R.string.format_retweeted_by](user.name)
-                    itemView.retweeted_by_container.visibility = View.VISIBLE
-                } else {
-                    itemView.retweeted_by_container.visibility = View.GONE
-                }
+            val tweet = dTweet.await()
+            if (tweet.isRetweet) {
+                val credentials = dCredentials.await()
+                val user = withContext(Dispatchers.Default) { User.dao.find(tweet.userId, credentials) ?: User.dummy() }
+                itemView.retweeted_by.text = string[R.string.format_retweeted_by](user.name)
+                itemView.retweeted_by_container.visibility = View.VISIBLE
+            } else {
+                itemView.retweeted_by_container.visibility = View.GONE
             }
         }
 
@@ -283,7 +283,7 @@ class HomeTabAdapter: PagedListAdapter<TweetSourceExt, HomeTabAdapter.TweetBaseV
             calendar.timeInMillis = timestamp
             calendar.timeZone = TimeZone.getDefault()
             return when {
-                calendar.get(Calendar.YEAR) != current.get(Calendar.YEAR) -> format3.format(calendar.time)
+                calendar.get(Calendar.YEAR)        != current.get(Calendar.YEAR)        -> format3.format(calendar.time)
                 calendar.get(Calendar.DAY_OF_YEAR) != current.get(Calendar.DAY_OF_YEAR) -> format2.format(calendar.time)
                 else -> format1.format(calendar.time)
             }

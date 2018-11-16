@@ -1,4 +1,4 @@
-package net.komunan.komunantw.common
+package net.komunan.komunantw.ui.common.base
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment

@@ -1,4 +1,4 @@
-package net.komunan.komunantw.event
+package net.komunan.komunantw.common.event
 
 import org.greenrobot.eventbus.EventBus
 

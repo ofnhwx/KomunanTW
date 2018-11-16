@@ -1,9 +1,9 @@
-package net.komunan.komunantw.ui.main.timelines
+package net.komunan.komunantw.ui.main.timelines.edit
 
 import androidx.lifecycle.*
 import net.komunan.komunantw.repository.entity.Source
 import net.komunan.komunantw.repository.entity.Timeline
-import net.komunan.komunantw.common.TWBaseViewModel
+import net.komunan.komunantw.ui.common.base.TWBaseViewModel
 
 class TimelineEditViewModel(timelineId: Long): TWBaseViewModel() {
     val timeline = Timeline.dao.findAsync(timelineId)

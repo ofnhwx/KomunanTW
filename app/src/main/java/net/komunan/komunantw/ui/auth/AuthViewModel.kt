@@ -7,12 +7,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import com.github.ajalt.timberkt.w
-import net.komunan.komunantw.Preference
-import net.komunan.komunantw.extension.combineLatest
+import net.komunan.komunantw.common.Preference
+import net.komunan.komunantw.common.extension.combineLatest
 import net.komunan.komunantw.repository.entity.*
-import net.komunan.komunantw.service.TwitterService
-import net.komunan.komunantw.common.TWBaseViewModel
-import net.komunan.komunantw.extension.transaction
+import net.komunan.komunantw.common.service.TwitterService
+import net.komunan.komunantw.ui.common.base.TWBaseViewModel
+import net.komunan.komunantw.common.extension.transaction
 import twitter4j.TwitterException
 
 class AuthViewModel: TWBaseViewModel() {

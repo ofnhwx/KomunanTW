@@ -1,7 +1,7 @@
 package net.komunan.komunantw.repository.entity.ext
 
 import androidx.room.ColumnInfo
-import net.komunan.komunantw.common.Diffable
+import net.komunan.komunantw.ui.common.base.Diffable
 import net.komunan.komunantw.repository.entity.Source
 
 class SourceWithActive: Source() {

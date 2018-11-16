@@ -5,7 +5,7 @@ package net.komunan.komunantw.repository.dao
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.github.ajalt.timberkt.d
-import net.komunan.komunantw.extension.transaction
+import net.komunan.komunantw.common.extension.transaction
 import net.komunan.komunantw.repository.entity.Timeline
 
 @Dao

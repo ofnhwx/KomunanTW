@@ -1,14 +1,14 @@
-package net.komunan.komunantw.worker
+package net.komunan.komunantw.common.worker
 
 import android.content.Context
 import androidx.work.*
-import net.komunan.komunantw.extension.string
-import net.komunan.komunantw.extension.transaction
+import net.komunan.komunantw.common.extension.string
+import net.komunan.komunantw.common.extension.transaction
 import net.komunan.komunantw.repository.entity.Account
 import net.komunan.komunantw.repository.entity.Credential
 import net.komunan.komunantw.repository.entity.Source
 import net.komunan.komunantw.repository.entity.Timeline
-import net.komunan.komunantw.service.TwitterService
+import net.komunan.komunantw.common.service.TwitterService
 import net.komunan.komunantw.R
 
 class UpdateSourcesWorker(context: Context, params: WorkerParameters): Worker(context, params) {

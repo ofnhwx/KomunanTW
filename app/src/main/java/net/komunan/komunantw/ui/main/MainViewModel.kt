@@ -1,8 +1,8 @@
 package net.komunan.komunantw.ui.main
 
-import net.komunan.komunantw.Preference
-import net.komunan.komunantw.service.TwitterService
-import net.komunan.komunantw.common.TWBaseViewModel
+import net.komunan.komunantw.common.Preference
+import net.komunan.komunantw.common.service.TwitterService
+import net.komunan.komunantw.ui.common.base.TWBaseViewModel
 import java.util.*
 
 class MainViewModel: TWBaseViewModel() {

@@ -1,11 +1,11 @@
-package net.komunan.komunantw.worker
+package net.komunan.komunantw.common.worker
 
 import android.content.Context
 import androidx.work.*
 import com.github.ajalt.timberkt.i
-import net.komunan.komunantw.Preference
-import net.komunan.komunantw.extension.TransactionTarget
-import net.komunan.komunantw.extension.transaction
+import net.komunan.komunantw.common.Preference
+import net.komunan.komunantw.common.extension.TransactionTarget
+import net.komunan.komunantw.common.extension.transaction
 import net.komunan.komunantw.repository.entity.Source
 import net.komunan.komunantw.repository.entity.Tweet
 import net.komunan.komunantw.repository.entity.User

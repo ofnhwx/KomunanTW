@@ -1,4 +1,4 @@
-package net.komunan.komunantw.common
+package net.komunan.komunantw.ui.common.base
 
 interface Diffable {
     fun isTheSame(other: Diffable): Boolean

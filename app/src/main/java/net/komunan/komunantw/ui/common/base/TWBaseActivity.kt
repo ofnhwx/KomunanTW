@@ -1,4 +1,4 @@
-package net.komunan.komunantw.common
+package net.komunan.komunantw.ui.common.base
 
 import androidx.appcompat.app.AppCompatActivity
 import com.mikepenz.materialdrawer.Drawer

@@ -1,4 +1,4 @@
-package net.komunan.komunantw.ui.view
+package net.komunan.komunantw.ui.common.view
 
 import android.content.Context
 import android.util.AttributeSet
@@ -8,12 +8,12 @@ import android.widget.LinearLayout
 import com.facebook.drawee.view.SimpleDraweeView
 import com.stfalcon.frescoimageviewer.ImageViewer
 import net.komunan.komunantw.R
-import net.komunan.komunantw.extension.intentActionView
-import net.komunan.komunantw.repository.entity.TweetExtension
+import net.komunan.komunantw.common.extension.intentActionView
+import net.komunan.komunantw.repository.entity.ext.TweetExtension
 
 class TweetMediaContainer: LinearLayout {
     private val mediaViews: List<SimpleDraweeView>
-    private lateinit var medias: List<TweetExtension.TweetMedia>
+    private lateinit var medias: List<TweetExtension.Media>
 
     constructor(context: Context): this(context, attrs = null)
     constructor(context: Context, attrs: AttributeSet?): this(context, attrs, defStyleAttr = 0)
@@ -22,7 +22,7 @@ class TweetMediaContainer: LinearLayout {
         mediaViews = listOf(findViewById(R.id.media1), findViewById(R.id.media2), findViewById(R.id.media3), findViewById(R.id.media4))
     }
 
-    fun bindVideo(media: TweetExtension.TweetMedia) {
+    fun bindVideo(media: TweetExtension.Media) {
         this.medias = listOf(media)
         mediaViews.forEachIndexed { index, mediaView ->
             if (index == 0) {
@@ -42,7 +42,7 @@ class TweetMediaContainer: LinearLayout {
         }
     }
 
-    fun bindPhotos(medias: List<TweetExtension.TweetMedia>) {
+    fun bindPhotos(medias: List<TweetExtension.Media>) {
         this.medias = medias
         mediaViews.forEachIndexed { index, mediaView ->
             val media = medias.elementAtOrNull(index)
@@ -65,13 +65,13 @@ class TweetMediaContainer: LinearLayout {
         }
     }
 
-    fun setOnClickListener(listener: (index: Int, medias: List<TweetExtension.TweetMedia>) -> Unit) {
+    fun setOnClickListener(listener: (index: Int, medias: List<TweetExtension.Media>) -> Unit) {
         for (i in IntRange(0, medias.size - 1)) {
             mediaViews[i].setOnClickListener { listener.invoke(i, medias) }
         }
     }
 
-    fun setOnLongClickListener(listener: (index: Int, medias: List<TweetExtension.TweetMedia>) -> Unit) {
+    fun setOnLongClickListener(listener: (index: Int, medias: List<TweetExtension.Media>) -> Unit) {
         for (i in IntRange(0, medias.size - 1)) {
             mediaViews[i].setOnLongClickListener { listener.invoke(i, medias); true }
         }

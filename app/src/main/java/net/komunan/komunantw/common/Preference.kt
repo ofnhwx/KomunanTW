@@ -1,7 +1,7 @@
-package net.komunan.komunantw
+package net.komunan.komunantw.common
 
 import com.marcinmoskala.kotlinpreferences.PreferenceHolder
-import net.komunan.komunantw.extension.gson
+import net.komunan.komunantw.common.extension.gson
 import net.komunan.komunantw.repository.entity.Consumer
 import twitter4j.auth.RequestToken
 

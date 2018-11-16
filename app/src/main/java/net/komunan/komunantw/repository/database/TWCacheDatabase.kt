@@ -8,6 +8,7 @@ import net.komunan.komunantw.repository.dao.TweetDao
 import net.komunan.komunantw.repository.dao.TweetSourceDao
 import net.komunan.komunantw.repository.dao.UserDao
 import net.komunan.komunantw.repository.entity.*
+import net.komunan.komunantw.repository.entity.ext.TweetExtension
 
 @Database(
         entities = [

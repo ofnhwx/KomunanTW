@@ -1,4 +1,4 @@
-package net.komunan.komunantw.ui.view
+package net.komunan.komunantw.ui.common.view
 
 import android.content.Context
 import android.util.AttributeSet
@@ -8,11 +8,9 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import com.facebook.drawee.view.SimpleDraweeView
 import com.github.ajalt.timberkt.w
-import com.mikepenz.google_material_typeface_library.GoogleMaterial
 import kotlinx.coroutines.*
 import net.komunan.komunantw.R
 import net.komunan.komunantw.common.AppColor
-import net.komunan.komunantw.extension.make
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import java.lang.Exception

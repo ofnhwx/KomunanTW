@@ -3,7 +3,7 @@ package net.komunan.komunantw.repository.entity
 import androidx.room.*
 import net.komunan.komunantw.BuildConfig
 import net.komunan.komunantw.R
-import net.komunan.komunantw.extension.string
+import net.komunan.komunantw.common.extension.string
 import net.komunan.komunantw.repository.database.TWDatabase
 import org.apache.commons.lang3.builder.ToStringBuilder
 

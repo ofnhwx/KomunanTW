@@ -1,4 +1,4 @@
-package net.komunan.komunantw.extension
+package net.komunan.komunantw.common.extension
 
 import android.content.Context
 import android.content.Intent
@@ -13,6 +13,9 @@ import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import androidx.work.WorkRequest
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonArray
+import com.google.gson.JsonSerializer
 import com.mikepenz.iconics.IconicsDrawable
 import com.mikepenz.iconics.typeface.IIcon
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
@@ -22,17 +25,14 @@ import net.komunan.komunantw.repository.database.TWCacheDatabase
 import net.komunan.komunantw.repository.database.TWDatabase
 import java.util.*
 
+
 // Int
-fun Int.toBoolean(): Boolean = this != 0
 fun Int.dp(): Float {
     return TWContext.resources.displayMetrics.density * this
 }
 fun Int.sp(): Float {
     return TWContext.resources.displayMetrics.scaledDensity * this
 }
-
-// Boolean
-fun Boolean.toInt(): Int = if (this) 1 else 0
 
 // String
 fun String.uri(): Uri = Uri.parse(this)
@@ -49,9 +49,9 @@ fun <T> LiveData<T>.observeOnNotNull(owner: LifecycleOwner, body: (data: T) -> U
 }
 
 // WorkManager
-fun WorkManager.enqueueSequentilly(name: String, policy: ExistingWorkPolicy, requests: List<OneTimeWorkRequest>): List<UUID> {
+fun WorkManager.enqueueSequentially(name: String, policy: ExistingWorkPolicy, requests: List<OneTimeWorkRequest>): List<UUID> {
     return if (requests.any()) {
-        var continuous = WorkManager.getInstance().beginUniqueWork(name, policy, requests.first())
+        var continuous = beginUniqueWork(name, policy, requests.first())
         for (request in requests.drop(1)) {
             continuous = continuous.then(request)
         }
@@ -71,7 +71,14 @@ fun SecondaryDrawerItem.withStringRes(@StringRes stringRes: Int): SecondaryDrawe
 }
 
 // Global
-val gson = Gson()
+val gson: Gson = GsonBuilder().registerTypeAdapter(List::class.java, JsonSerializer<List<*>> { src, _, context ->
+    if (src?.isEmpty() != false) {
+        return@JsonSerializer null
+    }
+    val result = JsonArray()
+    src.map { context.serialize(it) }.forEach { result.add(it) }
+    return@JsonSerializer result
+}).create()
 
 fun <T1, T2, R> combineLatest(source1: LiveData<T1>, source2: LiveData<T2>, func: (T1?, T2?) -> R?): LiveData<R> {
     val result = MediatorLiveData<R>()

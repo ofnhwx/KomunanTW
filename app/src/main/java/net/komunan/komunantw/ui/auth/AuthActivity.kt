@@ -14,8 +14,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.komunan.komunantw.R
 import net.komunan.komunantw.TWContext
-import net.komunan.komunantw.common.TWBaseActivity
-import net.komunan.komunantw.extension.observeOnNotNull
+import net.komunan.komunantw.ui.common.base.TWBaseActivity
+import net.komunan.komunantw.common.extension.observeOnNotNull
 import net.komunan.komunantw.repository.entity.Consumer
 import net.komunan.komunantw.ui.main.MainActivity
 

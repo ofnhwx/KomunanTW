@@ -1,4 +1,4 @@
-package net.komunan.komunantw.ui.main.timelines
+package net.komunan.komunantw.ui.main.timelines.edit
 
 import android.os.Bundle
 import android.view.*
@@ -15,11 +15,11 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.komunan.komunantw.R
 import net.komunan.komunantw.common.AppColor
-import net.komunan.komunantw.common.TWBaseFragment
-import net.komunan.komunantw.event.Transition
-import net.komunan.komunantw.extension.make
-import net.komunan.komunantw.extension.observeOnNotNull
-import net.komunan.komunantw.extension.string
+import net.komunan.komunantw.ui.common.base.TWBaseFragment
+import net.komunan.komunantw.common.event.Transition
+import net.komunan.komunantw.common.extension.make
+import net.komunan.komunantw.common.extension.observeOnNotNull
+import net.komunan.komunantw.common.extension.string
 import net.komunan.komunantw.repository.entity.Timeline
 
 class TimelineEditFragment: TWBaseFragment() {

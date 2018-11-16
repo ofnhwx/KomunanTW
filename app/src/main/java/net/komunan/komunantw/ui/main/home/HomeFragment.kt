@@ -8,13 +8,13 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.viewpager.widget.ViewPager
 import com.mikepenz.google_material_typeface_library.GoogleMaterial
 import kotlinx.android.synthetic.main.fragment_home.*
-import net.komunan.komunantw.Preference
+import net.komunan.komunantw.common.Preference
 import net.komunan.komunantw.R
 import net.komunan.komunantw.common.AppColor
-import net.komunan.komunantw.common.TWBaseFragment
-import net.komunan.komunantw.extension.make
-import net.komunan.komunantw.extension.observeOnNotNull
-import net.komunan.komunantw.service.TwitterService
+import net.komunan.komunantw.ui.common.base.TWBaseFragment
+import net.komunan.komunantw.common.extension.make
+import net.komunan.komunantw.common.extension.observeOnNotNull
+import net.komunan.komunantw.common.service.TwitterService
 
 class HomeFragment: TWBaseFragment() {
     companion object {

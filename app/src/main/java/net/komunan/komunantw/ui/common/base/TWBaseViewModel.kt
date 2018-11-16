@@ -1,4 +1,4 @@
-package net.komunan.komunantw.common
+package net.komunan.komunantw.ui.common.base
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

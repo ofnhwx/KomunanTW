@@ -1,10 +1,11 @@
 package net.komunan.komunantw.repository.entity
 
 import androidx.room.*
-import net.komunan.komunantw.extension.TransactionTarget
-import net.komunan.komunantw.extension.gson
-import net.komunan.komunantw.extension.transaction
+import net.komunan.komunantw.common.extension.TransactionTarget
+import net.komunan.komunantw.common.extension.gson
+import net.komunan.komunantw.common.extension.transaction
 import net.komunan.komunantw.repository.database.TWCacheDatabase
+import net.komunan.komunantw.repository.entity.ext.TweetExtension
 import org.apache.commons.lang3.builder.ToStringBuilder
 import twitter4j.MediaEntity
 import twitter4j.Status
@@ -92,98 +93,4 @@ open class Tweet() {
     }
 
     fun save() = dao.save(this)
-}
-
-class TweetExtension() {
-    var urls: List<TweetUrl> = emptyList()
-    var medias: List<TweetMedia> = emptyList()
-
-    constructor(status: Status): this() {
-        urls = TweetUrl.fromUrlEntities(status.urlEntities)
-        medias = TweetMedia.fromMediaEntities(status.mediaEntities)
-    }
-
-    fun isEmpty(): Boolean {
-        return urls.isEmpty() && medias.isEmpty()
-    }
-
-    class Converter {
-        @TypeConverter fun fromJson(value: String): TweetExtension = if (value.isEmpty()) TweetExtension() else gson.fromJson(value, TweetExtension::class.java)
-        @TypeConverter fun toJson(value: TweetExtension): String = if (value.isEmpty()) "" else gson.toJson(value)
-    }
-
-    class TweetUrl() {
-        var shorten : String = ""
-        var display : String = ""
-        var expanded: String = ""
-
-        companion object {
-            @JvmStatic
-            fun fromUrlEntities(urlEntities: Array<URLEntity>): List<TweetUrl> {
-                return urlEntities.filter { it.url != null && it.displayURL != null && it.expandedURL != null }
-                        .map { TweetUrl(it) }
-            }
-        }
-
-        constructor(urlEntity: URLEntity): this() {
-            this.shorten = urlEntity.url
-            this.display = urlEntity.displayURL
-            this.expanded = urlEntity.expandedURL
-        }
-    }
-
-    class TweetMedia() {
-        var shorten : String = ""
-        var display : String = ""
-        var expanded: String = ""
-        var url: String = ""
-        var type: String = ""
-        var videoAspectRatioHeight: Int = 0
-        var videoAspectRatioWidth: Int = 0
-        var videoDurationMillis: Long = 0
-        var videoVariants: List<Video> = emptyList()
-
-        companion object {
-            @JvmStatic
-            fun fromMediaEntities(mediaEntities: Array<MediaEntity>): List<TweetMedia> {
-                return mediaEntities
-                        .map { TweetMedia(it) }
-            }
-        }
-
-        constructor(mediaEntity: MediaEntity): this() {
-            this.shorten = mediaEntity.url
-            this.display = mediaEntity.displayURL
-            this.expanded = mediaEntity.expandedURL
-            this.url = mediaEntity.mediaURLHttps ?: mediaEntity.mediaURL
-            this.type = mediaEntity.type
-            if (this.isVideo) {
-                this.videoAspectRatioHeight = mediaEntity.videoAspectRatioHeight
-                this.videoAspectRatioWidth = mediaEntity.videoAspectRatioWidth
-                this.videoDurationMillis = mediaEntity.videoDurationMillis
-                this.videoVariants = mediaEntity.videoVariants.map { Video(it) }
-            }
-        }
-
-        val isPhoto: Boolean
-            get() = type == "photo"
-
-        val isVideo: Boolean
-            get() = type == "video"
-
-        val isAnimatedGif: Boolean
-            get() = type == "animated_gif"
-
-        class Video() {
-            var bitrate: Int = 0
-            var contentType: String = ""
-            var url: String = ""
-
-            constructor(videoVariant: MediaEntity.Variant): this() {
-                this.bitrate = videoVariant.bitrate
-                this.contentType = videoVariant.contentType
-                this.url = videoVariant.url
-            }
-        }
-    }
 }

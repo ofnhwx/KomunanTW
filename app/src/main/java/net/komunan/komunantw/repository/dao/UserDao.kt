@@ -5,7 +5,7 @@ import com.github.ajalt.timberkt.d
 import com.github.ajalt.timberkt.w
 import net.komunan.komunantw.repository.entity.Credential
 import net.komunan.komunantw.repository.entity.User
-import net.komunan.komunantw.service.TwitterService
+import net.komunan.komunantw.common.service.TwitterService
 import twitter4j.TwitterException
 
 @Suppress("FunctionName")

@@ -9,9 +9,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.simple_recycler_view.*
 import net.komunan.komunantw.R
-import net.komunan.komunantw.extension.observeOnNotNull
+import net.komunan.komunantw.common.extension.observeOnNotNull
 import net.komunan.komunantw.repository.entity.Timeline
-import net.komunan.komunantw.common.TWBaseFragment
+import net.komunan.komunantw.ui.common.base.TWBaseFragment
 
 class HomeTabFragment: TWBaseFragment() {
     companion object {

@@ -3,8 +3,8 @@ package net.komunan.komunantw.ui.main.home.tab
 import androidx.lifecycle.*
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
-import net.komunan.komunantw.Preference
-import net.komunan.komunantw.common.TWBaseViewModel
+import net.komunan.komunantw.common.Preference
+import net.komunan.komunantw.ui.common.base.TWBaseViewModel
 import net.komunan.komunantw.repository.entity.*
 import net.komunan.komunantw.repository.entity.ext.TweetSourceExt
 

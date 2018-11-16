@@ -13,9 +13,9 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.komunan.komunantw.R
-import net.komunan.komunantw.common.TWBaseFragment
-import net.komunan.komunantw.extension.observeOnNotNull
-import net.komunan.komunantw.extension.string
+import net.komunan.komunantw.ui.common.base.TWBaseFragment
+import net.komunan.komunantw.common.extension.observeOnNotNull
+import net.komunan.komunantw.common.extension.string
 import net.komunan.komunantw.repository.entity.Timeline
 
 class TimelinesFragment: TWBaseFragment() {

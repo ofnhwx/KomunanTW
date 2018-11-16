@@ -88,17 +88,17 @@
                     android:layout_marginTop="4dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
-            <net.komunan.komunantw.ui.view.TweetMediaContainer
+            <net.komunan.komunantw.ui.common.view.TweetMediaContainer
                     android:id="@+id/media_container"
                     android:layout_marginTop="4dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
-            <net.komunan.komunantw.ui.view.TweetOGPContainer
+            <net.komunan.komunantw.ui.common.view.TweetOGPContainer
                     android:id="@+id/ogp_container"
                     android:layout_marginTop="4dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
-            <net.komunan.komunantw.ui.view.TweetActionContainer
+            <net.komunan.komunantw.ui.common.view.TweetActionContainer
                     android:id="@+id/action_container"
                     android:layout_marginTop="4dp"
                     android:paddingStart="8dp"

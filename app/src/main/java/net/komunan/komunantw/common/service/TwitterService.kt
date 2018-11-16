@@ -1,4 +1,4 @@
-package net.komunan.komunantw.service
+package net.komunan.komunantw.common.service
 
 import android.content.Intent
 import android.net.Uri
@@ -7,15 +7,15 @@ import android.text.Spanned
 import androidx.work.ExistingWorkPolicy
 import androidx.work.WorkManager
 import net.komunan.komunantw.TWContext
-import net.komunan.komunantw.extension.enqueueSequentilly
+import net.komunan.komunantw.common.extension.enqueueSequentially
 import net.komunan.komunantw.repository.entity.Consumer
 import net.komunan.komunantw.repository.entity.Credential
 import net.komunan.komunantw.repository.entity.Timeline
 import net.komunan.komunantw.repository.entity.Tweet
 import net.komunan.komunantw.repository.entity.ext.TweetSourceExt
-import net.komunan.komunantw.worker.FetchTweetsWorker
-import net.komunan.komunantw.worker.GarbageCleaningWorker
-import net.komunan.komunantw.worker.UpdateSourcesWorker
+import net.komunan.komunantw.common.worker.FetchTweetsWorker
+import net.komunan.komunantw.common.worker.GarbageCleaningWorker
+import net.komunan.komunantw.common.worker.UpdateSourcesWorker
 import twitter4j.*
 import twitter4j.auth.AccessToken
 import twitter4j.conf.ConfigurationBuilder
@@ -38,13 +38,13 @@ object TwitterService {
         val workManager = WorkManager.getInstance()
         val sourceIds = Timeline.sourceDao.findAll().map { it.sourceId }.distinct()
         val requests = sourceIds.map { FetchTweetsWorker.request(it, Tweet.INVALID_ID, isInteractive) }
-        return workManager.enqueueSequentilly("TwitterService.FETCH_TWEETS_ALL", ExistingWorkPolicy.KEEP, requests)
+        return workManager.enqueueSequentially("TwitterService.FETCH_TWEETS_ALL", ExistingWorkPolicy.KEEP, requests)
     }
 
     fun fetchTweets(mark: TweetSourceExt, isInteractive: Boolean = false): List<UUID> {
         val workManager = WorkManager.getInstance()
         val requests = mark.sourceIds().map { FetchTweetsWorker.request(it, mark.tweetId, isInteractive) }
-        return workManager.enqueueSequentilly("TwitterService.FETCH_TWEETS_MISSING", ExistingWorkPolicy.APPEND, requests)
+        return workManager.enqueueSequentially("TwitterService.FETCH_TWEETS_MISSING", ExistingWorkPolicy.APPEND, requests)
     }
 
     fun garbageCleaning(): UUID {
@@ -142,7 +142,7 @@ object TwitterService {
         private const val INTENT_LIKE    = "intent/like"
         private const val INTENT_USER    = "intent/user"
 
-        private const val PATH_HASH_TAG = "hashtag/%s"
+        private const val PATH_HASHTAG = "hashtag/%s"
 
         private const val PARAM_IN_REPLY_TO = "in_reply_to"
         private const val PARAM_TWEET_ID    = "tweet_id"
@@ -173,8 +173,8 @@ object TwitterService {
             action { it.path(INTENT_USER).appendQueryParameter(PARAM_SCREEN_NAME, screenName.trim('@')) }
         }
 
-        fun showHashTag(hashTag: String) {
-            action { it.path(PATH_HASH_TAG.format(hashTag.trim('#'))) }
+        fun showHashtag(hashtag: String) {
+            action { it.path(PATH_HASHTAG.format(hashtag.trim('#'))) }
         }
 
         private fun action(body: (Uri.Builder) -> Uri.Builder) {

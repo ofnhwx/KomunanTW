@@ -2,7 +2,7 @@ package net.komunan.komunantw.repository.database
 
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import net.komunan.komunantw.Preference
+import net.komunan.komunantw.common.Preference
 import net.komunan.komunantw.TWContext
 
 abstract class TWBaseDatabase: RoomDatabase() {

@@ -1,13 +1,13 @@
-package net.komunan.komunantw.worker
+package net.komunan.komunantw.common.worker
 
 import android.content.Context
 import androidx.work.*
 import com.github.ajalt.timberkt.d
-import net.komunan.komunantw.Preference
-import net.komunan.komunantw.extension.transaction
+import net.komunan.komunantw.common.Preference
+import net.komunan.komunantw.common.extension.transaction
 import net.komunan.komunantw.repository.entity.*
 import net.komunan.komunantw.repository.entity.User
-import net.komunan.komunantw.service.TwitterService
+import net.komunan.komunantw.common.service.TwitterService
 import twitter4j.*
 
 class FetchTweetsWorker(context: Context, params: WorkerParameters): Worker(context, params) {
