@@ -154,7 +154,6 @@ class MainActivity: TWBaseActivity() {
                         "CommonsLang",
                         "Fresco",
                         "FrescoImageViewer",
-                        "LinkBuilder",
                         "PreferenceHolder",
                         "timberkt",
                         "Twitter4J",
