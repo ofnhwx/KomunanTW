@@ -64,16 +64,4 @@ class TweetMediaContainer: LinearLayout {
             }
         }
     }
-
-    fun setOnClickListener(listener: (index: Int, medias: List<TweetExtension.Media>) -> Unit) {
-        for (i in IntRange(0, medias.size - 1)) {
-            mediaViews[i].setOnClickListener { listener.invoke(i, medias) }
-        }
-    }
-
-    fun setOnLongClickListener(listener: (index: Int, medias: List<TweetExtension.Media>) -> Unit) {
-        for (i in IntRange(0, medias.size - 1)) {
-            mediaViews[i].setOnLongClickListener { listener.invoke(i, medias); true }
-        }
-    }
 }

@@ -17,6 +17,7 @@
     <string name="timeline_edit">タイムライン編集</string>
     <string name="timeline_list">タイムライン一覧</string>
     <string name="user">ユーザ</string>
+    <string name="via">via</string>
     <!-- Action -->
     <string name="do_authentication">認証</string>
     <string name="fetch_missing_tweets">未取得のツイートを取得する</string>
@@ -26,17 +27,17 @@
     <string name="do_delete">削除する</string>
     <string name="do_not_delete">削除しない</string>
     <!-- Google Material Design -->
-    <string name="format_gmd_favorite_border">{gmd_favorite_border} %s</string>
-    <string name="format_gmd_repeat">{gmd_repeat} %s</string>
-    <string name="gmd_chat_bubble_outline">{gmd-chat-bubble-outline}</string>
-    <string name="gmd_repeat">{gmd_repeat}</string>
+    <string name="format_gmd_like_count">{gmd_favorite} %s</string>
+    <string name="format_gmd_retweet_count">{gmd_repeat} %s</string>
+    <string name="gmd_reply">{gmd_reply}</string>
+    <string name="gmd_retweet">{gmd_repeat}</string>
     <!-- Format -->
     <string name="format_hashtag">#%s</string>
     <string name="format_list_label">リスト: %s</string>
+    <string name="format_reply_to">Reply to %s</string>
     <string name="format_retweeted_by">Retweeted by %s</string>
     <!--suppress AndroidDomInspection-->
     <string name="format_screen_name">@%s</string>
     <string name="format_search_label">検索: %s</string>
     <string name="format_timeline_source_count">%s個のソース</string>
-    <string name="format_via">via %s</string>
 </resources>

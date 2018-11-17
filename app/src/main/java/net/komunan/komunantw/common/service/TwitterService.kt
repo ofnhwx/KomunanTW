@@ -2,20 +2,18 @@ package net.komunan.komunantw.common.service
 
 import android.content.Intent
 import android.net.Uri
-import android.text.Html
-import android.text.Spanned
 import androidx.work.ExistingWorkPolicy
 import androidx.work.WorkManager
 import net.komunan.komunantw.TWContext
 import net.komunan.komunantw.common.extension.enqueueSequentially
+import net.komunan.komunantw.common.worker.FetchTweetsWorker
+import net.komunan.komunantw.common.worker.GarbageCleaningWorker
+import net.komunan.komunantw.common.worker.UpdateSourcesWorker
 import net.komunan.komunantw.repository.entity.Consumer
 import net.komunan.komunantw.repository.entity.Credential
 import net.komunan.komunantw.repository.entity.Timeline
 import net.komunan.komunantw.repository.entity.Tweet
 import net.komunan.komunantw.repository.entity.ext.TweetSourceExt
-import net.komunan.komunantw.common.worker.FetchTweetsWorker
-import net.komunan.komunantw.common.worker.GarbageCleaningWorker
-import net.komunan.komunantw.common.worker.UpdateSourcesWorker
 import twitter4j.*
 import twitter4j.auth.AccessToken
 import twitter4j.conf.ConfigurationBuilder
@@ -59,14 +57,6 @@ object TwitterService {
         val request = UpdateSourcesWorker.request(accountId)
         workManager.enqueue(request)
         return request.id
-    }
-
-    @Suppress("DEPRECATION")
-    fun makeStatusPermalink(text: String?, screenName: String?, tweetId: Long?): Spanned? {
-        if (text == null || screenName == null || tweetId == null) {
-            return null
-        }
-        return Html.fromHtml("""<a href="https://twitter.com/%s/status/%s">%s</a>""".format(screenName, tweetId, text))
     }
 
     object Unofficial {
@@ -142,6 +132,7 @@ object TwitterService {
         private const val INTENT_LIKE    = "intent/like"
         private const val INTENT_USER    = "intent/user"
 
+        private const val PATH_STATUS = "%s/status/%s"
         private const val PATH_HASHTAG = "hashtag/%s"
 
         private const val PARAM_IN_REPLY_TO = "in_reply_to"
@@ -163,6 +154,10 @@ object TwitterService {
 
         fun doLike(tweetId: Long) {
             action { it.path(INTENT_LIKE).appendQueryParameter(PARAM_TWEET_ID, tweetId.toString()) }
+        }
+
+        fun showStatus(screenName: String, statusId: Long) {
+            action { it.path(PATH_STATUS.format(screenName, statusId)) }
         }
 
         fun showProfile(userId: Long) {

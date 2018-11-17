@@ -5,17 +5,18 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.LinearLayout
 import com.mikepenz.iconics.view.IconicsButton
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import net.komunan.komunantw.R
 import net.komunan.komunantw.common.AppColor
 import net.komunan.komunantw.common.extension.string
+import net.komunan.komunantw.common.service.TwitterService
+import net.komunan.komunantw.repository.entity.Tweet
+import net.komunan.komunantw.repository.entity.TweetAccount
 
 class TweetActionContainer: LinearLayout {
-    enum class Action {
-        REPLY,
-        RETWEET,
-        LIKE,
-    }
-
     private val actionReply  : IconicsButton
     private val actionRetweet: IconicsButton
     private val actionLike   : IconicsButton
@@ -29,66 +30,39 @@ class TweetActionContainer: LinearLayout {
         actionRetweet = findViewById(R.id.action_retweet)
         actionLike    = findViewById(R.id.action_like)
 
-        actionReply.text = string[R.string.gmd_chat_bubble_outline]()
+        actionReply.text = string[R.string.gmd_reply]()
 
         textColor      = AppColor.GRAY
         retweetedColor = AppColor.RETWEETED
         likedColor     = AppColor.LIKED
-        isRetweeted = false
-        isLiked     = false
-        retweetCount = 0
-        likeCount    = 0
     }
 
-    var textColor: Int = AppColor.GRAY
+    var textColor: Int
         set(value) {
             actionReply.setTextColor(value)
             field = value
         }
 
-    var retweetedColor: Int = AppColor.RETWEETED
-        set(value) {
-            if (isRetweeted) {
-                actionRetweet.setTextColor(value)
-            }
-            field = value
-        }
+    var retweetedColor: Int
+    var likedColor: Int
 
-    var likedColor: Int = AppColor.LIKED
-        set(value) {
-            if (isLiked) {
-                actionLike.setTextColor(value)
-            }
-            field = value
-        }
 
-    var isRetweeted: Boolean = false
-        set(value) {
-            actionRetweet.setTextColor(if (value) retweetedColor else textColor)
-            field = value
-        }
+    fun bind(tweet: Tweet) = GlobalScope.launch(Dispatchers.Main) {
+        val tweetAccounts = withContext(Dispatchers.Default) { Tweet.accountDao.find(tweet.id) }
 
-    var retweetCount: Int = 0
-        set(value) {
-            actionRetweet.text = string[R.string.format_gmd_repeat](value.toString())
-            field = value
-        }
+        // リツイート
+        val isRetweeted = tweetAccounts.map(TweetAccount::retweeted).any { it }
+        actionRetweet.setTextColor(if (isRetweeted) retweetedColor else textColor)
+        actionRetweet.text = string[R.string.format_gmd_retweet_count](tweet.retweetCount.toString())
 
-    var isLiked: Boolean = false
-        set(value) {
-            actionLike.setTextColor(if (value) likedColor else textColor)
-            field = value
-        }
+        // お気に入り
+        val isLiked = tweetAccounts.map(TweetAccount::liked).any { it }
+        actionLike.setTextColor(if (isLiked) likedColor else textColor)
+        actionLike.text = string[R.string.format_gmd_like_count](tweet.likeCount.toString())
 
-    var likeCount: Int = 0
-        set(value) {
-            actionLike.text = string[R.string.format_gmd_favorite_border](value.toString())
-            field = value
-        }
-
-    fun setOnClickListener(listener: (action: Action) -> Unit) {
-        actionReply.setOnClickListener   { listener.invoke(Action.REPLY) }
-        actionRetweet.setOnClickListener { listener.invoke(Action.RETWEET) }
-        actionLike.setOnClickListener    { listener.invoke(Action.LIKE) }
+        // アクション
+        actionReply.setOnClickListener   { TwitterService.Official.doTweet(tweet.id) }
+        actionRetweet.setOnClickListener { TwitterService.Official.doRetweet(tweet.id) }
+        actionLike.setOnClickListener    { TwitterService.Official.doLike(tweet.id) }
     }
 }

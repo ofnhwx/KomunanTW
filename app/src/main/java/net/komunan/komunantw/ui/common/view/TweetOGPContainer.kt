@@ -33,13 +33,13 @@ class TweetOGPContainer: LinearLayout {
         descriptionColor = AppColor.GRAY
     }
 
-    var titleColor: Int = AppColor.WHITE
+    var titleColor: Int
         set(value) {
             title.setTextColor(value)
             field = value
         }
 
-    var descriptionColor: Int = AppColor.GRAY
+    var descriptionColor: Int
         set(value) {
             description.setTextColor(value)
             field = value

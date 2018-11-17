@@ -7,7 +7,7 @@
        android:layout_height="wrap_content">
     <com.mikepenz.iconics.view.IconicsButton
             android:id="@+id/action_reply"
-            android:text="@string/gmd_chat_bubble_outline"
+            android:text="@string/gmd_reply"
             android:gravity="center"
             android:background="@drawable/tw_action_button_l"
             android:layout_weight="1"
@@ -16,7 +16,7 @@
     <com.mikepenz.iconics.view.IconicsButton
             style="@style/Widget.AppCompat.Button.Borderless"
             android:id="@+id/action_retweet"
-            android:text="@string/format_gmd_repeat"
+            android:text="@string/format_gmd_retweet_count"
             android:gravity="center"
             android:background="@drawable/tw_action_button_m"
             android:layout_weight="1"
@@ -25,7 +25,7 @@
     <com.mikepenz.iconics.view.IconicsButton
             style="@style/Widget.AppCompat.Button.Borderless"
             android:id="@+id/action_like"
-            android:text="@string/format_gmd_favorite_border"
+            android:text="@string/format_gmd_like_count"
             android:gravity="center"
             android:background="@drawable/tw_action_button_r"
             android:layout_weight="1"

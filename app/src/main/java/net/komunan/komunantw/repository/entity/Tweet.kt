@@ -82,6 +82,9 @@ open class Tweet() {
             return result
         }
 
+    val isReply: Boolean
+        get() = replyId != -1L
+
     val isRetweet: Boolean
         get() = rtId != 0L
 
