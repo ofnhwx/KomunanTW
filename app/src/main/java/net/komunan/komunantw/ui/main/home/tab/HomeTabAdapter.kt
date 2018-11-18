@@ -144,28 +144,19 @@ class HomeTabAdapter: PagedListAdapter<TweetSourceExt, HomeTabAdapter.TweetBaseV
                 }
             }
 
+            itemView.media_container.visibility = View.GONE
+            itemView.ogp_container.visibility = View.GONE
             when {
                 tweet.ext.medias.any() -> {
                     // 写真・ビデオ表示
-                    itemView.media_container.visibility = View.VISIBLE
-                    itemView.ogp_container.visibility = View.GONE
                     itemView.media_container.bind(tweet.ext.medias)
                 }
                 tweet.hasQuote -> {
-                    itemView.media_container.visibility = View.GONE
-                    itemView.ogp_container.visibility = View.GONE
                     // TODO: 引用リツイートを検討
                 }
                 tweet.ext.urls.size == 1 -> {
                     // OGP表示
-                    itemView.media_container.visibility = View.GONE
-                    itemView.ogp_container.visibility = View.VISIBLE
                     itemView.ogp_container.bind(tweet.ext.urls.first().expanded)
-                }
-                else -> {
-                    // 表示なし
-                    itemView.media_container.visibility = View.GONE
-                    itemView.ogp_container.visibility = View.GONE
                 }
             }
 

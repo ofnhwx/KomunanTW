@@ -63,6 +63,7 @@ class TweetOGPContainer: LinearLayout {
             } catch (e: Exception) {
                 w(e)
             }
+            visibility = View.VISIBLE
         }
     }
 
