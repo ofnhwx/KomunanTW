@@ -40,11 +40,7 @@ class HomeTabFragment: TWBaseFragment() {
         container.layoutManager = layoutManager
         container.adapter = adapter
         viewModel.tweetSources.observeOnNotNull(this) { tweets ->
-            val positionIndex = layoutManager.findFirstVisibleItemPosition()
-            val positionOffset = container.getChildAt(0)?.let { it.top - container.paddingTop } ?: 0
-            adapter.submitList(tweets) {
-                layoutManager.scrollToPositionWithOffset(positionIndex, positionOffset)
-            }
+            adapter.submitList(tweets)
         }
     }
 

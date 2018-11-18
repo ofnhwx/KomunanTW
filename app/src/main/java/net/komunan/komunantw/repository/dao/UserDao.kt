@@ -41,7 +41,7 @@ abstract class UserDao {
 
     companion object {
         private const val QUERY_FIND = "SELECT * FROM user WHERE id = :id"
-        private const val QUERY_DELETE_UNNECESSARY = "DELETE FROM user WHERE NOT EXISTS (SELECT * FROM tweet WHERE tweet.user_id = user.id OR tweet.rt_user_id = user.id OR qt_user_id = user.id)"
+        private const val QUERY_DELETE_UNNECESSARY = "DELETE FROM user WHERE NOT EXISTS (SELECT * FROM tweet WHERE tweet.user_id = user.id OR tweet.reply_user_id = user.id OR tweet.rt_user_id = user.id OR tweet.qt_user_id = user.id)"
     }
 
     @Query(QUERY_FIND)

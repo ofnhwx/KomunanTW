@@ -11,6 +11,7 @@ import com.github.ajalt.timberkt.w
 import kotlinx.coroutines.*
 import net.komunan.komunantw.R
 import net.komunan.komunantw.common.AppColor
+import net.komunan.komunantw.common.extension.intentActionView
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import java.lang.Exception
@@ -58,6 +59,7 @@ class TweetOGPContainer: LinearLayout {
                 }
                 title.text = getTitle(document)
                 description.text = getDescription(document)
+                setOnClickListener { url.intentActionView() }
             } catch (e: Exception) {
                 w(e)
             }

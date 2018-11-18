@@ -94,7 +94,7 @@ class HomeTabAdapter: PagedListAdapter<TweetSourceExt, HomeTabAdapter.TweetBaseV
             }
             itemView.user_container.apply {
                 nameColor = AppColor.ORANGE
-                screenNameColor = AppColor.ORANGE
+                screenNameColor = AppColor.GRAY
             }
             itemView.tweet_text.apply {
                 setTextColor(AppColor.WHITE)
@@ -145,19 +145,18 @@ class HomeTabAdapter: PagedListAdapter<TweetSourceExt, HomeTabAdapter.TweetBaseV
             }
 
             when {
-                tweet.ext.medias.count() == 1 && tweet.ext.medias.first().isVideo -> {
-                    // ビデオ表示(最大1枚)
-                    itemView.media_container.visibility = View.VISIBLE
-                    itemView.ogp_container.visibility = View.GONE
-                    itemView.media_container.bindVideo(tweet.ext.medias.first())
-                }
                 tweet.ext.medias.any() -> {
-                    // 写真表示(最大4枚)
+                    // 写真・ビデオ表示
                     itemView.media_container.visibility = View.VISIBLE
                     itemView.ogp_container.visibility = View.GONE
-                    itemView.media_container.bindPhotos(tweet.ext.medias)
+                    itemView.media_container.bind(tweet.ext.medias)
                 }
-                !tweet.hasQuote && tweet.ext.urls.count() == 1 -> {
+                tweet.hasQuote -> {
+                    itemView.media_container.visibility = View.GONE
+                    itemView.ogp_container.visibility = View.GONE
+                    // TODO: 引用リツイートを検討
+                }
+                tweet.ext.urls.size == 1 -> {
                     // OGP表示
                     itemView.media_container.visibility = View.GONE
                     itemView.ogp_container.visibility = View.VISIBLE

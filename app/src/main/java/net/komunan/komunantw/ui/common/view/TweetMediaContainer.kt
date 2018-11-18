@@ -13,7 +13,6 @@ import net.komunan.komunantw.repository.entity.ext.TweetExtension
 
 class TweetMediaContainer: LinearLayout {
     private val mediaViews: List<SimpleDraweeView>
-    private lateinit var medias: List<TweetExtension.Media>
 
     constructor(context: Context): this(context, attrs = null)
     constructor(context: Context, attrs: AttributeSet?): this(context, attrs, defStyleAttr = 0)
@@ -22,8 +21,15 @@ class TweetMediaContainer: LinearLayout {
         mediaViews = listOf(findViewById(R.id.media1), findViewById(R.id.media2), findViewById(R.id.media3), findViewById(R.id.media4))
     }
 
-    fun bindVideo(media: TweetExtension.Media) {
-        this.medias = listOf(media)
+    fun bind(medias: List<TweetExtension.Media>) {
+        if (medias.size == 1 && medias.first().isVideo) {
+            bindVideo(medias.first())
+        } else {
+            bindPhotos(medias)
+        }
+    }
+
+    private fun bindVideo(media: TweetExtension.Media) {
         mediaViews.forEachIndexed { index, mediaView ->
             if (index == 0) {
                 mediaView.visibility = View.VISIBLE
@@ -42,8 +48,7 @@ class TweetMediaContainer: LinearLayout {
         }
     }
 
-    fun bindPhotos(medias: List<TweetExtension.Media>) {
-        this.medias = medias
+    private fun bindPhotos(medias: List<TweetExtension.Media>) {
         mediaViews.forEachIndexed { index, mediaView ->
             val media = medias.elementAtOrNull(index)
             if (media == null) {
