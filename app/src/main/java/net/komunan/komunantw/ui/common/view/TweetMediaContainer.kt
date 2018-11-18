@@ -69,6 +69,9 @@ class TweetMediaContainer: LinearLayout {
                 mediaView.visibility = View.GONE
             } else {
                 mediaView.visibility = View.VISIBLE
+                mediaView.hierarchy = GenericDraweeHierarchyBuilder(context.resources).apply {
+                    //
+                }.build()
                 mediaView.controller = Fresco.newDraweeControllerBuilder().apply {
                     imageRequest = ImageRequestBuilder.newBuilderWithSource(media.url.uri()).apply {
                         isProgressiveRenderingEnabled = true
