@@ -30,7 +30,7 @@ class TweetMediaContainer: LinearLayout {
     }
 
     fun bind(medias: List<TweetExtension.Media>) {
-        if (medias.size == 1 && medias.first().isVideo) {
+        if (medias.size == 1 && medias.first().let { it.isVideo || it.isAnimatedGif }) {
             bindVideo(medias.first())
         } else {
             bindPhotos(medias)
