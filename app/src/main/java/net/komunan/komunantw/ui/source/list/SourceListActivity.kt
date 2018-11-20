@@ -13,7 +13,6 @@ class SourceListActivity: TWBaseActivity() {
         }
     }
 
-    override fun content(): Fragment? {
-        return SourceListFragment.create()
-    }
+    override val content: Fragment?
+        get() = SourceListFragment.create()
 }

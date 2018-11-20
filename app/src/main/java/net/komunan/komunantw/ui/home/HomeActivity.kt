@@ -6,19 +6,20 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import com.mikepenz.aboutlibraries.Libs
 import com.mikepenz.aboutlibraries.LibsBuilder
+import com.mikepenz.materialdrawer.Drawer
 import com.mikepenz.materialdrawer.DrawerBuilder
 import com.mikepenz.materialdrawer.model.DividerDrawerItem
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import net.komunan.komunantw.R
 import net.komunan.komunantw.TWContext
+import net.komunan.komunantw.common.extension.observeOnNotNull
 import net.komunan.komunantw.common.extension.string
 import net.komunan.komunantw.common.extension.withStringRes
 import net.komunan.komunantw.common.service.TwitterService
 import net.komunan.komunantw.repository.entity.Account
+import net.komunan.komunantw.repository.entity.Timeline
 import net.komunan.komunantw.ui.account.auth.AccountAuthActivity
 import net.komunan.komunantw.ui.account.list.AccountListActivity
 import net.komunan.komunantw.ui.common.base.TWBaseActivity
@@ -31,7 +32,12 @@ class HomeActivity: TWBaseActivity() {
         fun createIntent(): Intent = Intent.makeRestartActivityTask(ComponentName(TWContext, HomeActivity::class.java))
     }
 
+    private lateinit var drawer: Drawer
+
     override val layout = R.layout.activity_main
+    override val upNavigation = false
+    override val content: Fragment?
+        get() = HomeFragment.create()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,29 +50,29 @@ class HomeActivity: TWBaseActivity() {
         super.onBackPressed()
     }
 
-    override fun content(): Fragment? {
-        return HomeFragment.create()
-    }
-
     private fun checkFirstRun() {
-        runBlocking(Dispatchers.Main) {
+        GlobalScope.launch(Dispatchers.Main) {
             if (withContext(Dispatchers.Default) { Account.dao.count() } == 0) {
                 startActivity(AccountAuthActivity.createIntent(true))
             }
         }
     }
 
-    private fun setupDrawer() {
-        DrawerBuilder().apply {
+    private fun setupDrawer() = GlobalScope.launch(Dispatchers.Main) {
+        val viewModel = viewModel(HomeActivityViewModel::class.java)
+        drawer = DrawerBuilder().apply {
             withActivity(this@HomeActivity)
             withToolbar(toolbar)
+            withContext(Dispatchers.Default) { Timeline.dao.findAll() }.forEach { timeline ->
+                addDrawerItems(SecondaryDrawerItem().withIdentifier(timeline.position.toLong()).withName(timeline.name))
+            }
             addDrawerItems(
                     DividerDrawerItem(),
-                    SecondaryDrawerItem().withStringRes(R.string.fragment_account_list),
-                    SecondaryDrawerItem().withStringRes(R.string.fragment_timeline_list),
-                    SecondaryDrawerItem().withStringRes(R.string.fragment_source_list),
+                    SecondaryDrawerItem().withStringRes(R.string.fragment_account_list).withSelectable(false),
+                    SecondaryDrawerItem().withStringRes(R.string.fragment_timeline_list).withSelectable(false),
+                    SecondaryDrawerItem().withStringRes(R.string.fragment_source_list).withSelectable(false),
                     DividerDrawerItem(),
-                    SecondaryDrawerItem().withStringRes(R.string.license)
+                    SecondaryDrawerItem().withStringRes(R.string.license).withSelectable(false)
             )
             withOnDrawerItemClickListener { _, _, drawerItem ->
                 when (drawerItem.identifier.toInt()) {
@@ -74,11 +80,15 @@ class HomeActivity: TWBaseActivity() {
                     R.string.fragment_timeline_list -> startActivity(TimelineListActivity.createIntent())
                     R.string.fragment_source_list -> startActivity(SourceListActivity.createIntent())
                     R.string.license -> showLicense()
+                    else -> viewModel.setPage(drawerItem.identifier.toInt())
                 }
-                //drawer.closeDrawer()
+                drawer.closeDrawer()
                 return@withOnDrawerItemClickListener true
             }
         }.build()
+        viewModel.currentPage.observeOnNotNull(this@HomeActivity) { currentPage ->
+            drawer.setSelection(currentPage.toLong())
+        }
     }
 
     @Suppress("SpellCheckingInspection")

@@ -55,11 +55,13 @@ class AccountAuthFragment: TWBaseFragment() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
+
         open_browser.setOnClickListener {
             GlobalScope.launch(Dispatchers.Main) {
-                viewModel.startOAuth(context!!, Consumer.default())
+                withContext(Dispatchers.Default) { viewModel.startOAuth(context!!, Consumer.default()) }
             }
         }
+
         authentication.setOnClickListener {
             GlobalScope.launch(Dispatchers.Main) {
                 when {

@@ -13,7 +13,6 @@ class AccountListActivity: TWBaseActivity() {
         }
     }
 
-    override fun content(): Fragment? {
-        return AccountListFragment.create()
-    }
+    override val content: Fragment?
+        get() = AccountListFragment.create()
 }

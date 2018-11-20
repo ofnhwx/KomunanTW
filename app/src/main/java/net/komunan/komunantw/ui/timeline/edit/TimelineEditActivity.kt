@@ -17,8 +17,9 @@ class TimelineEditActivity: TWBaseActivity() {
         }
     }
 
-    override fun content(): Fragment? {
-        val timelineId = intent.getLongExtra(PARAMETER_TIMELINE_ID, 0)
-        return TimelineEditFragment.create(timelineId)
-    }
+    override val content: Fragment?
+        get() {
+            val timelineId = intent.getLongExtra(PARAMETER_TIMELINE_ID, 0)
+            return TimelineEditFragment.create(timelineId)
+        }
 }

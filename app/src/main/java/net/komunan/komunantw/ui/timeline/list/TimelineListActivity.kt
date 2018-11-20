@@ -13,7 +13,6 @@ class TimelineListActivity: TWBaseActivity() {
         }
     }
 
-    override fun content(): Fragment? {
-        return TimelineListFragment.create()
-    }
+    override val content: Fragment?
+        get() = TimelineListFragment.create()
 }

@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.mikepenz.google_material_typeface_library.GoogleMaterial
 import com.mikepenz.iconics.IconicsDrawable
-import kotlinx.android.synthetic.main.edit_timeline.*
+import kotlinx.android.synthetic.main.fragment_timeline_edit.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -44,7 +44,7 @@ class TimelineEditFragment: TWBaseFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.edit_timeline, container, false)
+        return inflater.inflate(R.layout.fragment_timeline_edit, container, false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

@@ -20,8 +20,12 @@ class AccountAuthActivity: TWBaseActivity() {
         }
     }
 
-    override fun content(): Fragment? {
-        val firstRun = intent.getBooleanExtra(PARAMETER_FIRST_RUN, false)
-        return AccountAuthFragment.create(firstRun)
-    }
+    private val firstRun: Boolean
+        get() = intent.getBooleanExtra(PARAMETER_FIRST_RUN, false)
+
+    override val upNavigation: Boolean
+        get() = !firstRun
+
+    override val content: Fragment?
+        get() = AccountAuthFragment.create(firstRun)
 }
