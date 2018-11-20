@@ -1,15 +1,14 @@
 package net.komunan.komunantw.repository.entity
 
-import androidx.room.*
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.Ignore
 import net.komunan.komunantw.common.extension.TransactionTarget
-import net.komunan.komunantw.common.extension.gson
 import net.komunan.komunantw.common.extension.transaction
 import net.komunan.komunantw.repository.database.TWCacheDatabase
 import net.komunan.komunantw.repository.entity.ext.TweetExtension
 import org.apache.commons.lang3.builder.ToStringBuilder
-import twitter4j.MediaEntity
 import twitter4j.Status
-import twitter4j.URLEntity
 
 @Suppress("PropertyName")
 @Entity(tableName = "tweet", primaryKeys = ["id"])

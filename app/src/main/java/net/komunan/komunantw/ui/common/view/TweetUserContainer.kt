@@ -40,6 +40,6 @@ class TweetUserContainer: LinearLayout {
 
     fun bind(user: User) {
         name.text = user.name
-        screenName.text = string[R.string.format_screen_name](user.screenName)
+        screenName.text = string[R.string.screen_name](user.screenName)
     }
 }

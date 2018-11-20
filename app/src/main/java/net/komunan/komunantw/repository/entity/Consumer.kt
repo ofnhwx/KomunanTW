@@ -24,7 +24,7 @@ class Consumer() {
 
         @JvmStatic
         fun default() = dao.findDefault() ?: Consumer().apply {
-            this.name    = string[R.string.default_label]()
+            this.name    = string[R.string.defaults]()
             this.key     = BuildConfig.DEFAULT_CONSUMER_KEY
             this.secret  = BuildConfig.DEFAULT_CONSUMER_SECRET
             this.defaultKey = true

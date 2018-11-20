@@ -36,7 +36,7 @@ class UpdateSourcesWorker(context: Context, params: WorkerParameters): Worker(co
             updateSearchSources(sources)
 
             if (Timeline.dao.count() == 0) {
-                val timeline = Timeline(string[R.string.default_label]()).save()
+                val timeline = Timeline(string[R.string.defaults]()).save()
                 val source = Source.dao.findByAccountId(account.id).first { Source.Type.valueOf(it.type) == Source.Type.HOME }
                 timeline.addSource(source)
             }

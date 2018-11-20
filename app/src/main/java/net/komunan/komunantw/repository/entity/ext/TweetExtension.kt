@@ -17,10 +17,6 @@ class TweetExtension() {
         hashtags = status.hashtagEntities.map(HashtagEntity::getText)
     }
 
-    fun isEmpty(): Boolean {
-        return urls.isEmpty() && medias.isEmpty()
-    }
-
     class Converter {
         @TypeConverter
         fun fromJson(value: String): TweetExtension = gson.fromJson(value, TweetExtension::class.java)

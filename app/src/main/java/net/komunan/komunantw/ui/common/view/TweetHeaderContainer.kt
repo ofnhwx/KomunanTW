@@ -50,14 +50,14 @@ class TweetHeaderContainer: LinearLayout {
                 val user = withContext(Dispatchers.Default) { User.dao.find(tweet.userId, credentials) ?: User.dummy() }
                 mark.setTextColor(retweetedMarkColor)
                 mark.text = string[R.string.gmd_retweet]()
-                text.text = string[R.string.format_retweeted_by](user.name)
+                text.text = string[R.string.retweeted_by](user.name)
                 visibility = View.VISIBLE
             }
             tweet.isReply -> {
                 val user = withContext(Dispatchers.Default) { User.dao.find(tweet.replyUserId, credentials) ?: User.dummy() }
                 mark.setTextColor(replyToMarkColor)
                 mark.text = string[R.string.gmd_reply]()
-                text.text = string[R.string.format_reply_to](user.name)
+                text.text = string[R.string.reply_to](user.name)
                 visibility = View.VISIBLE
             }
             else -> {

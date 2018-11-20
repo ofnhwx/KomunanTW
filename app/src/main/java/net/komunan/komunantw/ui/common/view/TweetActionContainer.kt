@@ -53,12 +53,12 @@ class TweetActionContainer: LinearLayout {
         // リツイート
         val isRetweeted = tweetAccounts.map(TweetAccount::retweeted).any { it }
         actionRetweet.setTextColor(if (isRetweeted) retweetedColor else textColor)
-        actionRetweet.text = string[R.string.format_gmd_retweet_count](tweet.retweetCount.toString())
+        actionRetweet.text = string[R.string.gmd_retweet_count](tweet.retweetCount.toString())
 
         // お気に入り
         val isLiked = tweetAccounts.map(TweetAccount::liked).any { it }
         actionLike.setTextColor(if (isLiked) likedColor else textColor)
-        actionLike.text = string[R.string.format_gmd_like_count](tweet.likeCount.toString())
+        actionLike.text = string[R.string.gmd_like_count](tweet.likeCount.toString())
 
         // アクション
         actionReply.setOnClickListener   { TwitterService.Official.doTweet(tweet.id) }

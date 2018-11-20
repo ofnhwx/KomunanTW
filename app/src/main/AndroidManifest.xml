@@ -10,12 +10,16 @@
                  android:allowBackup="false"
                  android:supportsRtl="false"
                  tools:replace="android:allowBackup,android:supportsRtl">
-        <activity android:name=".ui.main.MainActivity">
+        <activity android:name=".ui.home.HomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.auth.AuthActivity" />
+        <activity android:name=".ui.account.auth.AccountAuthActivity" />
+        <activity android:name=".ui.account.list.AccountListActivity" />
+        <activity android:name=".ui.source.list.SourceListActivity" />
+        <activity android:name=".ui.timeline.edit.TimelineEditActivity" />
+        <activity android:name=".ui.timeline.list.TimelineListActivity" />
     </application>
 </manifest>

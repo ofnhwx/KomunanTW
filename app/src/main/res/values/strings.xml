@@ -1,43 +1,47 @@
 <resources>
     <string name="app_name">KomunanTW</string>
-    <!-- Misc -->
-    <string name="account_list">アカウント一覧</string>
-    <string name="add">追加</string>
-    <string name="default_label">デフォルト</string>
-    <string name="delete">削除</string>
-    <string name="dummy">{{dummy}}</string>
-    <string name="favorite">お気に入り</string>
-    <string name="home">ホーム</string>
-    <string name="license">ライセンス</string>
-    <string name="mention">メンション</string>
-    <string name="new_timeline">新規タイムライン</string>
-    <string name="pin">PIN</string>
-    <string name="retweet">リツイート</string>
-    <string name="source_list">ソース一覧</string>
-    <string name="timeline_edit">タイムライン編集</string>
-    <string name="timeline_list">タイムライン一覧</string>
-    <string name="user">ユーザ</string>
-    <string name="via">via</string>
-    <!-- Action -->
-    <string name="do_authentication">認証</string>
-    <string name="fetch_missing_tweets">未取得のツイートを取得する</string>
-    <string name="open_browser">ブラウザを開く</string>
-    <!-- Confirm -->
+    <!-- Fragments -->
+    <string name="fragment_account_auth">アカウント認証</string>
+    <string name="fragment_account_list">アカウント一覧</string>
+    <string name="fragment_source_list">ソース一覧</string>
+    <string name="fragment_timeline_edit">タイムライン編集</string>
+    <string name="fragment_timeline_list">タイムライン一覧</string>
+    <!-- Fragment: AccountAuth -->
+    <string name="fragment_account_auth_authentication">認証</string>
+    <string name="fragment_account_auth_open_browser">ブラウザを開く</string>
+    <!-- Fragment: HomeTab -->
+    <string name="fragment_home_tab_fetch_missing_tweets">未取得のツイートを取得する</string>
+    <!-- Fragment: TimelineList -->
+    <string name="fragment_timeline_list_new_name">新規タイムライン</string>
+    <string name="fragment_timeline_list_source_count">%s個のソース</string>
+    <!-- Messages -->
+    <string name="message_authentication_failed">認証に失敗しました</string>
     <string name="confirm_delete_timeline">タイムラインを削除しますか？</string>
     <string name="do_delete">削除する</string>
     <string name="do_not_delete">削除しない</string>
+    <!-- Source names -->
+    <string name="source_name_home">ホーム</string>
+    <string name="source_name_mention">メンション</string>
+    <string name="source_name_user">ユーザー</string>
+    <string name="source_name_like">お気に入り</string>
+    <string name="source_name_list">リスト：%s</string>
+    <string name="source_name_search">検索：%s</string>
     <!-- Google Material Design -->
-    <string name="format_gmd_like_count">{gmd_favorite} %s</string>
-    <string name="format_gmd_retweet_count">{gmd_repeat} %s</string>
+    <string name="gmd_like_count">{gmd_favorite} %s</string>
     <string name="gmd_reply">{gmd_reply}</string>
     <string name="gmd_retweet">{gmd_repeat}</string>
-    <!-- Format -->
-    <string name="format_hashtag">#%s</string>
-    <string name="format_list_label">リスト: %s</string>
-    <string name="format_reply_to">Reply to %s</string>
-    <string name="format_retweeted_by">Retweeted by %s</string>
+    <string name="gmd_retweet_count">{gmd_repeat} %s</string>
+    <!-- Misc -->
+    <string name="dummy">{{dummy}}</string>
+    <string name="add">追加</string>
+    <string name="defaults">デフォルト</string>
+    <string name="delete">削除</string>
+    <string name="hashtag">#%s</string>
+    <string name="license">ライセンス</string>
+    <string name="pin">PIN</string>
+    <string name="reply_to">Reply to %s</string>
+    <string name="retweeted_by">Retweeted by %s</string>
     <!--suppress AndroidDomInspection-->
-    <string name="format_screen_name">@%s</string>
-    <string name="format_search_label">検索: %s</string>
-    <string name="format_timeline_source_count">%s個のソース</string>
+    <string name="screen_name">@%s</string>
+    <string name="via">via</string>
 </resources>

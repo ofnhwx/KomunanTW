@@ -70,12 +70,12 @@ open class Source(): Diffable {
     val displayName: String
         get() {
             return when (Type.valueOf(type)) {
-                Type.HOME    -> string[R.string.home]()
-                Type.MENTION -> string[R.string.mention]()
-                Type.USER    -> string[R.string.user]()
-                Type.LIKE    -> string[R.string.favorite]()
-                Type.LIST    -> string[R.string.format_list_label](label)
-                Type.SEARCH  -> string[R.string.format_search_label](label)
+                Type.HOME    -> string[R.string.source_name_home]()
+                Type.MENTION -> string[R.string.source_name_mention]()
+                Type.USER    -> string[R.string.source_name_user]()
+                Type.LIKE    -> string[R.string.source_name_like]()
+                Type.LIST    -> string[R.string.source_name_list](label)
+                Type.SEARCH  -> string[R.string.source_name_search](label)
             }
         }
 
