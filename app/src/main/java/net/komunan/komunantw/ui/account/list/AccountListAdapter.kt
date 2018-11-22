@@ -2,8 +2,9 @@ package net.komunan.komunantw.ui.account.list
 
 import android.view.View
 import android.view.ViewGroup
-import kotlinx.android.synthetic.main.item_account.view.*
+import androidx.databinding.DataBindingUtil
 import net.komunan.komunantw.R
+import net.komunan.komunantw.databinding.ItemAccountBinding
 import net.komunan.komunantw.repository.entity.Account
 import net.komunan.komunantw.ui.common.base.TWBaseListAdapter
 
@@ -13,10 +14,10 @@ class AccountListAdapter: TWBaseListAdapter<Account, AccountListAdapter.ViewHold
     }
 
     class ViewHolder(itemView: View): TWBaseListAdapter.ViewHolder<Account>(itemView) {
+        private val binding by lazy { DataBindingUtil.bind<ItemAccountBinding>(itemView)!! }
+
         override fun bind(item: Account) {
-            itemView.account_icon.setImageURI(item.imageUrl)
-            itemView.account_name.text = item.name
-            itemView.account_screen_name.text = item.screenName
+            binding.account = item
         }
     }
 }

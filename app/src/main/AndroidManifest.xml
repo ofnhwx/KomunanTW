@@ -9,7 +9,8 @@
                  android:theme="@style/AppTheme"
                  android:allowBackup="false"
                  android:supportsRtl="false"
-                 tools:replace="android:allowBackup,android:supportsRtl">
+                 tools:replace="android:allowBackup,android:supportsRtl"
+                 tools:ignore="GoogleAppIndexingWarning">
         <activity android:name=".ui.home.HomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

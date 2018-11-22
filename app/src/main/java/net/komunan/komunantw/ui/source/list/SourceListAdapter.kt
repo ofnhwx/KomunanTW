@@ -2,12 +2,13 @@ package net.komunan.komunantw.ui.source.list
 
 import android.view.View
 import android.view.ViewGroup
-import kotlinx.android.synthetic.main.item_source.view.*
+import androidx.databinding.DataBindingUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.komunan.komunantw.R
+import net.komunan.komunantw.databinding.ItemSourceBinding
 import net.komunan.komunantw.repository.entity.Account
 import net.komunan.komunantw.repository.entity.Source
 import net.komunan.komunantw.ui.common.base.TWBaseListAdapter
@@ -18,13 +19,13 @@ class SourceListAdapter: TWBaseListAdapter<Source, SourceListAdapter.ViewHolder>
     }
 
     class ViewHolder(itemView: View): TWBaseListAdapter.ViewHolder<Source>(itemView) {
+        private val binding by lazy { DataBindingUtil.bind<ItemSourceBinding>(itemView)!! }
+
         override fun bind(item: Source) {
             GlobalScope.launch(Dispatchers.Main) {
-                val account = withContext(Dispatchers.Default) { Account.dao.find(item.accountId)!! }
-                itemView.source_account_icon.setImageURI(account.imageUrl)
-                itemView.source_account_name.text = account.name
-                itemView.source_name.text =item.displayName
+                binding.account = withContext(Dispatchers.Default) { Account.dao.find(item.accountId) }
             }
+            binding.source = item
         }
     }
 }
