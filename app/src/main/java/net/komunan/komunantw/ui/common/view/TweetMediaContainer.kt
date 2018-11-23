@@ -17,7 +17,7 @@ import net.komunan.komunantw.common.AppColor
 import net.komunan.komunantw.common.extension.intentActionView
 import net.komunan.komunantw.common.extension.make
 import net.komunan.komunantw.common.extension.uri
-import net.komunan.komunantw.repository.entity.ext.TweetExtension
+import net.komunan.komunantw.repository.entity.Tweet
 
 class TweetMediaContainer: LinearLayout {
     private val mediaViews: List<SimpleDraweeView>
@@ -29,7 +29,7 @@ class TweetMediaContainer: LinearLayout {
         mediaViews = listOf(findViewById(R.id.media1), findViewById(R.id.media2), findViewById(R.id.media3), findViewById(R.id.media4))
     }
 
-    fun bind(medias: List<TweetExtension.Media>) {
+    fun bind(medias: List<Tweet.Extension.Media>) {
         if (medias.size == 1 && medias.first().let { it.isVideo || it.isAnimatedGif }) {
             bindVideo(medias.first())
         } else {
@@ -38,7 +38,7 @@ class TweetMediaContainer: LinearLayout {
         visibility = View.VISIBLE
     }
 
-    private fun bindVideo(media: TweetExtension.Media) {
+    private fun bindVideo(media: Tweet.Extension.Media) {
         mediaViews.forEachIndexed { index, mediaView ->
             if (index == 0) {
                 mediaView.visibility = View.VISIBLE
@@ -62,7 +62,7 @@ class TweetMediaContainer: LinearLayout {
         }
     }
 
-    private fun bindPhotos(medias: List<TweetExtension.Media>) {
+    private fun bindPhotos(medias: List<Tweet.Extension.Media>) {
         mediaViews.forEachIndexed { index, mediaView ->
             val media = medias.elementAtOrNull(index)
             if (media == null) {

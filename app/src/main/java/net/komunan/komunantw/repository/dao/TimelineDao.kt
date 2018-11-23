@@ -7,6 +7,7 @@ import androidx.room.*
 import com.github.ajalt.timberkt.d
 import net.komunan.komunantw.common.extension.transaction
 import net.komunan.komunantw.repository.entity.Timeline
+import net.komunan.komunantw.repository.entity.ext.TimelineExt
 
 @Dao
 abstract class TimelineDao {
@@ -47,16 +48,16 @@ abstract class TimelineDao {
     /* ==================== SQL Definitions. ==================== */
 
     companion object {
-        private const val QUERY_COUNT    = "SELECT COUNT(*) FROM timeline"
-        private const val QUERY_FIND     = "SELECT * FROM timeline WHERE id = :id"
-        private const val QUERY_FIND_ALL = "SELECT * FROM timeline ORDER BY position ASC"
-
-        private const val QUERY_PACK_POSITION = "UPDATE timeline SET position = position - 1 WHERE position > :deleted"
-        private const val QUERY_SHIFT_LEFT    = "UPDATE timeline SET position = position - 1 WHERE position BETWEEN :begin AND :end"
-        private const val QUERY_SHIFT_RIGHT   = "UPDATE timeline SET position = position + 1 WHERE position BETWEEN :begin AND :end"
+        private const val QUERY_FIND = "SELECT * FROM timeline WHERE id = :id"
+        private const val QUERY_FIND_ALL = """SELECT
+    t.*,
+    ts.source_count
+FROM timeline AS t
+LEFT OUTER JOIN (SELECT timeline_id, count(*) AS source_count FROM timeline_source) as ts ON t.id = ts.timeline_id
+ORDER BY t.position ASC"""
     }
 
-    @Query(QUERY_COUNT)
+    @Query("SELECT COUNT(*) FROM timeline")
     abstract fun count(): Int
 
     @Query(QUERY_FIND)
@@ -66,20 +67,20 @@ abstract class TimelineDao {
     abstract fun findAsync(id: Long): LiveData<Timeline?>
 
     @Query(QUERY_FIND_ALL)
-    abstract fun findAll(): List<Timeline>
+    abstract fun findAll(): List<TimelineExt>
 
     @Query(QUERY_FIND_ALL)
-    abstract fun findAllAsync(): LiveData<List<Timeline>>
+    abstract fun findAllAsync(): LiveData<List<TimelineExt>>
 
     /* ==================== Protected SQL Definitions. ==================== */
 
-    @Query(QUERY_PACK_POSITION)
+    @Query("UPDATE timeline SET position = position - 1 WHERE position > :deleted")
     protected abstract fun pPackPosition(deleted: Int)
 
-    @Query(QUERY_SHIFT_LEFT)
+    @Query("UPDATE timeline SET position = position - 1 WHERE position BETWEEN :begin AND :end")
     protected abstract fun pShiftLeft(begin: Int, end: Int)
 
-    @Query(QUERY_SHIFT_RIGHT)
+    @Query("UPDATE timeline SET position = position + 1 WHERE position BETWEEN :begin AND :end")
     protected abstract fun pShiftRight(begin: Int, end: Int)
 
     @Insert(onConflict = OnConflictStrategy.ABORT)

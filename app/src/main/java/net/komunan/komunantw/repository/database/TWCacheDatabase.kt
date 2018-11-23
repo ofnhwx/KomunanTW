@@ -8,7 +8,6 @@ import net.komunan.komunantw.repository.dao.TweetDao
 import net.komunan.komunantw.repository.dao.TweetSourceDao
 import net.komunan.komunantw.repository.dao.UserDao
 import net.komunan.komunantw.repository.entity.*
-import net.komunan.komunantw.repository.entity.ext.TweetExtension
 
 @Database(
         entities = [
@@ -20,7 +19,7 @@ import net.komunan.komunantw.repository.entity.ext.TweetExtension
         version = 1,
         exportSchema = false
 )
-@TypeConverters(TweetExtension.Converter::class)
+@TypeConverters(Tweet.Extension.Converter::class)
 abstract class TWCacheDatabase: RoomDatabase() {
     @Suppress("ObjectPropertyName")
     companion object {

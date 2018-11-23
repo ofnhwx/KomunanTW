@@ -6,7 +6,7 @@ import net.komunan.komunantw.repository.database.TWDatabase
 import org.apache.commons.lang3.builder.ToStringBuilder
 
 @Entity(tableName = "timeline")
-class Timeline(): Diffable {
+open class Timeline(): Diffable {
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")        var id      : Long = 0L
     @ColumnInfo(name = "name")      var name    : String = ""

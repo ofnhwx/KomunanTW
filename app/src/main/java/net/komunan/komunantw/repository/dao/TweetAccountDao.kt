@@ -11,11 +11,7 @@ abstract class TweetAccountDao {
 
     /* ==================== SQL Definitions. ==================== */
 
-    companion object {
-        private const val QUERY_FIND = "SELECT * FROM tweet_account WHERE tweet_id = :tweetId"
-    }
-
-    @Query(QUERY_FIND)
+    @Query("SELECT * FROM tweet_account WHERE tweet_id = :tweetId")
     abstract fun find(tweetId: Long): List<TweetAccount>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

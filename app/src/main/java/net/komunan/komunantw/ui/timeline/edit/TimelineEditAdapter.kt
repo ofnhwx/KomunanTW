@@ -12,11 +12,11 @@ import net.komunan.komunantw.R
 import net.komunan.komunantw.common.AppColor
 import net.komunan.komunantw.common.extension.make
 import net.komunan.komunantw.repository.entity.Account
-import net.komunan.komunantw.repository.entity.ext.SourceWithActive
+import net.komunan.komunantw.repository.entity.ext.SourceExt
 import net.komunan.komunantw.ui.common.base.TWBaseListAdapter
 
-class TimelineEditAdapter: TWBaseListAdapter<SourceWithActive, TimelineEditAdapter.ViewHolder>() {
-    var onClickEvent: ((source: SourceWithActive) -> Unit)? = null
+class TimelineEditAdapter: TWBaseListAdapter<SourceExt, TimelineEditAdapter.ViewHolder>() {
+    var onClickEvent: ((source: SourceExt) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(inflate(R.layout.item_source, parent))
@@ -26,8 +26,8 @@ class TimelineEditAdapter: TWBaseListAdapter<SourceWithActive, TimelineEditAdapt
         holder.bind(getItem(position))
     }
 
-    inner class ViewHolder(itemView: View): TWBaseListAdapter.ViewHolder<SourceWithActive>(itemView) {
-        override fun bind(item: SourceWithActive) {
+    inner class ViewHolder(itemView: View): TWBaseListAdapter.ViewHolder<SourceExt>(itemView) {
+        override fun bind(item: SourceExt) {
             GlobalScope.launch(Dispatchers.Main) {
                 val account = withContext(Dispatchers.Default) { Account.dao.find(item.accountId)!! }
                 itemView.source_account_icon.setImageURI(account.imageUrl)

@@ -2,10 +2,9 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
-        <import type="net.komunan.komunantw.repository.entity.Timeline" />
+        <import type="net.komunan.komunantw.repository.entity.ext.TimelineExt" />
         <import type="kotlin.jvm.functions.Function0" />
-        <variable name="timeline" type="Timeline" />
-        <variable name="sourceCount" type="String" />
+        <variable name="timeline" type="TimelineExt" />
         <variable name="onClickEvent" type="Function0" />
     </data>
     <com.google.android.material.card.MaterialCardView
@@ -32,7 +31,7 @@
                     android:layout_height="wrap_content" />
             <TextView
                     android:id="@+id/timeline_source_count"
-                    android:text="@{sourceCount}"
+                    android:text="@{timeline.displaySourceCount()}"
                     app:layout_constraintTop_toBottomOf="@id/timeline_name"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"

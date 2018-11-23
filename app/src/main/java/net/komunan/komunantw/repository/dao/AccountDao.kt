@@ -30,19 +30,16 @@ abstract class AccountDao {
     /* ==================== SQL Definitions. ==================== */
 
     companion object {
-        private const val QUERY_COUNT    = "SELECT COUNT(*) FROM account"
-        private const val QUERY_FIND     = "SELECT * FROM account WHERE id = :id"
-        private const val QUERY_FIND_IDS = "SELECT * FROM account WHERE id IN (:ids) ORDER BY name ASC"
         private const val QUERY_FIND_ALL = "SELECT * FROM account ORDER BY name ASC"
     }
 
-    @Query(QUERY_COUNT)
+    @Query("SELECT COUNT(*) FROM account")
     abstract fun count(): Int
 
-    @Query(QUERY_FIND)
+    @Query("SELECT * FROM account WHERE id = :id")
     abstract fun find(id: Long): Account?
 
-    @Query(QUERY_FIND_IDS)
+    @Query("SELECT * FROM account WHERE id IN (:ids) ORDER BY name ASC")
     abstract fun find(ids: List<Long>): List<Account>
 
     @Query(QUERY_FIND_ALL)

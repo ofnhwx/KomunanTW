@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.github.ajalt.timberkt.d
 import net.komunan.komunantw.repository.entity.Source
-import net.komunan.komunantw.repository.entity.ext.SourceWithActive
+import net.komunan.komunantw.repository.entity.ext.SourceExt
 
 @Suppress("unused")
 @Dao
@@ -29,22 +29,15 @@ abstract class SourceDao {
     /* ==================== SQL Definitions. ==================== */
 
     companion object {
-        private const val PARTS_JOIN_ACCOUNT         = "LEFT OUTER JOIN account AS a ON a.id = s.account_id"
-        private const val PARTS_JOIN_TIMELINE_SOURCE = "LEFT OUTER JOIN timeline_source AS ts ON ts.source_id = s.id AND ts.timeline_id = :timelineId"
-        private const val PARTS_DEFAULT_ORDER        = "ORDER BY a.name ASC, s.ordinal ASC, s.label ASC"
-
-        private const val QUERY_FIND                 = "SELECT s.* FROM source AS s WHERE s.id = :id"
-        private const val QUERY_FIND_IDS             = "SELECT s.* FROM source AS s $PARTS_JOIN_ACCOUNT WHERE s.id IN (:ids) $PARTS_DEFAULT_ORDER"
-        private const val QUERY_FIND_ALL             = "SELECT s.* FROM source AS s $PARTS_JOIN_ACCOUNT $PARTS_DEFAULT_ORDER"
-        private const val QUERY_FIND_ALL_WITH_ACTIVE = "SELECT s.*, ifnull(ts.source_id, 0) AS is_active FROM source AS s $PARTS_JOIN_ACCOUNT $PARTS_JOIN_TIMELINE_SOURCE $PARTS_DEFAULT_ORDER"
-        private const val QUERY_FIND_BY_ACCOUNT_ID   = "SELECT s.* FROM source AS s WHERE s.account_id = :accountId"
-        private const val QUERY_FIND_SOURCE_IDS      = "SELECT DISTINCT s.id FROM source AS s ORDER BY s.id ASC"
+        private const val PARTS_JOIN_ACCOUNT  = "LEFT OUTER JOIN account AS a ON a.id = s.account_id"
+        private const val PARTS_DEFAULT_ORDER = "ORDER BY a.name ASC, s.ordinal ASC, s.label ASC"
+        private const val QUERY_FIND_ALL = "SELECT s.* FROM source AS s $PARTS_JOIN_ACCOUNT $PARTS_DEFAULT_ORDER"
     }
 
-    @Query(QUERY_FIND)
+    @Query("SELECT s.* FROM source AS s WHERE s.id = :id")
     abstract fun find(id: Long): Source?
 
-    @Query(QUERY_FIND_IDS)
+    @Query("SELECT s.* FROM source AS s $PARTS_JOIN_ACCOUNT WHERE s.id IN (:ids) $PARTS_DEFAULT_ORDER")
     abstract fun find(ids: List<Long>): List<Source>
 
     @Query(QUERY_FIND_ALL)
@@ -53,13 +46,13 @@ abstract class SourceDao {
     @Query(QUERY_FIND_ALL)
     abstract fun findAllAsync(): LiveData<List<Source>>
 
-    @Query(QUERY_FIND_ALL_WITH_ACTIVE)
-    abstract fun findAllWithActiveAsync(timelineId: Long): LiveData<List<SourceWithActive>>
+    @Query("SELECT s.*, ifnull(ts.source_id, 0) AS is_active FROM source AS s LEFT OUTER JOIN timeline_source AS ts ON ts.source_id = s.id AND ts.timeline_id = :timelineId $PARTS_JOIN_ACCOUNT $PARTS_DEFAULT_ORDER")
+    abstract fun findAllWithActiveAsync(timelineId: Long): LiveData<List<SourceExt>>
 
-    @Query(QUERY_FIND_BY_ACCOUNT_ID)
+    @Query("SELECT s.* FROM source AS s WHERE s.account_id = :accountId")
     abstract fun findByAccountId(accountId: Long): List<Source>
 
-    @Query(QUERY_FIND_SOURCE_IDS)
+    @Query("SELECT DISTINCT s.id FROM source AS s ORDER BY s.id ASC")
     abstract fun findSourceIds(): List<Long>
 
     @Delete

@@ -3,18 +3,13 @@ package net.komunan.komunantw.ui.timeline.list
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import net.komunan.komunantw.R
-import net.komunan.komunantw.common.extension.string
 import net.komunan.komunantw.databinding.ItemTimelineBinding
-import net.komunan.komunantw.repository.entity.Timeline
+import net.komunan.komunantw.repository.entity.ext.TimelineExt
 import net.komunan.komunantw.ui.common.base.TWBaseDraggableListAdapter
 import net.komunan.komunantw.ui.common.base.TWBaseListAdapter
 
-class TimelineListAdapter: TWBaseDraggableListAdapter<Timeline, TimelineListAdapter.ViewHolder>() {
+class TimelineListAdapter: TWBaseDraggableListAdapter<TimelineExt, TimelineListAdapter.ViewHolder>() {
     var onClickEvent: ((timelineId: Long) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -25,14 +20,10 @@ class TimelineListAdapter: TWBaseDraggableListAdapter<Timeline, TimelineListAdap
         return getItem(position).id
     }
 
-    inner class ViewHolder(itemView: View) : TWBaseListAdapter.ViewHolder<Timeline>(itemView) {
+    inner class ViewHolder(itemView: View) : TWBaseListAdapter.ViewHolder<TimelineExt>(itemView) {
         private val binding by lazy { DataBindingUtil.bind<ItemTimelineBinding>(itemView)!! }
 
-        override fun bind(item: Timeline) {
-            GlobalScope.launch(Dispatchers.Main) {
-                val sourceCount = withContext(Dispatchers.Default) { "${Timeline.sourceDao.countByTimelineId(item.id)}" }
-                binding.sourceCount = string[R.string.fragment_timeline_list_source_count](sourceCount)
-            }
+        override fun bind(item: TimelineExt) {
             binding.timeline = item
             binding.onClickEvent = { onClickEvent?.invoke(item.id) }
         }

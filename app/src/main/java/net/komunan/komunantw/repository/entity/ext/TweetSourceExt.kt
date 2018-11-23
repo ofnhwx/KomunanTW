@@ -1,10 +1,10 @@
 package net.komunan.komunantw.repository.entity.ext
 
 import androidx.room.ColumnInfo
-import net.komunan.komunantw.ui.common.base.Diffable
 import net.komunan.komunantw.repository.entity.Credential
 import net.komunan.komunantw.repository.entity.Source
 import net.komunan.komunantw.repository.entity.TweetSource
+import net.komunan.komunantw.ui.common.base.Diffable
 
 class TweetSourceExt: TweetSource(), Diffable {
     @ColumnInfo(name = "source_ids") var sourceIdsStr: String = ""

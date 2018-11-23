@@ -15,11 +15,12 @@ import kotlinx.coroutines.withContext
 import net.komunan.komunantw.R
 import net.komunan.komunantw.common.extension.string
 import net.komunan.komunantw.repository.entity.Timeline
+import net.komunan.komunantw.repository.entity.ext.TimelineExt
 import net.komunan.komunantw.ui.common.base.TWBaseListAdapter
 import net.komunan.komunantw.ui.common.base.TWBaseListFragment
 import net.komunan.komunantw.ui.timeline.edit.TimelineEditActivity
 
-class TimelineListFragment: TWBaseListFragment<Timeline, TimelineListAdapter.ViewHolder>() {
+class TimelineListFragment: TWBaseListFragment<TimelineExt, TimelineListAdapter.ViewHolder>() {
     companion object {
         @JvmStatic
         fun create() = TimelineListFragment()
@@ -50,7 +51,7 @@ class TimelineListFragment: TWBaseListFragment<Timeline, TimelineListAdapter.Vie
         return true
     }
 
-    override fun adapter(): TWBaseListAdapter<Timeline, TimelineListAdapter.ViewHolder> {
+    override fun adapter(): TWBaseListAdapter<TimelineExt, TimelineListAdapter.ViewHolder> {
         return TimelineListAdapter().apply {
             activateItemTouchHelper(container) { itemId, _, to ->
                 withContext(Dispatchers.Default) {
@@ -67,7 +68,7 @@ class TimelineListFragment: TWBaseListFragment<Timeline, TimelineListAdapter.Vie
         return LinearLayoutManager(context, RecyclerView.VERTICAL, false)
     }
 
-    override fun items(): LiveData<List<Timeline>> {
+    override fun items(): LiveData<List<TimelineExt>> {
         return viewModel(TimelineListViewModel::class.java).timelines
     }
 }

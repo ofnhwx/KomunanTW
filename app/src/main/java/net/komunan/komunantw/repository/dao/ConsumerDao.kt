@@ -33,16 +33,13 @@ abstract class ConsumerDao {
     /* ==================== SQL Definitions. ==================== */
 
     companion object {
-        private const val QUERY_COUNT        = "SELECT COUNT(*) FROM consumer"
-        private const val QUERY_FIND         = "SELECT * FROM consumer WHERE id = :id"
-        private const val QUERY_FIND_ALL     = "SELECT * FROM consumer ORDER BY default_key DESC, name ASC"
-        private const val QUERY_FIND_DEFAULT = "SELECT * FROM consumer WHERE default_key = 1"
+        private const val QUERY_FIND_ALL = "SELECT * FROM consumer ORDER BY default_key DESC, name ASC"
     }
 
-    @Query(QUERY_COUNT)
+    @Query("SELECT COUNT(*) FROM consumer")
     abstract fun count(): Int
 
-    @Query(QUERY_FIND)
+    @Query("SELECT * FROM consumer WHERE id = :id")
     abstract fun find(id: Long): Consumer?
 
     @Query(QUERY_FIND_ALL)
@@ -51,7 +48,7 @@ abstract class ConsumerDao {
     @Query(QUERY_FIND_ALL)
     abstract fun findAllAsync(): LiveData<List<Consumer>>
 
-    @Query(QUERY_FIND_DEFAULT)
+    @Query("SELECT * FROM consumer WHERE default_key = 1")
     abstract fun findDefault(): Consumer?
 
     /* ==================== Protected SQL Definitions. ==================== */

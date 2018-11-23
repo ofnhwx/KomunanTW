@@ -28,12 +28,7 @@ abstract class CredentialDao {
 
     /* ==================== SQL Definitions. ==================== */
 
-    companion object {
-        private const val QUERY_FIND_BY_ACCOUNT_ID = "SELECT * FROM credential WHERE account_id = :accountId"
-        private const val QUERY_FIND_SAME = "SELECT * FROM credential WHERE account_id = :accountId AND consumer_key = :consumerKey AND consumer_secret = :consumerSecret"
-    }
-
-    @Query(QUERY_FIND_BY_ACCOUNT_ID)
+    @Query("SELECT * FROM credential WHERE account_id = :accountId")
     abstract fun findByAccountId(accountId: Long): List<Credential>
 
     @Delete
@@ -41,7 +36,7 @@ abstract class CredentialDao {
 
     /* ==================== Protected SQL Definitions. ==================== */
 
-    @Query(QUERY_FIND_SAME)
+    @Query("SELECT * FROM credential WHERE account_id = :accountId AND consumer_key = :consumerKey AND consumer_secret = :consumerSecret")
     protected abstract fun pFindSame(accountId: Long, consumerKey: String, consumerSecret: String): Credential?
 
     @Insert(onConflict = OnConflictStrategy.ABORT)
