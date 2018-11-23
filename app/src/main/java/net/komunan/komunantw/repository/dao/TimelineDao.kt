@@ -53,7 +53,7 @@ abstract class TimelineDao {
     t.*,
     ts.source_count
 FROM timeline AS t
-LEFT OUTER JOIN (SELECT timeline_id, count(*) AS source_count FROM timeline_source) as ts ON t.id = ts.timeline_id
+LEFT OUTER JOIN (SELECT timeline_id, count(*) AS source_count FROM timeline_source GROUP BY timeline_id) as ts ON t.id = ts.timeline_id
 ORDER BY t.position ASC"""
     }
 
