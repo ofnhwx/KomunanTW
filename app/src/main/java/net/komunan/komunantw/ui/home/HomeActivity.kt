@@ -14,6 +14,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.*
 import net.komunan.komunantw.R
 import net.komunan.komunantw.TWContext
+import net.komunan.komunantw.common.Preference
 import net.komunan.komunantw.common.extension.observeOnNotNull
 import net.komunan.komunantw.common.extension.string
 import net.komunan.komunantw.common.extension.withStringRes
@@ -86,6 +87,7 @@ class HomeActivity: TWBaseActivity() {
                 return@withOnDrawerItemClickListener true
             }
         }.build()
+        drawer.setSelection(Preference.currentPage.toLong())
         viewModel.currentPage.observeOnNotNull(this@HomeActivity) { currentPage ->
             drawer.setSelection(currentPage.toLong())
         }

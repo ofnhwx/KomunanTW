@@ -24,28 +24,37 @@ class HomeFragment: TWBaseFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        val activityViewModel = activityViewModel(HomeActivityViewModel::class.java)
-
         viewModel(HomeViewModel::class.java).also { viewModel ->
             viewModel.timelines.observeOnNotNull(this@HomeFragment) { timelines ->
                 container.adapter = HomeAdapter(childFragmentManager, timelines)
-                val currentPage = Preference.currentPage
-                if (currentPage > 0 && currentPage < timelines.size) {
-                    activityViewModel.setPage(currentPage)
-                }
+                changePage(Preference.currentPage)
             }
             viewModel.startUpdate()
         }
 
-        activityViewModel.currentPage.observeOnNotNull(this) { currentPage ->
-            container.setCurrentItem(currentPage, false)
-            activity?.title = container.adapter?.getPageTitle(currentPage)
-        }
+        activityViewModel(HomeActivityViewModel::class.java).also { aViewModel ->
+            aViewModel.currentPage.observeOnNotNull(this) { currentPage ->
+                changePage(currentPage)
+            }
 
-        container.addOnPageChangeListener(object: ViewPager.OnPageChangeListener {
-            override fun onPageScrollStateChanged(state: Int) {}
-            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
-            override fun onPageSelected(position: Int) { activityViewModel.setPage(position) }
-        })
+            container.addOnPageChangeListener(object: ViewPager.OnPageChangeListener {
+                override fun onPageScrollStateChanged(state: Int) {}
+                override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
+                override fun onPageSelected(position: Int) {
+                    aViewModel.setPage(position)
+                }
+            })
+        }
+    }
+
+    private fun changePage(page: Int) {
+        container.adapter?.also { adapter ->
+            if (page >= 0 && page < adapter.count) {
+                if (container.currentItem != page) {
+                    container.setCurrentItem(page, false)
+                }
+                activity?.title = adapter.getPageTitle(page)
+            }
+        }
     }
 }
