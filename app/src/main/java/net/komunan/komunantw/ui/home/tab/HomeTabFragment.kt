@@ -31,7 +31,7 @@ class HomeTabFragment: TWBaseFragment() {
         get() = arguments!!.getLong(PARAMETER_TIMELINE_ID)
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.simple_recycler_view, container, false)
+        return inflater.inflate(R.layout.fragment_home_tab, container, false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

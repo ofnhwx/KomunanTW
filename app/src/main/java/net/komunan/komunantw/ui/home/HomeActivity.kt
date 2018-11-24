@@ -10,6 +10,7 @@ import com.mikepenz.materialdrawer.Drawer
 import com.mikepenz.materialdrawer.DrawerBuilder
 import com.mikepenz.materialdrawer.model.DividerDrawerItem
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem
+import com.mikepenz.materialize.MaterializeBuilder
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.*
 import net.komunan.komunantw.R
@@ -49,6 +50,11 @@ class HomeActivity: TWBaseActivity() {
     override fun onBackPressed() {
         TwitterService.garbageCleaning()
         super.onBackPressed()
+    }
+
+    override fun materialize(builder: MaterializeBuilder) {
+        builder.withStatusBarPadding(true)
+                .withTranslucentNavigationBarProgrammatically(true)
     }
 
     private fun checkFirstRun() {

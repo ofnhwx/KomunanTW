@@ -8,6 +8,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProviders
+import com.mikepenz.materialize.MaterializeBuilder
 import net.komunan.komunantw.R
 
 abstract class TWBaseActivity: AppCompatActivity() {
@@ -22,6 +23,9 @@ abstract class TWBaseActivity: AppCompatActivity() {
         findViewById<Toolbar>(R.id.toolbar)?.let { toolbar ->
             setSupportActionBar(toolbar)
         }
+        MaterializeBuilder().withActivity(this).also {
+            materialize(it)
+        }.build()
         if (upNavigation) {
             supportActionBar?.apply {
                 setDisplayHomeAsUpEnabled(true)
@@ -35,6 +39,9 @@ abstract class TWBaseActivity: AppCompatActivity() {
                         .commit()
             }
         }
+    }
+
+    protected open fun materialize(builder: MaterializeBuilder) {
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
