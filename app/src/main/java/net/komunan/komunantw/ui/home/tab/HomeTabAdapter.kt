@@ -47,12 +47,17 @@ class HomeTabAdapter: PagedListAdapter<TweetSourceExt, HomeTabAdapter.TweetBaseV
         holder.bind(getItem(position))
     }
 
+    override fun onViewRecycled(holder: TweetBaseViewHolder) {
+        holder.unbind()
+    }
+
     override fun getItemViewType(position: Int): Int {
         return if (getItem(position)?.isMissing != false) VIEW_TYPE_MISSING else VIEW_TYPE_TWEET
     }
 
     abstract class TweetBaseViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         abstract fun bind(tweetSource: TweetSourceExt?)
+        open fun unbind() {}
     }
 
     class TweetMissingViewHolder(itemView: View): TweetBaseViewHolder(itemView) {
@@ -84,6 +89,10 @@ class HomeTabAdapter: PagedListAdapter<TweetSourceExt, HomeTabAdapter.TweetBaseV
                 bindValue(tweet, credentials).join()
                 firstSetup = false
             }
+        }
+
+        override fun unbind() {
+            itemView.ogp_container.unbind()
         }
 
         private fun firstSetup() {

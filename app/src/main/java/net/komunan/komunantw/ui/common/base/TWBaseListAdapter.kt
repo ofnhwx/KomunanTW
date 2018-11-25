@@ -22,7 +22,12 @@ abstract class TWBaseListAdapter<T: Diffable, VH: TWBaseListAdapter.ViewHolder<T
         holder.bind(getItem(position))
     }
 
+    override fun onViewRecycled(holder: VH) {
+        holder.unbind()
+    }
+
     abstract class ViewHolder<T: Diffable>(itemView: View): RecyclerView.ViewHolder(itemView) {
         abstract fun bind(item: T)
+        open fun unbind() {}
     }
 }

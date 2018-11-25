@@ -20,6 +20,7 @@ class TweetOGPContainer: LinearLayout {
     private val image: SimpleDraweeView
     private val title: TextView
     private val description: TextView
+    private var job: Job? = null
 
     constructor(context: Context): this(context, attrs = null)
     constructor(context: Context, attrs: AttributeSet?): this(context, attrs, defStyleAttr = 0)
@@ -47,7 +48,8 @@ class TweetOGPContainer: LinearLayout {
         }
 
     fun bind(url: String) {
-        GlobalScope.launch(Dispatchers.Main) {
+        job?.cancel()
+        job = GlobalScope.launch(Dispatchers.Main) {
             try {
                 val document = withContext(Dispatchers.Default) { Jsoup.connect(url).get() }
                 val imageUrl = getImageUrl(document)
@@ -65,6 +67,11 @@ class TweetOGPContainer: LinearLayout {
             }
             visibility = View.VISIBLE
         }
+    }
+
+    fun unbind() {
+        job?.cancel()
+        visibility = View.GONE
     }
 
     private fun getImageUrl(document: Document): String? {

@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.simple_recycler_view.*
 import net.komunan.komunantw.R
 import net.komunan.komunantw.common.extension.observeOnNotNull
 
@@ -21,11 +20,13 @@ abstract class TWBaseListFragment<T: Diffable, VH: TWBaseListAdapter.ViewHolder<
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        container.layoutManager = layoutManager()
-        adapter().also { adapter ->
-            container.adapter = adapter
-            items().observeOnNotNull(this) { items ->
-                adapter.submitList(items)
+        view?.findViewById<RecyclerView>(R.id.container)?.also { container ->
+            container.layoutManager = layoutManager()
+            adapter().also { adapter ->
+                container.adapter = adapter
+                items().observeOnNotNull(this) { items ->
+                    adapter.submitList(items)
+                }
             }
         }
     }
