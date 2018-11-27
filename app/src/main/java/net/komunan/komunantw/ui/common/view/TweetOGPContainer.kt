@@ -62,10 +62,10 @@ class TweetOGPContainer: LinearLayout {
                 title.text = getTitle(document)
                 description.text = getDescription(document)
                 setOnClickListener { url.intentActionView() }
+                visibility = View.VISIBLE
             } catch (e: Exception) {
                 w(e)
             }
-            visibility = View.VISIBLE
         }
     }
 
