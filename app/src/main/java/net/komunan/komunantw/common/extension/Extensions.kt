@@ -27,11 +27,11 @@ import java.util.*
 
 
 // Int
-fun Int.dp(): Float {
-    return TWContext.resources.displayMetrics.density * this
+fun Int.dp(): Int {
+    return (TWContext.resources.displayMetrics.density * this).toInt()
 }
-fun Int.sp(): Float {
-    return TWContext.resources.displayMetrics.scaledDensity * this
+fun Int.sp(): Int {
+    return (TWContext.resources.displayMetrics.scaledDensity * this).toInt()
 }
 
 // String

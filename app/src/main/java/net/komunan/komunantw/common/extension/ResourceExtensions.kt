@@ -29,3 +29,9 @@ val Context.uri get() = ResourceMapper {
 }
 
 val uri get() = TWContext.uri
+
+val Context.navigationBarHeight: Int
+    get() {
+        val resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android")
+        return if (resourceId > 0) resources.getDimensionPixelSize(resourceId) else 0
+    }

@@ -15,7 +15,9 @@ import kotlinx.android.synthetic.main.item_tweet_missing.view.*
 import kotlinx.coroutines.*
 import net.komunan.komunantw.R
 import net.komunan.komunantw.common.AppColor
+import net.komunan.komunantw.common.extension.dp
 import net.komunan.komunantw.common.extension.intentActionView
+import net.komunan.komunantw.common.extension.navigationBarHeight
 import net.komunan.komunantw.common.extension.string
 import net.komunan.komunantw.common.service.TwitterService
 import net.komunan.komunantw.repository.entity.Credential
@@ -25,8 +27,8 @@ import net.komunan.komunantw.repository.entity.ext.TweetSourceExt
 
 class HomeTabAdapter: PagedListAdapter<TweetSourceExt, HomeTabAdapter.TweetBaseViewHolder>(DIFF_CALLBACK) {
     companion object {
-        private const val VIEW_TYPE_TWEET = 1
-        private const val VIEW_TYPE_MISSING = 2
+        private const val VIEW_TYPE_TWEET   = R.layout.item_tweet
+        private const val VIEW_TYPE_MISSING = R.layout.item_tweet_missing
 
         val DIFF_CALLBACK: DiffUtil.ItemCallback<TweetSourceExt> = object: DiffUtil.ItemCallback<TweetSourceExt>() {
             override fun areItemsTheSame(oldItem: TweetSourceExt, newItem: TweetSourceExt): Boolean = oldItem.isTheSame(newItem)
@@ -36,15 +38,17 @@ class HomeTabAdapter: PagedListAdapter<TweetSourceExt, HomeTabAdapter.TweetBaseV
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TweetBaseViewHolder {
         val inflater = LayoutInflater.from(parent.context)
+        val view = inflater.inflate(viewType, parent, false)
         return when (viewType) {
-            VIEW_TYPE_TWEET -> TweetViewHolder(inflater.inflate(R.layout.item_tweet, parent, false))
-            VIEW_TYPE_MISSING -> TweetMissingViewHolder(inflater.inflate(R.layout.item_tweet_missing, parent, false))
+            VIEW_TYPE_TWEET   -> TweetViewHolder(view)
+            VIEW_TYPE_MISSING -> TweetMissingViewHolder(view)
             else -> throw IllegalStateException()
         }
     }
 
     override fun onBindViewHolder(holder: TweetBaseViewHolder, position: Int) {
-        holder.bind(getItem(position))
+        val item = getItem(position) ?: return
+        holder.bind(item, position == (itemCount - 1))
     }
 
     override fun onViewRecycled(holder: TweetBaseViewHolder) {
@@ -56,19 +60,19 @@ class HomeTabAdapter: PagedListAdapter<TweetSourceExt, HomeTabAdapter.TweetBaseV
     }
 
     abstract class TweetBaseViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
-        abstract fun bind(tweetSource: TweetSourceExt?)
+        abstract fun bind(tweetSource: TweetSourceExt, isLast: Boolean)
         open fun unbind() {}
     }
 
     class TweetMissingViewHolder(itemView: View): TweetBaseViewHolder(itemView) {
-        override fun bind(tweetSource: TweetSourceExt?) {
-            if (tweetSource == null) {
-                return
-            }
+        override fun bind(tweetSource: TweetSourceExt, isLast: Boolean) {
             itemView.tweet_missing.run {
                 setTextColor(AppColor.LINK)
                 paintFlags = paintFlags or Paint.UNDERLINE_TEXT_FLAG
                 setOnClickListener { TwitterService.fetchTweets(tweetSource, true) }
+            }
+            GlobalScope.launch(Dispatchers.Main) {
+                itemView.setPadding(0, 0, 0,  if (isLast) (itemView.context.navigationBarHeight + 8.dp()) else 0)
             }
         }
     }
@@ -76,10 +80,7 @@ class HomeTabAdapter: PagedListAdapter<TweetSourceExt, HomeTabAdapter.TweetBaseV
     class TweetViewHolder(itemView: View): TweetBaseViewHolder(itemView) {
         private var firstSetup: Boolean = true
 
-        override fun bind(tweetSource: TweetSourceExt?) {
-            if (tweetSource == null) {
-                return
-            }
+        override fun bind(tweetSource: TweetSourceExt, isLast: Boolean) {
             GlobalScope.launch(Dispatchers.Main) {
                 if (firstSetup) {
                     firstSetup()
@@ -87,6 +88,9 @@ class HomeTabAdapter: PagedListAdapter<TweetSourceExt, HomeTabAdapter.TweetBaseV
                 val tweet       = withContext(Dispatchers.Default) { Tweet.dao.find(tweetSource.tweetId)!! }
                 val credentials = withContext(Dispatchers.Default) { tweetSource.credentials() }
                 bindValue(tweet, credentials).join()
+                (itemView.layoutParams as? ViewGroup.MarginLayoutParams)?.also { params ->
+                    params.bottomMargin = if (isLast) (itemView.context.navigationBarHeight + 8.dp()) else 0
+                }
                 firstSetup = false
             }
         }

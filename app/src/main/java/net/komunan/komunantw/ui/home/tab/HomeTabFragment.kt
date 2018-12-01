@@ -7,11 +7,12 @@ import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.simple_recycler_view.*
+import kotlinx.android.synthetic.main.fragment_home_tab.*
 import net.komunan.komunantw.R
 import net.komunan.komunantw.common.extension.observeOnNotNull
 import net.komunan.komunantw.repository.entity.Timeline
 import net.komunan.komunantw.ui.common.base.TWBaseFragment
+import net.komunan.komunantw.ui.home.HomeActivity
 
 class HomeTabFragment: TWBaseFragment() {
     companion object {
@@ -37,7 +38,10 @@ class HomeTabFragment: TWBaseFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         HomeTabAdapter().also { adapter ->
-            container.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+            container.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false).apply {
+                recycleChildrenOnDetach = true
+            }
+            container.setRecycledViewPool((activity as? HomeActivity)?.viewPool)
             container.adapter = adapter
             viewModel().tweetSources.observeOnNotNull(this) { tweets ->
                 adapter.submitList(tweets)

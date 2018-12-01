@@ -4,6 +4,7 @@ import android.content.ComponentName
 import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.RecyclerView
 import com.mikepenz.aboutlibraries.Libs
 import com.mikepenz.aboutlibraries.LibsBuilder
 import com.mikepenz.materialdrawer.Drawer
@@ -40,6 +41,8 @@ class HomeActivity: TWBaseActivity() {
     override val upNavigation = false
     override val content: Fragment?
         get() = HomeFragment.create()
+
+    val viewPool = RecyclerView.RecycledViewPool()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
