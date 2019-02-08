@@ -28,16 +28,13 @@ class AccountListFragment: TWBaseListFragment<Account, AccountListAdapter.ViewHo
         setHasOptionsMenu(true)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        if (menu == null) {
-            return
-        }
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         menu.add(0, R.string.add, 1, R.string.add).apply {
         }
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when (item?.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
             R.string.add -> startActivity(AccountAuthActivity.createIntent())
             else -> return super.onOptionsItemSelected(item)
         }

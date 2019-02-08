@@ -41,7 +41,7 @@ class UpdateSourcesWorker(context: Context, params: WorkerParameters): Worker(co
                 timeline.addSource(source)
             }
         }
-        return Result.SUCCESS
+        return Result.success()
     }
 
     private fun updateStandardSources(sources: List<Source>) {

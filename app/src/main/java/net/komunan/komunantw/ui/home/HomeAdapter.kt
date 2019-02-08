@@ -7,7 +7,7 @@ import androidx.viewpager.widget.PagerAdapter
 import net.komunan.komunantw.repository.entity.Timeline
 import net.komunan.komunantw.ui.home.tab.HomeTabFragment
 
-class HomeAdapter(fm: FragmentManager?, private val timelines: List<Timeline>): FragmentPagerAdapter(fm) {
+class HomeAdapter(fm: FragmentManager, private val timelines: List<Timeline>): FragmentPagerAdapter(fm) {
     override fun getCount(): Int {
         return timelines.size
     }

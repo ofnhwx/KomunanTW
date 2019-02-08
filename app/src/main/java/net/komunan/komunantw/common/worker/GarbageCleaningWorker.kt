@@ -24,7 +24,7 @@ class GarbageCleaningWorker(context: Context, params: WorkerParameters): Worker(
         deleteUnnecessaryTweet()       // 他から参照されなくなったツイートを削除
         deleteUnnecessaryUser()        // 他から参照されなくなったユーザを削除
         addMissingMarks()              // 未取得ツイートのマークを追加
-        return Result.SUCCESS
+        return Result.success()
     }
 
     private fun deleteUnnecessaryTweetSource() = transaction(TransactionTarget.WITH_CACHE) {

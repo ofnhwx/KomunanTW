@@ -1,14 +1,13 @@
 package net.komunan.komunantw.ui.account.auth
 
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import com.github.ajalt.timberkt.w
 import net.komunan.komunantw.common.Preference
 import net.komunan.komunantw.common.extension.combineLatest
+import net.komunan.komunantw.common.extension.intentActionView
 import net.komunan.komunantw.repository.entity.*
 import net.komunan.komunantw.common.service.TwitterService
 import net.komunan.komunantw.ui.common.base.TWBaseViewModel
@@ -37,7 +36,7 @@ class AccountAuthViewModel: TWBaseViewModel() {
         Preference.requestToken = requestToken
         Preference.consumer = consumerKeySecret
         tokenValid.postValue(true)
-        context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(requestToken.authorizationURL)))
+        requestToken.authorizationURL.intentActionView()
     }
 
     suspend fun finishOAuth(): Boolean = process {

@@ -103,15 +103,12 @@ class TimelineEditFragment: TWBaseFragment() {
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        if (menu == null) {
-            return
-        }
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         menu.add(0, R.string.delete, 1, R.string.delete)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when (item?.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
             R.string.delete -> MaterialDialog(context!!).apply {
                 message(R.string.confirm_delete_timeline)
                 positiveButton(R.string.do_delete) {

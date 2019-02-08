@@ -36,7 +36,8 @@ fun Int.sp(): Int {
 
 // String
 fun String.uri(): Uri = Uri.parse(this)
-fun String.intentActionView() = TWContext.startActivity(Intent(Intent.ACTION_VIEW, this.uri()))
+fun String.intentActionView()
+        = TWContext.startActivity(Intent(Intent.ACTION_VIEW, this.uri()).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
 
 // IIcon
 fun IIcon.make(context: Context): IconicsDrawable {

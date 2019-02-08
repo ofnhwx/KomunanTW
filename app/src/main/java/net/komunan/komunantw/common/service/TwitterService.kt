@@ -174,7 +174,8 @@ object TwitterService {
 
         private fun action(body: (Uri.Builder) -> Uri.Builder) {
             val builder = Uri.Builder().scheme(SCHEME).authority(AUTHORITY)
-            TWContext.startActivity(Intent(Intent.ACTION_VIEW, body.invoke(builder).build()))
+            val uri = body.invoke(builder).build()
+            TWContext.startActivity(Intent(Intent.ACTION_VIEW, uri).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
         }
     }
 }

@@ -53,7 +53,7 @@ class FetchTweetsWorker(context: Context, params: WorkerParameters): Worker(cont
             // 自動更新で指定値以上の間隔が空いていない場合はスキップ
             !isInteractive && !source.requireAutoFetch() -> {
                 d { "fetch(${source.id}): skip=[elapsed=${System.currentTimeMillis() - source.fetchAt}, required=${Preference.fetchIntervalMillis * 0.8}]" }
-                return Result.SUCCESS
+                return Result.success()
             }
             // 初回の取得
             tweetsEmpty -> {
@@ -108,7 +108,7 @@ class FetchTweetsWorker(context: Context, params: WorkerParameters): Worker(cont
             }
         }
 
-        return Result.SUCCESS
+        return Result.success()
     }
 
     private fun fetchTweets(): List<Status> {

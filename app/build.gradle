@@ -17,8 +17,8 @@ android {
         applicationId "net.komunan.komunan_tw"
         minSdkVersion 23
         targetSdkVersion 28
-        versionCode 51
-        versionName "0.17.0"
+        versionCode 52
+        versionName "0.17.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         buildConfigField "String", "DEFAULT_CONSUMER_KEY", "\"" + buildProperties.secrets['consumer_key'].string + "\""
         buildConfigField "String", "DEFAULT_CONSUMER_SECRET", "\"" + buildProperties.secrets['consumer_secret'].string + "\""
@@ -43,20 +43,20 @@ dependencies {
 
     // Android Support Library
     implementation 'androidx.appcompat:appcompat:1.0.2'
-    implementation 'androidx.annotation:annotation:1.0.0'
-    implementation 'com.google.android.material:material:1.1.0-alpha01'
+    implementation 'androidx.annotation:annotation:1.0.1'
+    implementation 'com.google.android.material:material:1.1.0-alpha03'
 
     // Android Architecture Components
     implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
     kapt 'androidx.lifecycle:lifecycle-compiler:2.0.0'
-    implementation 'androidx.room:room-runtime:2.1.0-alpha02'
-    kapt 'androidx.room:room-compiler:2.1.0-alpha02'
-    implementation 'androidx.paging:paging-runtime-ktx:2.1.0-beta01'
-    implementation 'android.arch.work:work-runtime-ktx:1.0.0-alpha11'
+    implementation 'androidx.room:room-runtime:2.1.0-alpha04'
+    kapt 'androidx.room:room-compiler:2.1.0-alpha04'
+    implementation 'androidx.paging:paging-runtime-ktx:2.1.0'
+    implementation 'android.arch.work:work-runtime-ktx:1.0.0-beta05'
 
     // Firebase
-    implementation 'com.google.firebase:firebase-core:16.0.5'
-    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.6'
+    implementation 'com.google.firebase:firebase-core:16.0.7'
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.8'
 
     // Kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"

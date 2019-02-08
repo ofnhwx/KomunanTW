@@ -34,15 +34,12 @@ class TimelineListFragment: TWBaseListFragment<TimelineExt, TimelineListAdapter.
         setHasOptionsMenu(true)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        if (menu == null) {
-            return
-        }
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         menu.add(0, R.string.add, 1, R.string.add)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when (item?.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
             R.string.add -> GlobalScope.launch(Dispatchers.Default) {
                 viewModel(TimelineListViewModel::class.java).addTimeline()
             }
