@@ -9,7 +9,7 @@
 Fresco takes care of image loading and display, so you don\'t have to. It will load images from the network,
 local storage, or local resources, and display a placeholder until the image has arrived. It has two
 levels of cache; one in memory and another in internal storage.</string>
-    <string name="library_Fresco_libraryVersion">1.11.0</string>
+    <string name="library_Fresco_libraryVersion">1.13.0</string>
     <string name="library_Fresco_libraryWebsite">https://github.com/facebook/fresco</string>
     <string name="library_Fresco_licenseId">mit</string>
     <string name="library_Fresco_isOpenSource">true</string>
