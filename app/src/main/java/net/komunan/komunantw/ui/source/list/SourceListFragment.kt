@@ -4,12 +4,12 @@ import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import net.komunan.komunantw.R
-import net.komunan.komunantw.common.extension.string
-import net.komunan.komunantw.repository.entity.Source
+import net.komunan.komunantw.common.string
+import net.komunan.komunantw.core.repository.entity.Source
 import net.komunan.komunantw.ui.common.base.TWBaseListAdapter
 import net.komunan.komunantw.ui.common.base.TWBaseListFragment
 
-class SourceListFragment: TWBaseListFragment<Source, SourceListAdapter.ViewHolder>() {
+class SourceListFragment : TWBaseListFragment<Source, SourceListAdapter.ViewHolder>() {
     companion object {
         @JvmStatic
         fun create() = SourceListFragment()

@@ -4,17 +4,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_home_tab.*
 import net.komunan.komunantw.R
-import net.komunan.komunantw.common.extension.observeOnNotNull
-import net.komunan.komunantw.repository.entity.Timeline
+import net.komunan.komunantw.core.repository.entity.Timeline
 import net.komunan.komunantw.ui.common.base.TWBaseFragment
 import net.komunan.komunantw.ui.home.HomeActivity
 
-class HomeTabFragment: TWBaseFragment() {
+class HomeTabFragment : TWBaseFragment() {
     companion object {
         private const val PARAMETER_TIMELINE_ID = "HomeTabFragment.PARAMETER_TIMELINE_ID"
 
@@ -43,9 +43,9 @@ class HomeTabFragment: TWBaseFragment() {
             }
             container.setRecycledViewPool((activity as? HomeActivity)?.viewPool)
             container.adapter = adapter
-            viewModel().tweetSources.observeOnNotNull(this) { tweets ->
+            viewModel().tweets.observe(this, Observer { tweets ->
                 adapter.submitList(tweets)
-            }
+            })
         }
     }
 

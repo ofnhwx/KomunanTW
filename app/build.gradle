@@ -15,10 +15,10 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "net.komunan.komunan_tw"
-        minSdkVersion 23
+        minSdkVersion 26
         targetSdkVersion 28
-        versionCode 53
-        versionName "0.17.2"
+        versionCode 54
+        versionName "0.18.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         buildConfigField "String", "DEFAULT_CONSUMER_KEY", "\"" + buildProperties.secrets['consumer_key'].string + "\""
         buildConfigField "String", "DEFAULT_CONSUMER_SECRET", "\"" + buildProperties.secrets['consumer_secret'].string + "\""
@@ -49,8 +49,6 @@ dependencies {
     // Android Architecture Components
     implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
     kapt 'androidx.lifecycle:lifecycle-compiler:2.0.0'
-    implementation 'androidx.room:room-runtime:2.1.0-beta01'
-    kapt 'androidx.room:room-compiler:2.1.0-beta01'
     implementation 'androidx.paging:paging-runtime-ktx:2.1.0'
     implementation 'android.arch.work:work-runtime-ktx:1.0.1'
 
@@ -64,6 +62,10 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlin_coroutines_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core-common:$kotlin_coroutines_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlin_coroutines_version"
+
+    // ObjectBox
+    debugImplementation "io.objectbox:objectbox-android-objectbrowser:$objectbox_version"
+    releaseImplementation "io.objectbox:objectbox-android:$objectbox_version"
 
     // Iconics
     implementation 'com.mikepenz:iconics-core:3.2.5'
@@ -81,7 +83,6 @@ dependencies {
     implementation 'com.mikepenz:aboutlibraries:6.2.3'
     implementation 'com.mikepenz:materialdrawer:6.1.2'
     implementation 'com.twitter.twittertext:twitter-text:3.0.1'
-    implementation 'org.apache.commons:commons-lang3:3.8.1'
     implementation 'org.greenrobot:eventbus:3.1.1'
     implementation 'org.jsoup:jsoup:1.12.1'
     implementation 'org.twitter4j:twitter4j-core:4.0.7'
@@ -96,3 +97,4 @@ dependencies {
 }
 
 apply plugin: 'com.google.gms.google-services'
+apply plugin: 'io.objectbox'

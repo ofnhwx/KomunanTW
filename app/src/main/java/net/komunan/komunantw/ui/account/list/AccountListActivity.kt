@@ -5,7 +5,7 @@ import androidx.fragment.app.Fragment
 import net.komunan.komunantw.TWContext
 import net.komunan.komunantw.ui.common.base.TWBaseActivity
 
-class AccountListActivity: TWBaseActivity() {
+class AccountListActivity : TWBaseActivity() {
     companion object {
         @JvmStatic
         fun createIntent(): Intent {

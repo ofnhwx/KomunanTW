@@ -5,7 +5,7 @@ import androidx.fragment.app.Fragment
 import net.komunan.komunantw.TWContext
 import net.komunan.komunantw.ui.common.base.TWBaseActivity
 
-class TimelineEditActivity: TWBaseActivity() {
+class TimelineEditActivity : TWBaseActivity() {
     companion object {
         private const val PARAMETER_TIMELINE_ID = "TimelineEditActivity.PARAMETER_TIMELINE_ID"
 

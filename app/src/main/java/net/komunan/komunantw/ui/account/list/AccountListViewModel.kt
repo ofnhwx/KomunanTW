@@ -1,10 +1,14 @@
 package net.komunan.komunantw.ui.account.list
 
 import androidx.lifecycle.LiveData
-import net.komunan.komunantw.repository.entity.Account
+import io.objectbox.android.ObjectBoxLiveData
+import net.komunan.komunantw.core.repository.entity.Account
+import net.komunan.komunantw.core.repository.entity.Account_
 import net.komunan.komunantw.ui.common.base.TWBaseViewModel
 
-class AccountListViewModel: TWBaseViewModel() {
+class AccountListViewModel : TWBaseViewModel() {
     val accounts: LiveData<List<Account>>
-        get() = Account.dao.findAllAsync()
+        get() = ObjectBoxLiveData(Account.query().apply {
+            order(Account_.name)
+        }.build())
 }

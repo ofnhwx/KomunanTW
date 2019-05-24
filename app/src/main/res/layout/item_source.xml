@@ -2,65 +2,80 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools">
+
     <data>
-        <import type="net.komunan.komunantw.repository.entity.Account" />
-        <import type="net.komunan.komunantw.repository.entity.Source" />
-        <variable name="account" type="Account" />
-        <variable name="source" type="Source" />
+
+        <import type="net.komunan.komunantw.core.repository.entity.Account"/>
+
+        <import type="net.komunan.komunantw.core.repository.entity.Source"/>
+
+        <variable
+                name="account"
+                type="Account"/>
+
+        <variable
+                name="source"
+                type="Source"/>
     </data>
+
     <com.google.android.material.card.MaterialCardView
-            app:cardCornerRadius="8dp"
-            android:layout_marginTop="4dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
+            android:layout_marginTop="4dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="4dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            app:cardCornerRadius="8dp">
+
         <androidx.constraintlayout.widget.ConstraintLayout
-                android:padding="8dp"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:padding="8dp">
+
             <com.facebook.drawee.view.SimpleDraweeView
                     android:id="@+id/source_account_icon"
                     imageUrl="@{account.imageUrl}"
-                    app:roundAsCircle="true"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp" />
-            <TextView
-                    android:id="@+id/source_account_name"
-                    android:text="@{account.name}"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/source_account_icon"
-                    app:layout_constraintEnd_toStartOf="@id/source_selected"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content" />
-            <TextView
-                    android:id="@+id/source_name"
-                    android:text="@{source.displayName}"
-                    app:layout_constraintTop_toBottomOf="@id/source_account_name"
-                    app:layout_constraintStart_toEndOf="@id/source_account_icon"
-                    app:layout_constraintEnd_toStartOf="@id/source_selected"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginBottom="4dp"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content" />
-            <ImageButton
-                    android:id="@+id/source_selected"
-                    android:visibility="gone"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    android:layout_marginStart="8dp"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
-                    tools:ignore="ContentDescription" />
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:roundAsCircle="true"/>
+
+            <TextView
+                    android:id="@+id/source_account_name"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="4dp"
+                    android:text="@{account.name}"
+                    app:layout_constraintEnd_toStartOf="@id/source_selected"
+                    app:layout_constraintStart_toEndOf="@id/source_account_icon"
+                    app:layout_constraintTop_toTopOf="parent"/>
+
+            <TextView
+                    android:id="@+id/source_name"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="4dp"
+                    android:text="@{source.displayName}"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/source_selected"
+                    app:layout_constraintStart_toEndOf="@id/source_account_icon"
+                    app:layout_constraintTop_toBottomOf="@id/source_account_name"/>
+
+            <ImageButton
+                    android:id="@+id/source_selected"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginStart="8dp"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:ignore="ContentDescription"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
 </layout>

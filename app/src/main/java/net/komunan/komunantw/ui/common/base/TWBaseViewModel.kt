@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 
-open class TWBaseViewModel: ViewModel() {
+open class TWBaseViewModel : ViewModel() {
     private val _isProcessing = MutableLiveData<Boolean>()
 
     init {

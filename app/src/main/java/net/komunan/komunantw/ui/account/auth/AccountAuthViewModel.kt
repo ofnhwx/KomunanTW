@@ -6,15 +6,17 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import com.github.ajalt.timberkt.w
 import net.komunan.komunantw.common.Preference
-import net.komunan.komunantw.common.extension.combineLatest
-import net.komunan.komunantw.common.extension.intentActionView
-import net.komunan.komunantw.repository.entity.*
-import net.komunan.komunantw.common.service.TwitterService
+import net.komunan.komunantw.common.combineLatest
+import net.komunan.komunantw.common.openUrl
+import net.komunan.komunantw.core.repository.ObjectBox
+import net.komunan.komunantw.core.repository.entity.Account
+import net.komunan.komunantw.core.repository.entity.Consumer
+import net.komunan.komunantw.core.repository.entity.Credential
+import net.komunan.komunantw.core.service.TwitterService
 import net.komunan.komunantw.ui.common.base.TWBaseViewModel
-import net.komunan.komunantw.common.extension.transaction
 import twitter4j.TwitterException
 
-class AccountAuthViewModel: TWBaseViewModel() {
+class AccountAuthViewModel : TWBaseViewModel() {
     private val tokenValid = MutableLiveData<Boolean>()
 
     val openBrowserEnabled: LiveData<Boolean> = isIdle
@@ -31,29 +33,28 @@ class AccountAuthViewModel: TWBaseViewModel() {
         tokenValid.postValue(Preference.requestToken != null && Preference.consumer != null)
     }
 
-    suspend fun startOAuth(context: Context, consumerKeySecret: Consumer): Unit = process {
+    suspend fun startOAuth(consumerKeySecret: Consumer): Unit = process {
         val requestToken = TwitterService.twitter(consumerKeySecret).oAuthRequestToken
         Preference.requestToken = requestToken
         Preference.consumer = consumerKeySecret
         tokenValid.postValue(true)
-        requestToken.authorizationURL.intentActionView()
+        requestToken.authorizationURL.openUrl()
     }
 
     suspend fun finishOAuth(): Boolean = process {
-        val consumerKeySecret = Preference.consumer
+        val consumer = Preference.consumer
         val requestToken = Preference.requestToken
-        if (consumerKeySecret == null || requestToken == null) {
-            w { "ConsumerKeySecret or RequestToken is null: ConsumerKeySecret=$consumerKeySecret, RequestToken=$requestToken" }
+        if (consumer == null || requestToken == null) {
+            w { "ConsumerKeySecret or RequestToken is null: ConsumerKeySecret=$consumer, RequestToken=$requestToken" }
             return@process false
         }
 
-        val twitter = TwitterService.twitter(consumerKeySecret)
+        val twitter = TwitterService.twitter(consumer)
         try {
             val accessToken = twitter.getOAuthAccessToken(requestToken, pin.value)
-            transaction {
+            ObjectBox.get().runInTx {
                 val account = Account(twitter.showUser(accessToken.userId)).save()
-                Credential.dao.findByAccountId(account.id).forEach { it.delete() }
-                Credential(account, consumerKeySecret, accessToken).save()
+                Credential(account, consumer, accessToken).save()
                 TwitterService.updateSourceList(account.id)
             }
             Preference.consumer = null

@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import net.komunan.komunantw.common.Preference
 import net.komunan.komunantw.ui.common.base.TWBaseViewModel
 
-class HomeActivityViewModel: TWBaseViewModel() {
+class HomeActivityViewModel : TWBaseViewModel() {
     private val page = MutableLiveData<Int>()
 
     val currentPage: LiveData<Int>

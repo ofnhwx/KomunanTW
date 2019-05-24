@@ -11,7 +11,7 @@ import androidx.lifecycle.ViewModelProviders
 import com.mikepenz.materialize.MaterializeBuilder
 import net.komunan.komunantw.R
 
-abstract class TWBaseActivity: AppCompatActivity() {
+abstract class TWBaseActivity : AppCompatActivity() {
     @LayoutRes
     protected open val layout: Int? = null
     protected open val content: Fragment? = null
@@ -57,7 +57,7 @@ abstract class TWBaseActivity: AppCompatActivity() {
         return true
     }
 
-    protected fun <T: ViewModel> viewModel(clazz: Class<T>): T {
+    protected fun <T : ViewModel> viewModel(clazz: Class<T>): T {
         return ViewModelProviders.of(this).get(clazz)
     }
 }

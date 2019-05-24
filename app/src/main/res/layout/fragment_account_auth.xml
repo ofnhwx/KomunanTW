@@ -1,50 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
     <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"/>
+
     <ScrollView
-            android:fillViewport="true"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:fillViewport="true">
+
         <LinearLayout
-                android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
             <LinearLayout
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    android:layout_weight="1"
                     android:layout_width="match_parent"
-                    android:layout_height="0dp">
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
                 <EditText
                         android:id="@+id/pin"
-                        android:inputType="numberPassword"
-                        android:hint="@string/pin"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:hint="@string/pin"
+                        android:inputType="numberPassword"/>
             </LinearLayout>
+
             <LinearLayout
-                    android:orientation="horizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
                 <Button
                         android:id="@+id/open_browser"
-                        android:text="@string/fragment_account_auth_open_browser"
-                        android:layout_weight="1"
                         android:layout_width="0dp"
-                        android:layout_height="match_parent" />
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:text="@string/fragment_account_auth_open_browser"/>
+
                 <Button
                         android:id="@+id/authentication"
-                        android:text="@string/fragment_account_auth_authentication"
-                        android:layout_weight="1"
                         android:layout_width="0dp"
-                        android:layout_height="match_parent" />
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:text="@string/fragment_account_auth_authentication"/>
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

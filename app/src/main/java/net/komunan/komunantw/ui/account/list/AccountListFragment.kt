@@ -8,13 +8,13 @@ import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import net.komunan.komunantw.R
-import net.komunan.komunantw.common.extension.string
-import net.komunan.komunantw.repository.entity.Account
+import net.komunan.komunantw.common.string
+import net.komunan.komunantw.core.repository.entity.Account
 import net.komunan.komunantw.ui.account.auth.AccountAuthActivity
 import net.komunan.komunantw.ui.common.base.TWBaseListAdapter
 import net.komunan.komunantw.ui.common.base.TWBaseListFragment
 
-class AccountListFragment: TWBaseListFragment<Account, AccountListAdapter.ViewHolder>() {
+class AccountListFragment : TWBaseListFragment<Account, AccountListAdapter.ViewHolder>() {
     companion object {
         @JvmStatic
         fun create() = AccountListFragment()

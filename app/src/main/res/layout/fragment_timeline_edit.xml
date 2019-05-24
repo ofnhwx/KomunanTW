@@ -4,56 +4,64 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
     <LinearLayout
             android:id="@+id/timeline_name_show_container"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             android:layout_width="0dp"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
         <TextView
                 android:id="@+id/timeline_name_show"
-                android:text="@string/dummy"
-                android:layout_weight="1"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/dummy"/>
+
         <ImageButton
                 android:id="@+id/timeline_name_show_edit"
                 android:layout_width="48dp"
-                android:layout_height="48dp" />
+                android:layout_height="48dp"/>
     </LinearLayout>
+
     <LinearLayout
             android:id="@+id/timeline_name_edit_container"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            app:layout_constraintTop_toBottomOf="@id/timeline_name_show_container"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             android:layout_width="0dp"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/timeline_name_show_container">
+
         <EditText
                 android:id="@+id/timeline_name_edit"
-                android:inputType="text"
-                android:layout_weight="1"
                 android:layout_width="0dp"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:inputType="text"/>
+
         <ImageButton
                 android:id="@+id/timeline_name_edit_cancel"
                 android:layout_width="48dp"
-                android:layout_height="48dp" />
+                android:layout_height="48dp"/>
+
         <ImageButton
                 android:id="@+id/timeline_name_edit_save"
                 android:layout_width="48dp"
-                android:layout_height="48dp" />
+                android:layout_height="48dp"/>
     </LinearLayout>
+
     <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/sources_container"
-            app:layout_constraintTop_toBottomOf="@id/timeline_name_edit_container"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
             android:layout_width="0dp"
-            android:layout_height="0dp" />
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/timeline_name_edit_container"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -4,6 +4,7 @@ import android.content.ComponentName
 import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import com.mikepenz.aboutlibraries.Libs
 import com.mikepenz.aboutlibraries.LibsBuilder
@@ -13,23 +14,26 @@ import com.mikepenz.materialdrawer.model.DividerDrawerItem
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem
 import com.mikepenz.materialize.MaterializeBuilder
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import net.komunan.komunantw.R
 import net.komunan.komunantw.TWContext
 import net.komunan.komunantw.common.Preference
-import net.komunan.komunantw.common.extension.observeOnNotNull
-import net.komunan.komunantw.common.extension.string
-import net.komunan.komunantw.common.extension.withStringRes
-import net.komunan.komunantw.common.service.TwitterService
-import net.komunan.komunantw.repository.entity.Account
-import net.komunan.komunantw.repository.entity.Timeline
+import net.komunan.komunantw.common.string
+import net.komunan.komunantw.common.withStringRes
+import net.komunan.komunantw.core.repository.entity.Account
+import net.komunan.komunantw.core.repository.entity.Timeline
+import net.komunan.komunantw.core.repository.entity.Timeline_
+import net.komunan.komunantw.core.service.TwitterService
 import net.komunan.komunantw.ui.account.auth.AccountAuthActivity
 import net.komunan.komunantw.ui.account.list.AccountListActivity
 import net.komunan.komunantw.ui.common.base.TWBaseActivity
 import net.komunan.komunantw.ui.source.list.SourceListActivity
 import net.komunan.komunantw.ui.timeline.list.TimelineListActivity
 
-class HomeActivity: TWBaseActivity() {
+class HomeActivity : TWBaseActivity() {
     companion object {
         @JvmStatic
         fun createIntent(): Intent = Intent.makeRestartActivityTask(ComponentName(TWContext, HomeActivity::class.java))
@@ -62,7 +66,7 @@ class HomeActivity: TWBaseActivity() {
 
     private fun checkFirstRun() {
         GlobalScope.launch(Dispatchers.Main) {
-            if (withContext(Dispatchers.Default) { Account.dao.count() } == 0) {
+            if (withContext(Dispatchers.Default) { Account.box.isEmpty }) {
                 startActivity(AccountAuthActivity.createIntent(true))
             }
         }
@@ -73,7 +77,7 @@ class HomeActivity: TWBaseActivity() {
         drawer = DrawerBuilder().apply {
             withActivity(this@HomeActivity)
             withToolbar(toolbar)
-            withContext(Dispatchers.Default) { Timeline.dao.findAll() }.forEach { timeline ->
+            withContext(Dispatchers.Default) { Timeline.box.query().order(Timeline_.position).build().find() }.forEach { timeline ->
                 addDrawerItems(SecondaryDrawerItem().withIdentifier(timeline.position.toLong()).withName(timeline.name))
             }
             addDrawerItems(
@@ -97,9 +101,9 @@ class HomeActivity: TWBaseActivity() {
             }
         }.build()
         drawer.setSelection(Preference.currentPage.toLong())
-        viewModel.currentPage.observeOnNotNull(this@HomeActivity) { currentPage ->
+        viewModel.currentPage.observe(this@HomeActivity, Observer { currentPage ->
             drawer.setSelection(currentPage.toLong())
-        }
+        })
     }
 
     @Suppress("SpellCheckingInspection")

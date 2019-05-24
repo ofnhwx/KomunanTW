@@ -1,45 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <data>
-        <import type="net.komunan.komunantw.repository.entity.ext.TimelineExt" />
-        <import type="kotlin.jvm.functions.Function0" />
-        <variable name="timeline" type="TimelineExt" />
-        <variable name="onClickEvent" type="Function0" />
+
+        <import type="net.komunan.komunantw.core.repository.entity.Timeline"/>
+
+        <import type="kotlin.jvm.functions.Function0"/>
+
+        <variable
+                name="timeline"
+                type="Timeline"/>
+
+        <variable
+                name="onClickEvent"
+                type="Function0"/>
     </data>
+
     <com.google.android.material.card.MaterialCardView
-            app:cardCornerRadius="8dp"
-            android:onClick="@{() -> onClickEvent.invoke()}"
-            android:layout_marginTop="4dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
+            android:layout_marginTop="4dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="4dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:onClick="@{() -> onClickEvent.invoke()}"
+            app:cardCornerRadius="8dp">
+
         <androidx.constraintlayout.widget.ConstraintLayout
-                android:padding="8dp"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:padding="8dp">
+
             <TextView
                     android:id="@+id/timeline_name"
-                    android:text="@{timeline.name}"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    android:layout_marginTop="4dp"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@{timeline.name}"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"/>
+
             <TextView
                     android:id="@+id/timeline_source_count"
-                    android:text="@{timeline.displaySourceCount()}"
-                    app:layout_constraintTop_toBottomOf="@id/timeline_name"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:layout_marginBottom="4dp"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content" />
+                    android:text="@{timeline.displaySourceCount}"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/timeline_name"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
 </layout>

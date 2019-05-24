@@ -4,14 +4,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.Observer
 import androidx.viewpager.widget.ViewPager
 import kotlinx.android.synthetic.main.simple_view_pager.*
 import net.komunan.komunantw.R
 import net.komunan.komunantw.common.Preference
-import net.komunan.komunantw.common.extension.observeOnNotNull
 import net.komunan.komunantw.ui.common.base.TWBaseFragment
 
-class HomeFragment: TWBaseFragment() {
+class HomeFragment : TWBaseFragment() {
     companion object {
         @JvmStatic
         fun create() = HomeFragment()
@@ -25,19 +25,18 @@ class HomeFragment: TWBaseFragment() {
         super.onActivityCreated(savedInstanceState)
 
         viewModel(HomeViewModel::class.java).also { viewModel ->
-            viewModel.timelines.observeOnNotNull(this@HomeFragment) { timelines ->
+            viewModel.timelines.observe(this, Observer { timelines ->
                 container.adapter = HomeAdapter(childFragmentManager, timelines)
                 changePage(Preference.currentPage)
-            }
+            })
             viewModel.startUpdate()
         }
 
         activityViewModel(HomeActivityViewModel::class.java).also { aViewModel ->
-            aViewModel.currentPage.observeOnNotNull(this) { currentPage ->
+            aViewModel.currentPage.observe(this, Observer { currentPage ->
                 changePage(currentPage)
-            }
-
-            container.addOnPageChangeListener(object: ViewPager.OnPageChangeListener {
+            })
+            container.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
                 override fun onPageScrollStateChanged(state: Int) {}
                 override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
                 override fun onPageSelected(position: Int) {

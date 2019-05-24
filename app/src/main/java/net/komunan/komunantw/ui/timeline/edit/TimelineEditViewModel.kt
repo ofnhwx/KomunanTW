@@ -1,25 +1,47 @@
 package net.komunan.komunantw.ui.timeline.edit
 
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import net.komunan.komunantw.repository.entity.Source
-import net.komunan.komunantw.repository.entity.Timeline
+import androidx.lifecycle.*
+import io.objectbox.android.ObjectBoxLiveData
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import net.komunan.komunantw.common.combineLatest
+import net.komunan.komunantw.core.repository.entity.Source
+import net.komunan.komunantw.core.repository.entity.Source_
+import net.komunan.komunantw.core.repository.entity.Timeline
+import net.komunan.komunantw.core.repository.entity.Timeline_
 import net.komunan.komunantw.ui.common.base.TWBaseViewModel
 
-class TimelineEditViewModel(timelineId: Long): TWBaseViewModel() {
-    val timeline = Timeline.dao.findAsync(timelineId)
-    val sources = Source.dao.findAllWithActiveAsync(timelineId)
+class TimelineEditViewModel(timelineId: Long) : TWBaseViewModel() {
+    val timeline: LiveData<Timeline?> = Transformations.map(ObjectBoxLiveData(Timeline.query().apply {
+        equal(Timeline_.id, timelineId)
+    }.build()), List<Timeline>::firstOrNull)
+    val sources = combineLatest(timeline, ObjectBoxLiveData(Source.query().apply {
+        order(Source_.accountName)
+        order(Source_.ordinal)
+        order(Source_.label)
+    }.build())) { timeline, sources ->
+        return@combineLatest if (sources == null) {
+            emptyList<Source>()
+        } else {
+            val actives = timeline?.sources?.map(Source::id)?.toHashSet() ?: emptySet<Long>()
+            sources.map { source ->
+                source.isActive = actives.contains(source.id)
+                return@map source
+            }
+        }
+    }
     val editMode = MutableLiveData<Boolean>()
 
     init {
         editMode.postValue(false)
     }
 
-    fun updateName(name: String) {
-        timeline.value?.apply {
-            this.name = name
-        }?.save()
+    fun updateName(name: String) = GlobalScope.launch(Dispatchers.Main) {
+        timeline.value?.also { timeline ->
+            timeline.name = name
+            timeline.save()
+        }
     }
 
     fun startEdit() {
@@ -30,7 +52,7 @@ class TimelineEditViewModel(timelineId: Long): TWBaseViewModel() {
         editMode.postValue(false)
     }
 
-    class Factory(private val timelineId: Long): ViewModelProvider.Factory {
+    class Factory(private val timelineId: Long) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             if (modelClass == TimelineEditViewModel::class.java) {
                 @Suppress("UNCHECKED_CAST")

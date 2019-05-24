@@ -1,33 +1,41 @@
 package net.komunan.komunantw.ui.home.tab
 
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Transformations
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
+import io.objectbox.android.ObjectBoxDataSource
+import io.objectbox.android.ObjectBoxLiveData
+import io.objectbox.kotlin.inValues
 import net.komunan.komunantw.common.Preference
+import net.komunan.komunantw.core.repository.entity.Source
+import net.komunan.komunantw.core.repository.entity.Source_
+import net.komunan.komunantw.core.repository.entity.Timeline
+import net.komunan.komunantw.core.repository.entity.Timeline_
+import net.komunan.komunantw.core.repository.entity.cache.Tweet
+import net.komunan.komunantw.core.repository.entity.cache.Tweet_
 import net.komunan.komunantw.ui.common.base.TWBaseViewModel
-import net.komunan.komunantw.repository.entity.*
-import net.komunan.komunantw.repository.entity.ext.TweetSourceExt
 
-class HomeTabViewModel(private val timelineId: Long): TWBaseViewModel() {
+class HomeTabViewModel(private val timelineId: Long) : TWBaseViewModel() {
     private val timeline: LiveData<Timeline?>
-        get() = Timeline.dao.findAsync(timelineId)
-    private val sources: LiveData<List<TimelineSource>>
-        get() = Transformations.switchMap(timeline) {
-            if (it == null) {
-                MutableLiveData<List<TimelineSource>>()
-            } else {
-                Timeline.sourceDao.findByTimelineIdAsync(it.id)
-            }
-        }
+        get() = Transformations.map(ObjectBoxLiveData(Timeline.query().apply {
+            equal(Timeline_.id, timelineId)
+        }.build()), List<Timeline>::firstOrNull)
+
     private val sourceIds: LiveData<List<Long>>
-        get() = Transformations.map(sources) { it.map(TimelineSource::sourceId) }
+        get() = Transformations.map(timeline) { it?.sources?.map(Source::id) ?: emptyList() }
 
-    val tweetSources: LiveData<PagedList<TweetSourceExt>>
+    val tweets: LiveData<PagedList<Tweet>>
         get() = Transformations.switchMap(sourceIds) {
-            LivePagedListBuilder(Tweet.sourceDao.findBySourceIdsAsync(it), Preference.pageSize).build()
+            LivePagedListBuilder(ObjectBoxDataSource.Factory(Tweet.query().apply {
+                link(Tweet_.sources).inValues(Source_.id, it.toLongArray())
+                orderDesc(Tweet_.id)
+            }.build()), Preference.pageSize).build()
         }
 
-    class Factory(private val timelineId: Long): ViewModelProvider.Factory {
+    class Factory(private val timelineId: Long) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             if (modelClass == HomeTabViewModel::class.java) {
                 @Suppress("UNCHECKED_CAST")

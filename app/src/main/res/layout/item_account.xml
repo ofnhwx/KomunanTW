@@ -1,53 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <data>
-        <import type="net.komunan.komunantw.repository.entity.Account" />
-        <variable name="account" type="Account" />
+
+        <import type="net.komunan.komunantw.core.repository.entity.Account"/>
+
+        <variable
+                name="account"
+                type="Account"/>
     </data>
+
     <com.google.android.material.card.MaterialCardView
-            app:cardCornerRadius="8dp"
-            android:layout_marginTop="4dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
+            android:layout_marginTop="4dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="4dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            app:cardCornerRadius="8dp">
+
         <androidx.constraintlayout.widget.ConstraintLayout
-                android:padding="8dp"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:padding="8dp">
+
             <com.facebook.drawee.view.SimpleDraweeView
                     android:id="@+id/account_icon"
                     imageUrl="@{account.imageUrl}"
-                    app:roundAsCircle="true"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
                     android:layout_width="48dp"
-                    android:layout_height="48dp" />
+                    android:layout_height="48dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:roundAsCircle="true"/>
+
             <TextView
                     android:id="@+id/account_name"
-                    android:text="@{account.name}"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/account_icon"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginStart="8dp"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="4dp"
+                    android:text="@{account.name}"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/account_icon"
+                    app:layout_constraintTop_toTopOf="parent"/>
+
             <TextView
                     android:id="@+id/account_screen_name"
-                    android:text="@{account.screenName}"
-                    app:layout_constraintTop_toBottomOf="@id/account_name"
-                    app:layout_constraintStart_toEndOf="@id/account_icon"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginBottom="4dp"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="4dp"
+                    android:text="@{account.screenName}"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/account_icon"
+                    app:layout_constraintTop_toBottomOf="@id/account_name"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
 </layout>

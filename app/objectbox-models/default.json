@@ -1,0 +1,346 @@
+{
+  "_note1": "KEEP THIS FILE! Check it into a version control system (VCS) like git.",
+  "_note2": "ObjectBox manages crucial IDs for your object model. See docs for details.",
+  "_note3": "If you have VCS merge conflicts, you must resolve them according to ObjectBox docs.",
+  "entities": [
+    {
+      "id": "1:677066169257324592",
+      "lastPropertyId": "7:8647643099930069300",
+      "name": "OGP",
+      "properties": [
+        {
+          "id": "1:8002340136479604999",
+          "name": "tweetId"
+        },
+        {
+          "id": "2:6445267035925398924",
+          "name": "url"
+        },
+        {
+          "id": "3:5153464762821128023",
+          "name": "imageUrl"
+        },
+        {
+          "id": "4:3767939875089940843",
+          "name": "title"
+        },
+        {
+          "id": "5:2961354886964254131",
+          "name": "description"
+        },
+        {
+          "id": "6:1242825762590109818",
+          "name": "hasError"
+        },
+        {
+          "id": "7:8647643099930069300",
+          "name": "expiredAt"
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "2:8485583272953134983",
+      "lastPropertyId": "5:3930818171279341178",
+      "name": "User",
+      "properties": [
+        {
+          "id": "1:4765324007992692040",
+          "name": "id"
+        },
+        {
+          "id": "2:4028043926100687181",
+          "name": "name"
+        },
+        {
+          "id": "3:8165039843391734356",
+          "name": "screenName"
+        },
+        {
+          "id": "4:7508277565929153556",
+          "name": "imageUrl"
+        },
+        {
+          "id": "5:3930818171279341178",
+          "name": "cachedAt"
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "3:5212800296981563175",
+      "lastPropertyId": "15:2459794410791883378",
+      "name": "Tweet",
+      "properties": [
+        {
+          "id": "1:372723075767731190",
+          "name": "id"
+        },
+        {
+          "id": "2:7862631991121115707",
+          "name": "text"
+        },
+        {
+          "id": "3:557538037190080524",
+          "name": "userId"
+        },
+        {
+          "id": "4:6969742295982293829",
+          "name": "rtCount"
+        },
+        {
+          "id": "5:6628915412278828321",
+          "name": "likeCount"
+        },
+        {
+          "id": "6:2165211540560065957",
+          "name": "timestamp"
+        },
+        {
+          "id": "7:5229016681704889675",
+          "name": "via"
+        },
+        {
+          "id": "8:8605917432398986587",
+          "name": "replyId"
+        },
+        {
+          "id": "9:2224434333089903447",
+          "name": "replyUserId"
+        },
+        {
+          "id": "10:5917655667667780796",
+          "name": "rtId"
+        },
+        {
+          "id": "11:1910875859759271088",
+          "name": "rtUserId"
+        },
+        {
+          "id": "12:3275974296613273365",
+          "name": "qtId"
+        },
+        {
+          "id": "13:502110765478022014",
+          "name": "qtUserId"
+        },
+        {
+          "id": "14:6882561797285891057",
+          "name": "cachedAt"
+        },
+        {
+          "id": "15:2459794410791883378",
+          "name": "ext"
+        }
+      ],
+      "relations": [
+        {
+          "id": "1:1638317275277631700",
+          "name": "sources"
+        },
+        {
+          "id": "2:8834698148880518615",
+          "name": "missings"
+        },
+        {
+          "id": "3:2936547606144857458",
+          "name": "rtBy"
+        },
+        {
+          "id": "4:748194166825053531",
+          "name": "likeBy"
+        }
+      ]
+    },
+    {
+      "id": "4:193498281323869105",
+      "lastPropertyId": "4:5933913608748975400",
+      "name": "Timeline",
+      "properties": [
+        {
+          "id": "1:8919172771203381977",
+          "name": "id"
+        },
+        {
+          "id": "2:4452740965512738961",
+          "name": "name"
+        },
+        {
+          "id": "3:5968722558538086409",
+          "name": "position"
+        },
+        {
+          "id": "4:5933913608748975400",
+          "name": "savedAt"
+        }
+      ],
+      "relations": [
+        {
+          "id": "5:262502179221603269",
+          "name": "sources"
+        }
+      ]
+    },
+    {
+      "id": "5:347101217091579033",
+      "lastPropertyId": "5:87129146145257916",
+      "name": "Account",
+      "properties": [
+        {
+          "id": "1:116782639604881179",
+          "name": "id"
+        },
+        {
+          "id": "2:5721990267180653955",
+          "name": "name"
+        },
+        {
+          "id": "3:6552576817101377086",
+          "name": "screenName"
+        },
+        {
+          "id": "4:8356257384604053634",
+          "name": "imageUrl"
+        },
+        {
+          "id": "5:87129146145257916",
+          "name": "savedAt"
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "6:4193671586046741597",
+      "lastPropertyId": "6:4105651370921197842",
+      "name": "Consumer",
+      "properties": [
+        {
+          "id": "1:841335296972633798",
+          "name": "id"
+        },
+        {
+          "id": "2:6655718312252541239",
+          "name": "name"
+        },
+        {
+          "id": "3:1216433701851878695",
+          "name": "key"
+        },
+        {
+          "id": "4:8025065697690835400",
+          "name": "secret"
+        },
+        {
+          "id": "5:4614402769118482279",
+          "name": "isDefault"
+        },
+        {
+          "id": "6:4105651370921197842",
+          "name": "savedAt"
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "7:5878010709767581616",
+      "lastPropertyId": "7:328467233363839131",
+      "name": "Credential",
+      "properties": [
+        {
+          "id": "1:395758477373579719",
+          "name": "id"
+        },
+        {
+          "id": "2:8867171948906440854",
+          "name": "consumerKey"
+        },
+        {
+          "id": "3:4183206994103490434",
+          "name": "consumerSecret"
+        },
+        {
+          "id": "4:4074994654951281309",
+          "name": "token"
+        },
+        {
+          "id": "5:3309963083613863027",
+          "name": "tokenSecret"
+        },
+        {
+          "id": "6:8974125579448034478",
+          "name": "savedAt"
+        },
+        {
+          "id": "7:328467233363839131",
+          "indexId": "1:3991781967467060221",
+          "name": "accountId"
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "8:7685127317003796953",
+      "lastPropertyId": "11:7879238267351486928",
+      "name": "Source",
+      "properties": [
+        {
+          "id": "1:6972709365067844486",
+          "name": "id"
+        },
+        {
+          "id": "2:4460509440037162319",
+          "name": "accountName"
+        },
+        {
+          "id": "3:1888284085999658244",
+          "name": "ordinal"
+        },
+        {
+          "id": "4:2752883447596278095",
+          "name": "type"
+        },
+        {
+          "id": "5:6599460120979097919",
+          "name": "label"
+        },
+        {
+          "id": "6:4207988517897258387",
+          "name": "query"
+        },
+        {
+          "id": "7:5050801836619794085",
+          "name": "listId"
+        },
+        {
+          "id": "8:4177636418079736030",
+          "name": "listOwner"
+        },
+        {
+          "id": "9:6749887442550447454",
+          "name": "fetchedAt"
+        },
+        {
+          "id": "10:6957532129143748140",
+          "name": "savedAt"
+        },
+        {
+          "id": "11:7879238267351486928",
+          "indexId": "2:5601398692806470812",
+          "name": "accountId"
+        }
+      ],
+      "relations": []
+    }
+  ],
+  "lastEntityId": "8:7685127317003796953",
+  "lastIndexId": "2:5601398692806470812",
+  "lastRelationId": "5:262502179221603269",
+  "lastSequenceId": "0:0",
+  "modelVersion": 4,
+  "modelVersionParserMinimum": 4,
+  "retiredEntityUids": [],
+  "retiredIndexUids": [],
+  "retiredPropertyUids": [],
+  "retiredRelationUids": [],
+  "version": 1
+}

@@ -8,8 +8,8 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 
-abstract class TWBaseListAdapter<T: Diffable, VH: TWBaseListAdapter.ViewHolder<T>>: ListAdapter<T, VH>(ItemCallback<T>()) {
-    private class ItemCallback<T: Diffable>: DiffUtil.ItemCallback<T>() {
+abstract class TWBaseListAdapter<T : Diffable, VH : TWBaseListAdapter.ViewHolder<T>> : ListAdapter<T, VH>(ItemCallback<T>()) {
+    private class ItemCallback<T : Diffable> : DiffUtil.ItemCallback<T>() {
         override fun areItemsTheSame(oldItem: T, newItem: T): Boolean = oldItem.isTheSame(newItem)
         override fun areContentsTheSame(oldItem: T, newItem: T): Boolean = oldItem.isContentsTheSame(newItem)
     }
@@ -26,7 +26,7 @@ abstract class TWBaseListAdapter<T: Diffable, VH: TWBaseListAdapter.ViewHolder<T
         holder.unbind()
     }
 
-    abstract class ViewHolder<T: Diffable>(itemView: View): RecyclerView.ViewHolder(itemView) {
+    abstract class ViewHolder<T : Diffable>(itemView: View) : RecyclerView.ViewHolder(itemView) {
         abstract fun bind(item: T)
         open fun unbind() {}
     }

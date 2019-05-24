@@ -4,12 +4,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import net.komunan.komunantw.R
+import net.komunan.komunantw.core.repository.entity.Timeline
 import net.komunan.komunantw.databinding.ItemTimelineBinding
-import net.komunan.komunantw.repository.entity.ext.TimelineExt
 import net.komunan.komunantw.ui.common.base.TWBaseDraggableListAdapter
 import net.komunan.komunantw.ui.common.base.TWBaseListAdapter
 
-class TimelineListAdapter: TWBaseDraggableListAdapter<TimelineExt, TimelineListAdapter.ViewHolder>() {
+class TimelineListAdapter : TWBaseDraggableListAdapter<Timeline, TimelineListAdapter.ViewHolder>() {
     var onClickEvent: ((timelineId: Long) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -20,10 +20,10 @@ class TimelineListAdapter: TWBaseDraggableListAdapter<TimelineExt, TimelineListA
         return getItem(position).id
     }
 
-    inner class ViewHolder(itemView: View) : TWBaseListAdapter.ViewHolder<TimelineExt>(itemView) {
+    inner class ViewHolder(itemView: View) : TWBaseListAdapter.ViewHolder<Timeline>(itemView) {
         private val binding by lazy { DataBindingUtil.bind<ItemTimelineBinding>(itemView)!! }
 
-        override fun bind(item: TimelineExt) {
+        override fun bind(item: Timeline) {
             binding.timeline = item
             binding.onClickEvent = { onClickEvent?.invoke(item.id) }
         }

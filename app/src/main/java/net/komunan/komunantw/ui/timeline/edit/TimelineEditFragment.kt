@@ -2,25 +2,22 @@ package net.komunan.komunantw.ui.timeline.edit
 
 import android.os.Bundle
 import android.view.*
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.mikepenz.google_material_typeface_library.GoogleMaterial
 import com.mikepenz.iconics.IconicsDrawable
 import kotlinx.android.synthetic.main.fragment_timeline_edit.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import net.komunan.komunantw.R
 import net.komunan.komunantw.common.AppColor
-import net.komunan.komunantw.common.extension.make
-import net.komunan.komunantw.common.extension.observeOnNotNull
-import net.komunan.komunantw.common.extension.string
-import net.komunan.komunantw.repository.entity.Timeline
+import net.komunan.komunantw.common.make
+import net.komunan.komunantw.common.string
+import net.komunan.komunantw.core.repository.entity.Timeline
 import net.komunan.komunantw.ui.common.base.TWBaseFragment
 
-class TimelineEditFragment: TWBaseFragment() {
+class TimelineEditFragment : TWBaseFragment() {
     companion object {
         private const val PARAMETER_TIMELINE_ID = "TimelineEditFragment.PARAMETER_TIMELINE_ID"
 
@@ -54,10 +51,15 @@ class TimelineEditFragment: TWBaseFragment() {
         val adapter = TimelineEditAdapter().apply {
             onClickEvent = { source ->
                 GlobalScope.launch(Dispatchers.Default) {
-                    if (source.isActive) {
-                        Timeline.dao.find(timelineId)?.delSource(source)
-                    } else {
-                        Timeline.dao.find(timelineId)?.addSource(source)
+                    Timeline.box.get(timelineId)?.also { timeline ->
+                        timeline.sources.reset()
+                        if (timeline.sources.contains(source)) {
+                            timeline.sources.remove(source)
+                        } else {
+                            timeline.sources.add(source)
+                        }
+                        timeline.sources.applyChangesToDb()
+                        timeline.save()
                     }
                 }
             }
@@ -69,16 +71,16 @@ class TimelineEditFragment: TWBaseFragment() {
         }
 
         viewModel.apply {
-            timeline.observeOnNotNull(this@TimelineEditFragment) {
+            timeline.observe(this@TimelineEditFragment, Observer {
                 timeline_name_show.text = it?.name
-            }
-            sources.observeOnNotNull(this@TimelineEditFragment) {
+            })
+            sources.observe(this@TimelineEditFragment, Observer {
                 adapter.submitList(it)
-            }
-            editMode.observeOnNotNull(this@TimelineEditFragment) {
+            })
+            editMode.observe(this@TimelineEditFragment, Observer {
                 timeline_name_show_container.visibility = if (it) View.GONE else View.VISIBLE
                 timeline_name_edit_container.visibility = if (it) View.VISIBLE else View.GONE
-            }
+            })
         }
 
         timeline_name_show_edit.apply {
@@ -113,7 +115,10 @@ class TimelineEditFragment: TWBaseFragment() {
                 message(R.string.confirm_delete_timeline)
                 positiveButton(R.string.do_delete) {
                     GlobalScope.launch(Dispatchers.Main) {
-                        withContext(Dispatchers.Default) { Timeline.dao.find(timelineId)?.delete() }
+                        withContext(Dispatchers.Default) {
+                            Timeline.box.remove(timelineId)
+                            Timeline.packPosition()
+                        }
                         activity?.finish()
                     }
                 }

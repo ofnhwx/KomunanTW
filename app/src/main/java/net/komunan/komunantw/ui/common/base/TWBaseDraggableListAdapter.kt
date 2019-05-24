@@ -6,7 +6,7 @@ import com.github.ajalt.timberkt.d
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-abstract class TWBaseDraggableListAdapter<T: Diffable, VH: TWBaseListAdapter.ViewHolder<T>>: TWBaseListAdapter<T, VH>() {
+abstract class TWBaseDraggableListAdapter<T : Diffable, VH : TWBaseListAdapter.ViewHolder<T>> : TWBaseListAdapter<T, VH>() {
     private lateinit var refList: MutableList<T>
 
     override fun submitList(list: MutableList<T>?) {
@@ -20,15 +20,15 @@ abstract class TWBaseDraggableListAdapter<T: Diffable, VH: TWBaseListAdapter.Vie
     }
 
     fun activateItemTouchHelper(recyclerView: RecyclerView, onComplete: suspend (itemId: Long, from: Int, to: Int) -> Unit) {
-        ItemTouchHelper(object: ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0) {
+        ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0) {
             private val INVALID_POSITION = -1
             var dragFrom: Int = INVALID_POSITION
-            var dragTo  : Int = INVALID_POSITION
-            var itemId  : Long = 0
+            var dragTo: Int = INVALID_POSITION
+            var itemId: Long = 0L
 
             override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
                 val fromPosition = viewHolder.adapterPosition
-                val toPosition   = target.adapterPosition
+                val toPosition = target.adapterPosition
                 if (dragFrom == INVALID_POSITION) {
                     dragFrom = fromPosition
                     itemId = recyclerView.adapter!!.getItemId(dragFrom)
@@ -45,7 +45,7 @@ abstract class TWBaseDraggableListAdapter<T: Diffable, VH: TWBaseListAdapter.Vie
                     kotlinx.coroutines.GlobalScope.launch(Dispatchers.Main) {
                         onComplete.invoke(itemId, dragFrom, dragTo)
                         dragFrom = INVALID_POSITION
-                        dragTo   = INVALID_POSITION
+                        dragTo = INVALID_POSITION
                     }
                 }
             }

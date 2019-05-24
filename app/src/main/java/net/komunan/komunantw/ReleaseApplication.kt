@@ -8,9 +8,10 @@ import com.github.ajalt.timberkt.Timber
 import com.marcinmoskala.kotlinpreferences.PreferenceHolder
 import com.mikepenz.google_material_typeface_library.GoogleMaterial
 import com.mikepenz.iconics.Iconics
+import net.komunan.komunantw.core.repository.ObjectBox
 
 @SuppressLint("Registered")
-open class ReleaseApplication: Application() {
+open class ReleaseApplication : Application() {
     companion object {
         @JvmStatic
         lateinit var instance: ReleaseApplication
@@ -25,6 +26,7 @@ open class ReleaseApplication: Application() {
         super.onCreate()
         instance = this
         Iconics.registerFont(GoogleMaterial())
+        ObjectBox.init(TWContext)
         Fresco.initialize(TWContext)
         PreferenceHolder.setContext(TWContext)
         Timber.plant(timberTree())

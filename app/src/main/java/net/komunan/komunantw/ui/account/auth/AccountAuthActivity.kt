@@ -6,7 +6,7 @@ import androidx.fragment.app.Fragment
 import net.komunan.komunantw.TWContext
 import net.komunan.komunantw.ui.common.base.TWBaseActivity
 
-class AccountAuthActivity: TWBaseActivity() {
+class AccountAuthActivity : TWBaseActivity() {
     companion object {
         private const val PARAMETER_FIRST_RUN = "AccountAuthActivity.PARAMETER_FIRST_RUN"
 
